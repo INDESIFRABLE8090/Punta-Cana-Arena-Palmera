@@ -15,15 +15,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Restore website source
+        run: |
+          base64 --decode project-source.zip.b64 > /tmp/project.zip
+          mkdir -p site
+          unzip -q /tmp/project.zip -d site
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-      - run: npm install
-      - run: npm run build
+      - name: Install dependencies
+        working-directory: site/punta-cana-arena-palmera
+        run: npm install --no-audit --no-fund
+      - name: Build website
+        working-directory: site/punta-cana-arena-palmera
+        run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: site/punta-cana-arena-palmera/dist
   deploy:
     environment:
       name: github-pages
