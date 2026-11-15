@@ -14,4 +14,15 @@ export const site = {
   email: '',
   instagram: '',
   facebook: '',
+  /**
+   * Identificación legal del titular (aviso legal y privacidad). Obligatoria antes de
+   * publicar en dominio definitivo: `npm run prelaunch` falla si falta.
+   */
+  legalName: '',
+  /** RNC o identificación fiscal. */
+  taxId: '',
+  /** Domicilio o zona del negocio. */
+  address: '',
+  /** Fecha de la última revisión de los textos legales. */
+  legalUpdated: '2026-11-15',
 } as const;

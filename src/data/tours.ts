@@ -36,7 +36,8 @@ export interface Tour {
   accent: string;
   /** Tono oscuro que acompaña al acento en fondos. */
   deep: string;
-  image?: { src: ImageMetadata; alt: L; position?: string };
+  /** `credit`: nombre del archivo en src/data/credits.ts cuando la foto es de terceros. */
+  image?: { src: ImageMetadata; alt: L; position?: string; credit?: string };
 }
 
 const kidsNote: L = {

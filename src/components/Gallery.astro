@@ -5,16 +5,19 @@ import coast from '@/assets/images/costa-punta-cana.jpg';
 import { t } from '@/i18n/ui';
 import type { Lang } from '@/i18n/config';
 import { tours } from '@/data/tours';
+import { creditFor } from '@/data/credits';
+import { legalUi } from '@/i18n/legal';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const d = t(lang);
 
 const shots = [
-  { src: coast, alt: d.hero.imageAlt, caption: d.gallery.coastCaption, shape: 'wide' },
+  { src: coast, alt: d.hero.imageAlt, caption: d.gallery.coastCaption, shape: 'wide', credit: undefined },
   ...tours.filter((x) => x.image).map((x, i) => ({
     src: x.image!.src,
     alt: x.image!.alt[lang],
     caption: x.name[lang],
+    credit: x.image!.credit ? creditFor(x.image!.credit) : undefined,
     shape: x.slug === 'coco-bongo' ? 'tall' : i % 2 ? 'std' : 'wide',
   })),
 ];
@@ -31,10 +34,10 @@ const items = await Promise.all(
   <ul class="rail" data-gallery>
     {items.map((it, i) => (
       <li class={`shot is-${it.shape}`} data-reveal style={`--i:${i % 3}`}>
-        <button type="button" data-shot={i} data-full={it.full} data-alt={it.alt} data-caption={it.caption} aria-label={`${d.gallery.open}: ${it.caption}`}>
+        <button type="button" data-shot={i} data-full={it.full} data-alt={it.alt} data-caption={it.credit ? `${it.caption} · ${legalUi[lang].photo}: ${it.credit.author} (${it.credit.license})` : it.caption} aria-label={`${d.gallery.open}: ${it.caption}`}>
           <Picture src={it.src} alt={it.alt} formats={['webp']} widths={[400, 720, 1080]} sizes="(min-width: 64rem) 45vw, 82vw" loading="lazy" decoding="async" quality={66} />
         </button>
-        <p><span>{String(i + 1).padStart(2, '0')}</span>{it.caption}</p>
+        <p><span>{String(i + 1).padStart(2, '0')}</span>{it.caption}{it.credit && <small class="credit">{legalUi[lang].photo}: {it.credit.author} · {it.credit.license}</small>}</p>
       </li>
     ))}
   </ul>
@@ -63,6 +66,8 @@ const items = await Promise.all(
   .shot :global(img) { object-fit: cover; transition: transform 1.2s var(--ease); }
   .shot button:hover :global(img) { transform: scale(1.05); }
   .shot p { display: flex; gap: 0.75rem; align-items: baseline; margin-top: 0.75rem; font-size: 0.9rem; font-weight: 600; }
+  .shot .credit { display: block; font-weight: 500; font-size: 0.72rem; color: var(--ink-soft); }
+  .shot p { flex-wrap: wrap; }
   .shot p span { font-family: var(--font-display); font-style: italic; color: var(--turq-700); }
 
   @media (min-width: 64rem) {

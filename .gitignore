@@ -7,3 +7,7 @@ dist
 .DS_Store
 tests/screenshots
 capturas
+.taste-skill/chrome*
+shots
+.taste-skill/build
+.taste-skill/consistency.txt

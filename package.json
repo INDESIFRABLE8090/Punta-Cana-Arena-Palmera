@@ -3,13 +3,14 @@
   "version": "2.0.0",
   "private": true,
   "type": "module",
-  "description": "Experiencias y transporte en Punta Cana — sitio oficial de Punta Cana Arena y Palmera",
+  "description": "Experiencias y transporte en Punta Cana \u2014 sitio oficial de Punta Cana Arena y Palmera",
   "scripts": {
     "dev": "astro dev --host 0.0.0.0",
     "build": "astro check && astro build",
     "preview": "astro preview --host 0.0.0.0",
     "check": "astro check",
-    "test": "node tests/site.test.mjs"
+    "test": "node tests/site.test.mjs",
+    "prelaunch": "node scripts/prelaunch.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.12",

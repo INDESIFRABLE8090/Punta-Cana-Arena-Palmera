@@ -15,4 +15,5 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 /** Ruta interna con la subcarpeta de despliegue aplicada. */
 export const href = (path = '/') => `${base}${path.startsWith('/') ? path : `/${path}`}`;
 export const homePath = (lang: Lang, hash = '') => href(`/${lang}/${hash}`);
+export const legalPath = (lang: Lang, slug: string) => href(`/${lang}/legal/${slug}/`);
 export const tourPath = (lang: Lang, slug: string) => href(`/${lang}/${langMeta[lang].tourSegment}/${slug}/`);
