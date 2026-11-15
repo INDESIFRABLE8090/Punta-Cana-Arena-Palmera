@@ -16,6 +16,22 @@ export interface Credit {
 
 export const credits: Credit[] = [
   {
+    file: 'commons-mono-ardilla.jpg',
+    title: 'Saimiri sciureus 184553489',
+    author: 'Lennart Hudel',
+    license: 'CC BY 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+    source: 'https://commons.wikimedia.org/wiki/File:Saimiri_sciureus_184553489.jpg',
+  },
+  {
+    file: 'commons-isla-catalina.jpg',
+    title: "Catalina Island, La Romana, Dominican Republic. A line of bright painted bungalows nearby the cost line, shaded with palm trees (landscape)",
+    author: 'Mstyslav Chernov',
+    license: 'CC BY-SA 3.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
+    source: "https://commons.wikimedia.org/wiki/File:Catalina_Island,_La_Romana,_Dominican_Republic._A_line_of_bright_painted_bungalows_nearby_the_cost_line,_shaded_with_palm_trees_(landscape).jpg",
+  },
+  {
     file: 'commons-isla-saona.jpg',
     title: 'Isla Saona III',
     author: 'Melodygar',

@@ -1,5 +1,5 @@
 ---
-import TourChapter from './TourChapter.astro';
+import TourCard from './TourCard.astro';
 import SplitHeading from './SplitHeading.astro';
 import { t } from '@/i18n/ui';
 import type { Lang } from '@/i18n/config';
@@ -12,33 +12,34 @@ const cats: Category[] = ['sea', 'adventure', 'nature', 'night'];
 
 <section class="section experiences" id="experiencias" aria-labelledby="exp-title">
   <div class="shell">
-    <div class="section-head">
-      <SplitHeading class="h-xl" id="exp-title" text={d.experiences.title} em={d.experiences.titleEm} />
+    <div class="head">
+      <SplitHeading class="h-lg" id="exp-title" text={d.experiences.title} em={d.experiences.titleEm} />
       <p class="lead">{d.experiences.lead}</p>
-      <div class="filters" role="group" aria-label={d.experiences.filterLabel}>
-        <button type="button" class="chip" data-filter="all" aria-pressed="true">{d.experiences.all}</button>
-        {cats.map((c) => <button type="button" class="chip" data-filter={c} aria-pressed="false">{d.categories[c]}</button>)}
-      </div>
     </div>
-    <ol class="chapters" data-chapters>
-      {tours.map((tour, i) => <TourChapter lang={lang} tour={tour} index={i} />)}
-    </ol>
-    <p class="price-note">{d.experiences.priceNote}</p>
+    <div class="filters" role="group" aria-label={d.experiences.filterLabel}>
+      <button type="button" class="chip" data-filter="all" aria-pressed="true">{d.experiences.all}</button>
+      {cats.map((c) => <button type="button" class="chip" data-filter={c} aria-pressed="false">{d.categories[c]}</button>)}
+    </div>
   </div>
+  <ol class="cards" data-chapters>
+    {tours.map((tour) => <TourCard lang={lang} tour={tour} />)}
+  </ol>
+  <p class="shell price-note">{d.experiences.priceNote}</p>
 </section>
 
 <style>
   .experiences { background: var(--sand-50); }
-  .filters { display: flex; gap: 0.5rem; overflow-x: auto; margin-inline: calc(var(--gutter) * -1); padding: 0.25rem var(--gutter); scrollbar-width: none; }
+  .head { display: grid; gap: 1rem; margin-bottom: 1.75rem; max-width: 52rem; }
+  .filters { display: flex; gap: 0.5rem; overflow-x: auto; margin: 0 calc(var(--gutter) * -1) 1.75rem; padding: 0.25rem var(--gutter); scrollbar-width: none; }
   .filters::-webkit-scrollbar { display: none; }
-  .chip { flex: none; min-height: 3rem; padding: 0 1.25rem; border-radius: 999px; border: 1px solid rgb(10 30 38 / 0.25); font-weight: 650; font-size: 0.9rem; transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
+  .chip { flex: none; min-height: 2.9rem; padding: 0 1.2rem; border-radius: 999px; border: 1px solid rgb(10 30 38 / 0.18); font-weight: 650; font-size: 0.9rem; background: var(--white); transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
   .chip:hover { border-color: var(--ink); }
   .chip[aria-pressed='true'] { background: var(--ink); color: var(--white); border-color: var(--ink); }
-  .chapters { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(3.5rem, 9vw, 8rem) clamp(1rem, 2vw, 2rem); }
-  .chapters :global(.chapter[hidden]) { display: none; }
-  .chapters :global(.is-poster + .is-poster) { margin-top: calc(clamp(3.5rem, 9vw, 8rem) * -1 + 1rem); }
-  .price-note { margin-top: clamp(3rem, 6vw, 5rem); padding-top: 1.25rem; border-top: 1px solid rgb(10 30 38 / 0.15); font-size: 0.9rem; color: var(--ink-soft); max-width: 44rem; }
+  .cards { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); padding: 0 var(--gutter) 1.5rem; scrollbar-width: none; }
+  .cards::-webkit-scrollbar { display: none; }
+  .price-note { margin-top: 1.5rem; font-size: 0.88rem; color: var(--ink-soft); }
   @media (min-width: 48rem) {
-    .chapters :global(.is-poster + .is-poster) { margin-top: 5rem; }
+    .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.5rem 1.5rem; overflow: visible; max-width: var(--max); margin-inline: auto; }
   }
+  @media (min-width: 64rem) { .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 </style>

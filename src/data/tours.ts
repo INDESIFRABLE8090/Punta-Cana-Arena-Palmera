@@ -8,6 +8,8 @@ import lancha from '@/assets/images/lancha-rapida.jpg';
 import cocoBongo from '@/assets/images/coco-bongo.jpg';
 import playaMacao from '@/assets/images/commons-playa-macao.jpg';
 import islaSaona from '@/assets/images/commons-isla-saona.jpg';
+import islaCatalina from '@/assets/images/commons-isla-catalina.jpg';
+import monoArdilla from '@/assets/images/commons-mono-ardilla.jpg';
 
 /**
  * Catálogo comercial autorizado: 11 excursiones.
@@ -135,6 +137,15 @@ export const tours: Tour[] = [
     notes: { es: [kidsNote.es], en: [kidsNote.en], pt: [kidsNote.pt] },
     accent: '#3d9be0',
     deep: '#0b3a66',
+    image: {
+      src: islaCatalina,
+      alt: {
+        es: 'Casitas de colores entre palmeras de coco sobre la arena de Isla Catalina',
+        en: 'Colourful cabins among coconut palms on the sand of Catalina Island',
+        pt: 'Casinhas coloridas entre coqueiros na areia da Ilha Catalina',
+      },
+      credit: 'commons-isla-catalina.jpg',
+    },
   },
   {
     slug: 'buggies-polaris-atv',
@@ -310,6 +321,16 @@ export const tours: Tour[] = [
     notes: { es: [kidsNote.es], en: [kidsNote.en], pt: [kidsNote.pt] },
     accent: '#8fbf4a',
     deep: '#2c4413',
+    image: {
+      src: monoArdilla,
+      alt: {
+        es: 'Mono ardilla trepando por el tronco de un árbol entre hojas verdes',
+        en: 'Squirrel monkey climbing a tree trunk among green leaves',
+        pt: 'Macaco-esquilo subindo no tronco de uma árvore entre folhas verdes',
+      },
+      position: '40% 45%',
+      credit: 'commons-mono-ardilla.jpg',
+    },
   },
   {
     slug: 'party-boat',

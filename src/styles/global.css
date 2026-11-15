@@ -9,8 +9,9 @@
   --turq-500: #17b6b9;
   --turq-300: #7fdcd6;
   --turq-100: #d6f4f0;
-  --sand-50: #fbf7ef;
-  --sand-100: #f4ecdc;
+  --sand-50: #ffffff;
+  --sand-75: #f6f7f5;
+  --sand-100: #eef3f2;
   --sand-200: #e8dcc4;
   --sand-400: #c9b48c;
   --palm-700: #17503c;
@@ -22,7 +23,7 @@
   --white: #fff;
   --wa: #0f7a41;
 
-  --font-display: 'Fraunces Variable', 'Iowan Old Style', Georgia, serif;
+  --font-display: 'Outfit Variable', 'Manrope Variable', system-ui, sans-serif;
   --font-body: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
   --gutter: clamp(1.25rem, 5vw, 4rem);
@@ -157,15 +158,14 @@ button {
 /* Tipografía editorial */
 .display {
   font-family: var(--font-display);
-  font-weight: 340;
-  font-optical-sizing: auto;
+  font-weight: 620;
   line-height: 0.98;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.04em;
   text-wrap: balance;
 }
 .display em {
-  font-style: italic;
-  font-weight: 300;
+  font-style: normal;
+  font-weight: inherit;
   color: var(--turq-700);
 }
 .h-xl {

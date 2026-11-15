@@ -218,20 +218,20 @@ async function browserChecks() {
       await page.click('[data-itinerary-list] > li:nth-child(2) .ctrl button:first-child');
       check('itinerario: reordenar pone Coco Bongo el día 1', (await page.locator('[data-itinerary-list] > li:first-child .name').textContent()) === 'Coco Bongo Regular');
 
-      await page.fill('[name="route"]', 'Aeropuerto a hotel en Bávaro');
-      await page.fill('[name="date"]', '2031-03-14');
-      await page.fill('[name="adults"]', '2');
-      await page.fill('[name="children"]', '1');
-      check('niños > 0 muestra el campo de edades', await page.locator('[name="ages"]').isVisible());
-      await page.fill('[name="ages"]', '8 años');
-      await page.fill('[name="hotel"]', 'Hotel de prueba');
-      await page.fill('[name="name"]', 'María <script>alert(1)</script>');
-      await page.fill('[name="notes"]', 'Línea 1\nLínea 2');
-      await page.fill('[name="date"]', '2020-01-01');
-      await page.check('[name="consent"]');
+      await page.fill('[data-planner] [name="route"]', 'Aeropuerto a hotel en Bávaro');
+      await page.fill('[data-planner] [name="date"]', '2031-03-14');
+      await page.fill('[data-planner] [name="adults"]', '2');
+      await page.fill('[data-planner] [name="children"]', '1');
+      check('niños > 0 muestra el campo de edades', await page.locator('[data-planner] [name="ages"]').isVisible());
+      await page.fill('[data-planner] [name="ages"]', '8 años');
+      await page.fill('[data-planner] [name="hotel"]', 'Hotel de prueba');
+      await page.fill('[data-planner] [name="name"]', 'María <script>alert(1)</script>');
+      await page.fill('[data-planner] [name="notes"]', 'Línea 1\nLínea 2');
+      await page.fill('[data-planner] [name="date"]', '2020-01-01');
+      await page.check('[data-planner] [name="consent"]');
       await page.click('[data-planner] button[type="submit"]');
       check('fecha pasada: se rechaza', (await page.evaluate(() => window.__opened.length)) === 0 && (await page.locator('[data-err="date"]').textContent()) !== '');
-      await page.fill('[name="date"]', '2031-03-14');
+      await page.fill('[data-planner] [name="date"]', '2031-03-14');
       await page.click('[data-planner] button[type="submit"]');
       const opened = await page.evaluate(() => window.__opened);
       const text = opened[0] ? decodeURIComponent(opened[0].split('?text=')[1] ?? '') : '';
@@ -248,12 +248,12 @@ async function browserChecks() {
       await page.waitForTimeout(2700);
       check('el itinerario persiste al recargar', (await page.locator('[data-itinerary-list] > li').count()) === 3);
       check('no se guardan datos personales en el navegador', await page.evaluate(() => !JSON.stringify(localStorage).includes('María')));
-      await page.evaluate(() => (document.querySelector('[name="website"]').value = 'bot'));
-      await page.fill('[name="route"]', 'x a y');
-      await page.fill('[name="date"]', '2031-03-14');
-      await page.fill('[name="hotel"]', 'Hotel');
-      await page.fill('[name="name"]', 'Bot');
-      await page.check('[name="consent"]');
+      await page.evaluate(() => (document.querySelector('[data-planner] [name="website"]').value = 'bot'));
+      await page.fill('[data-planner] [name="route"]', 'x a y');
+      await page.fill('[data-planner] [name="date"]', '2031-03-14');
+      await page.fill('[data-planner] [name="hotel"]', 'Hotel');
+      await page.fill('[data-planner] [name="name"]', 'Bot');
+      await page.check('[data-planner] [name="consent"]');
       await page.click('[data-planner] button[type="submit"]');
       check('señuelo relleno: no envía', (await page.evaluate(() => window.__opened.length)) === 0);
 
@@ -269,6 +269,30 @@ async function browserChecks() {
 
       const wa = await page.$$eval('[data-wa]', (els) => els.map((e) => e.href));
       check('todos los enlaces de WhatsApp usan el número oficial', wa.length >= 3 && wa.every((h) => h.startsWith(`https://wa.me/${WHATSAPP}?text=`)));
+      await ctx.close();
+    }
+
+    console.log('\nCotización rápida de la portada');
+    {
+      const { ctx, page } = await open(pixel, '/es/');
+      await page.click('[data-quick] button[type="submit"]');
+      check('cotización rápida vacía: no abre WhatsApp y marca campos', (await page.evaluate(() => window.__opened.length)) === 0 && (await page.locator('[data-quick] .is-invalid').count()) >= 2);
+      await page.selectOption('[data-quick] [name="tour"]', 'isla-saona');
+      await page.fill('[data-quick] [name="date"]', '2031-05-20');
+      await page.fill('[data-quick] [name="people"]', '4');
+      await page.click('[data-quick] button[type="submit"]');
+      let opened = await page.evaluate(() => window.__opened);
+      let msg = opened[0] ? decodeURIComponent(opened[0].split('?text=')[1]) : '';
+      check('cotización de excursión: WhatsApp oficial con excursión, fecha y personas', opened[0]?.startsWith(`https://wa.me/${WHATSAPP}?text=`) && msg.includes('Isla Saona') && msg.includes('20 de mayo de 2031') && msg.includes('Personas: 4'), msg.slice(0, 120));
+      await page.check('[data-quick] input[value="transfer"]', { force: true });
+      check('pestaña Traslado muestra origen y destino', await page.locator('[data-quick] [name="from"]').isVisible());
+      await page.fill('[data-quick] [name="from"]', 'Aeropuerto de Punta Cana');
+      await page.fill('[data-quick] [name="to"]', 'Hotel en Bávaro');
+      await page.click('[data-quick] button[type="submit"]');
+      opened = await page.evaluate(() => window.__opened);
+      msg = opened[1] ? decodeURIComponent(opened[1].split('?text=')[1]) : '';
+      check('cotización de traslado: origen, destino, fecha y personas', msg.includes('traslado privado') && msg.includes('Aeropuerto de Punta Cana') && msg.includes('Hotel en Bávaro') && msg.includes('Personas: 4'), msg.slice(0, 120));
+      check('las fotos de portada tienen botón de pausa', (await page.locator('[data-slides-toggle]').count()) === 1);
       await ctx.close();
     }
 
@@ -300,8 +324,8 @@ async function browserChecks() {
 
     console.log('\nIdiomas');
     for (const [lang, h1, submit, tourSeg, tourMsg] of [
-      ['en', 'The Caribbean', 'Send request on WhatsApp', 'excursions', 'quote for the excursion: Saona Island'],
-      ['pt', 'O Caribe', 'Enviar pedido pelo WhatsApp', 'excursoes', 'orçamento para a excursão: Ilha Saona'],
+      ['en', 'Excursions and transfers', 'Send request on WhatsApp', 'excursions', 'quote for the excursion: Saona Island'],
+      ['pt', 'Excursões e traslados', 'Enviar pedido pelo WhatsApp', 'excursoes', 'orçamento para a excursão: Ilha Saona'],
     ]) {
       const { ctx, page } = await open(pixel, `/${lang}/`);
       check(`/${lang}/: titular traducido`, (await page.locator('h1').textContent()).includes(h1));
