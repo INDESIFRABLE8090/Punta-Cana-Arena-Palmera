@@ -9,12 +9,11 @@ const d = t(lang).faq;
 <section class="section faq" id="preguntas" aria-labelledby="faq-title">
   <div class="shell grid">
     <div class="section-head">
-      <p class="eyebrow" data-reveal>{d.eyebrow}</p>
       <SplitHeading class="h-lg" id="faq-title" text={d.title} em={d.titleEm} />
     </div>
     <div class="list">
-      {d.items.map((it, i) => (
-        <details data-reveal style={`--i:${i % 4}`} name="faq">
+      {d.items.map((it) => (
+        <details name="faq">
           <summary><h3>{it.q}</h3><span aria-hidden="true"></span></summary>
           <p>{it.a}</p>
         </details>

@@ -14,6 +14,23 @@ export interface Credit {
   source: string;
 }
 
-export const credits: Credit[] = [];
+export const credits: Credit[] = [
+  {
+    file: 'commons-isla-saona.jpg',
+    title: 'Isla Saona III',
+    author: 'Melodygar',
+    license: 'CC BY-SA 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+    source: 'https://commons.wikimedia.org/wiki/File:Isla_Saona_III.jpg',
+  },
+  {
+    file: 'commons-playa-macao.jpg',
+    title: 'Playa Macao Dominican Republic',
+    author: 'bogdix (Flickr)',
+    license: 'CC BY 2.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by/2.0/',
+    source: 'https://commons.wikimedia.org/wiki/File:Playa_Macao_Dominican_Republic.jpg',
+  },
+];
 
 export const creditFor = (file: string) => credits.find((c) => c.file === file);

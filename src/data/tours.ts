@@ -6,6 +6,8 @@ import buggies from '@/assets/images/buggies.jpg';
 import dolphin from '@/assets/images/dolphin-explorer.jpg';
 import lancha from '@/assets/images/lancha-rapida.jpg';
 import cocoBongo from '@/assets/images/coco-bongo.jpg';
+import playaMacao from '@/assets/images/commons-playa-macao.jpg';
+import islaSaona from '@/assets/images/commons-isla-saona.jpg';
 
 /**
  * Catálogo comercial autorizado: 11 excursiones.
@@ -101,6 +103,15 @@ export const tours: Tour[] = [
     notes: { es: [kidsNote.es], en: [kidsNote.en], pt: [kidsNote.pt] },
     accent: '#1fc7b6',
     deep: '#0a4f5c',
+    image: {
+      src: islaSaona,
+      alt: {
+        es: 'Playa de Isla Saona con palmeras de coco, arena blanca y agua turquesa',
+        en: 'Saona Island beach with coconut palms, white sand and turquoise water',
+        pt: 'Praia da Ilha Saona com coqueiros, areia branca e água turquesa',
+      },
+      credit: 'commons-isla-saona.jpg',
+    },
   },
   {
     slug: 'isla-catalina',
@@ -205,6 +216,15 @@ export const tours: Tour[] = [
     notes: { es: [kidsNote.es], en: [kidsNote.en], pt: [kidsNote.pt] },
     accent: '#e7b043',
     deep: '#5c3d0a',
+    image: {
+      src: playaMacao,
+      alt: {
+        es: 'Playa Macao: arena blanca, agua turquesa, una lancha anclada y acantilados con vegetación',
+        en: 'Macao Beach: white sand, turquoise water, an anchored boat and green-topped cliffs',
+        pt: 'Praia Macao: areia branca, água turquesa, um barco ancorado e falésias com vegetação',
+      },
+      credit: 'commons-playa-macao.jpg',
+    },
   },
   {
     slug: 'dolphin-explorer',

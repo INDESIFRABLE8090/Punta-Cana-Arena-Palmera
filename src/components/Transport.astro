@@ -21,10 +21,10 @@ const d = t(lang);
     <div class="copy">
       <p class="eyebrow"><ShinyText client:visible text={d.transport.eyebrow} color="#e3c88f" shineColor="#ffffff" speed={3} /></p>
       <SplitHeading class="h-lg" id="tr-title" text={d.transport.title} em={d.transport.titleEm} />
-      <p class="lead" data-reveal style="--i:2">{d.transport.lead}</p>
-      <div class="actions" data-reveal style="--i:3">
+      <p class="lead">{d.transport.lead}</p>
+      <div class="actions">
         <Magnet client:idle padding={50}>
-          <a class="btn btn-gold" href={waLink(d.client.waTransport)} target="_blank" rel="noopener noreferrer" data-wa><Icon name="whatsapp" />{d.transport.cta}</a>
+          <a class="btn btn-wa" href={waLink(d.client.waTransport)} target="_blank" rel="noopener noreferrer" data-wa><Icon name="whatsapp" />{d.transport.cta}</a>
         </Magnet>
         <button type="button" class="btn btn-ghost" data-add-transport aria-pressed="false">
           <span class="i-plus"><Icon name="plus" /></span><span class="i-check"><Icon name="check" /></span>{d.transport.add}
@@ -33,7 +33,7 @@ const d = t(lang);
     </div>
     <ol class="steps">
       {d.transport.steps.map((s, i) => (
-        <li data-reveal style={`--i:${i + 1}`}>
+        <li>
           <span class="n">{String(i + 1).padStart(2, '0')}</span>
           <div><h3>{s.title}</h3><p>{s.copy}</p></div>
         </li>

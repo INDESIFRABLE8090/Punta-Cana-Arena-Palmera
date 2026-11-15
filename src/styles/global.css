@@ -118,7 +118,7 @@ button {
 }
 
 :focus-visible {
-  outline: 3px solid var(--gold-500);
+  outline: 3px solid var(--turq-700);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -340,4 +340,9 @@ html.js [data-reveal='mask'].is-in > * {
     transform: none;
     clip-path: none;
   }
+}
+
+/* En fondos oscuros el anillo de foco pasa a dorado claro para mantener el contraste. */
+:is(.hero, .dive, .transport, .footer, .lightbox, .is-night, .is-poster, .cover, .option) :focus-visible {
+  outline-color: var(--gold-300);
 }

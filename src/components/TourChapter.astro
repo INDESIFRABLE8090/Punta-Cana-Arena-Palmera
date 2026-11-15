@@ -6,10 +6,9 @@ import { tourPath, type Lang } from '@/i18n/config';
 import { t } from '@/i18n/ui';
 import type { Tour } from '@/data/tours';
 
-interface Props { lang: Lang; tour: Tour; index: number }
-const { lang, tour, index } = Astro.props;
+interface Props { lang: Lang; tour: Tour; index?: number }
+const { lang, tour } = Astro.props;
 const d = t(lang);
-const num = String(index + 1).padStart(2, '0');
 /** Composición propia de cada capítulo con fotografía. */
 const layouts: Record<string, string> = {
   'scuba-doo': 'cinema',
@@ -34,13 +33,13 @@ const url = tourPath(lang, tour.slug);
     )}
     {layout === 'poster' && <div class="caustics" aria-hidden="true"></div>}
     <div class="body">
-      <p class="meta" data-reveal><span class="num">{num}</span><span>{d.categories[tour.category]}</span></p>
-      <h3 class="display" data-reveal style="--i:1"><a href={url}>{tour.name[lang]}</a></h3>
-      <p class="tagline" data-reveal style="--i:2">{tour.tagline[lang]}</p>
-      <ul class="highlights" data-reveal style="--i:3" aria-label={d.experiences.includes}>
+      <p class="meta">{d.categories[tour.category]}</p>
+      <h3 class="display"><a href={url}>{tour.name[lang]}</a></h3>
+      <p class="tagline">{tour.tagline[lang]}</p>
+      <ul class="highlights" aria-label={d.experiences.includes}>
         {highlights.map((h) => <li>{h}</li>)}
       </ul>
-      <div class="actions" data-reveal style="--i:4">
+      <div class="actions">
         <a class="btn btn-solid" href={url}>{d.experiences.view}<span class="arrow"><Icon name="arrow" /></span></a>
         <AddButton lang={lang} slug={tour.slug} />
       </div>
@@ -58,7 +57,6 @@ const url = tourPath(lang, tour.slug);
   .figure:hover :global(img) { transform: scale(1.04); }
   .body { display: grid; gap: 0.9rem; align-content: center; }
   .meta { display: flex; align-items: baseline; gap: 1rem; font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 700; color: var(--ink-soft); }
-  .num { font-family: var(--font-display); font-size: 1.5rem; font-style: italic; font-weight: 300; letter-spacing: 0; color: color-mix(in srgb, var(--accent) 45%, var(--ink)); }
   h3 { font-size: clamp(2.3rem, 8vw, 4.6rem); }
   h3 a { text-decoration: none; }
   .tagline { font-family: var(--font-display); font-style: italic; font-weight: 300; font-size: clamp(1.15rem, 2.2vw, 1.5rem); color: var(--ink-soft); }
@@ -66,7 +64,7 @@ const url = tourPath(lang, tour.slug);
   .highlights li { padding: 0.55rem 0; border-top: 1px solid rgb(10 30 38 / 0.12); font-size: 0.95rem; }
   .highlights li:last-child { border-bottom: 1px solid rgb(10 30 38 / 0.12); }
   .actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.4rem; }
-  .btn-solid { --btn-bg: var(--ink); }
+  .btn-solid { --btn-bg: var(--turq-500); --btn-fg: var(--ocean-950); }
 
   /* Cinema: imagen a sangre con el texto montado sobre ella */
   .is-cinema .figure { aspect-ratio: 4 / 5; }
@@ -78,24 +76,20 @@ const url = tourPath(lang, tour.slug);
   .is-night .figure { position: relative; }
   .is-night .body { padding-inline: var(--gutter); margin-top: -5rem; position: relative; }
   .is-night .meta, .is-night .tagline { color: rgb(255 255 255 / 0.75); }
-  .is-night .num { color: var(--accent); }
   .is-night .highlights li { border-color: rgb(255 255 255 / 0.18); }
-  .is-night .btn-solid { --btn-bg: var(--accent); --btn-fg: var(--deep); }
 
   /* Póster tipográfico: capítulos sin fotografía todavía */
-  .is-poster article { min-height: 30rem; height: 100%; padding: clamp(1.5rem, 4vw, 2.75rem); border-radius: var(--radius); overflow: hidden; color: var(--white); background: linear-gradient(155deg, var(--deep) 10%, color-mix(in srgb, var(--accent) 45%, var(--deep)) 100%); align-content: end; isolation: isolate; }
+  .is-poster article { min-height: 30rem; height: 100%; padding: clamp(1.5rem, 4vw, 2.75rem); border-radius: var(--radius); overflow: hidden; color: var(--white); background: linear-gradient(155deg, var(--deep) 10%, color-mix(in srgb, var(--accent) 32%, var(--deep)) 100%); align-content: end; isolation: isolate; }
   .caustics { position: absolute; inset: -40%; z-index: -1; opacity: 0.5; background:
     radial-gradient(40% 30% at 30% 30%, color-mix(in srgb, var(--accent) 80%, white) 0, transparent 70%),
     radial-gradient(30% 40% at 70% 60%, color-mix(in srgb, var(--accent) 60%, transparent) 0, transparent 70%),
     radial-gradient(25% 25% at 55% 20%, rgb(255 255 255 / 0.35) 0, transparent 70%);
     filter: blur(30px); animation: caustic 18s ease-in-out infinite alternate; }
   @keyframes caustic { to { transform: translate(8%, -6%) rotate(14deg) scale(1.15); } }
-  .is-poster .meta, .is-poster .tagline { color: rgb(255 255 255 / 0.82); }
-  .is-poster .num { position: absolute; top: clamp(1rem, 3vw, 2rem); right: clamp(1.25rem, 3vw, 2rem); font-size: clamp(5rem, 14vw, 9rem); line-height: 0.8; color: transparent; -webkit-text-stroke: 1px rgb(255 255 255 / 0.45); }
+  .is-poster .meta, .is-poster .tagline { color: var(--white); }
   .is-poster h3 { font-size: clamp(2.6rem, 9vw, 4.4rem); }
   .is-poster .highlights { display: flex; flex-wrap: wrap; gap: 0.4rem; }
   .is-poster .highlights li, .is-poster .highlights li:last-child { border: 1px solid rgb(255 255 255 / 0.35); border-radius: 999px; padding: 0.3rem 0.8rem; font-size: 0.82rem; background: rgb(255 255 255 / 0.08); }
-  .is-poster .btn-solid { --btn-bg: var(--white); --btn-fg: var(--deep); }
 
   @media (min-width: 48rem) {
     .is-poster { grid-column: span 6; }

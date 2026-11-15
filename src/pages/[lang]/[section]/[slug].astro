@@ -73,10 +73,10 @@ const jsonLd = [
 
     <div class="shell layout">
       <div class="main">
-        <p class="intro" data-reveal>{tour.description[lang]}</p>
+        <p class="intro">{tour.description[lang]}</p>
 
         {tour.options ? (
-          <section aria-labelledby="opt-title" data-reveal>
+          <section aria-labelledby="opt-title">
             <h2 class="display h-md" id="opt-title">{d.tour.optionsTitle}</h2>
             <div class="options">
               {tour.options.map((o) => (
@@ -88,14 +88,14 @@ const jsonLd = [
             </div>
           </section>
         ) : (
-          <section aria-labelledby="inc-title" data-reveal>
+          <section aria-labelledby="inc-title">
             <h2 class="display h-md" id="inc-title">{d.tour.includesTitle}</h2>
             <ul class="incl">{tour.inclusions[lang].map((x) => <li><Icon name="check" />{x}</li>)}</ul>
           </section>
         )}
 
         {tour.notes[lang].length > 0 && (
-          <section class="notes" aria-labelledby="note-title" data-reveal>
+          <section class="notes" aria-labelledby="note-title">
             <h2 id="note-title">{d.tour.notesTitle}</h2>
             <ul>{tour.notes[lang].map((x) => <li>{x}</li>)}</ul>
           </section>

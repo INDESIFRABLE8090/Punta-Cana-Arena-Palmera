@@ -12,7 +12,7 @@ const d = t(lang);
 
 <section class="hero" data-hero aria-labelledby="hero-title">
   <div class="media" data-hero-media>
-    <Picture src={coast} alt={d.hero.imageAlt} formats={['avif', 'webp']} widths={[480, 768, 1080, 1376]} sizes="100vw" loading="eager" fetchpriority="high" decoding="async" quality={72} />
+    <Picture src={coast} alt={d.hero.imageAlt} formats={['avif', 'webp']} widths={[480, 768, 1080, 1376]} sizes="(orientation: portrait) 240vw, 100vw" loading="eager" fetchpriority="high" decoding="async" quality={72} />
   </div>
   <div class="shade" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
@@ -50,11 +50,11 @@ const d = t(lang);
   .media :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 62% 50%; animation: drift 26s ease-in-out infinite alternate; }
   @keyframes drift { from { transform: scale(1.04); } to { transform: scale(1.14) translate(-1.5%, 1%); } }
   .shade { position: absolute; inset: 0; z-index: -2; background:
-    linear-gradient(180deg, rgb(3 26 36 / 0.55) 0%, rgb(3 26 36 / 0.05) 28%, rgb(3 26 36 / 0.1) 55%, rgb(3 26 36 / 0.78) 100%),
-    linear-gradient(90deg, rgb(3 26 36 / 0.55) 0%, rgb(3 26 36 / 0) 65%); }
+    linear-gradient(180deg, rgb(3 26 36 / 0.7) 0%, rgb(3 26 36 / 0.05) 28%, rgb(3 26 36 / 0.1) 55%, rgb(3 26 36 / 0.78) 100%),
+    linear-gradient(90deg, rgb(3 26 36 / 0.82) 0%, rgb(3 26 36 / 0.55) 40%, rgb(3 26 36 / 0) 80%); }
   .grain { position: absolute; inset: 0; z-index: -1; opacity: 0.09; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"); }
   .content { align-self: end; padding-top: calc(var(--header-h) + 2rem); padding-bottom: clamp(1.5rem, 4vh, 3rem); display: grid; gap: 1.25rem; }
-  .eyebrow { color: var(--gold-300); }
+  .eyebrow { color: var(--gold-300); text-shadow: 0 1px 12px rgb(3 26 36 / 0.8); }
   h1 { font-size: clamp(3.1rem, 13.5vw, 9rem); }
   h1 em { color: var(--turq-300); }
   .l { display: block; overflow: hidden; padding-bottom: 0.08em; }
@@ -62,7 +62,7 @@ const d = t(lang);
   .l:nth-child(2) > span { animation-delay: 0.12s; }
   .l:nth-child(3) > span { animation-delay: 0.24s; }
   @keyframes rise { from { transform: translateY(110%); } }
-  .lead { color: rgb(255 255 255 / 0.9); max-width: 32rem; animation: fade 1.2s 0.5s var(--ease) both; }
+  .lead { color: var(--white); text-shadow: 0 1px 14px rgb(3 26 36 / 0.7); max-width: 32rem; animation: fade 1.2s 0.5s var(--ease) both; }
   .cta { display: flex; flex-wrap: wrap; gap: 0.75rem; animation: fade 1.2s 0.65s var(--ease) both; }
   @keyframes fade { from { opacity: 0; transform: translateY(1rem); } }
   .foot { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 1rem calc(1.25rem + env(safe-area-inset-bottom)); border-top: 1px solid rgb(255 255 255 / 0.22); font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; }

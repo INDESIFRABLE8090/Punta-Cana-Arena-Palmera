@@ -67,9 +67,54 @@ tests/site.test.mjs     Control de calidad automatizado.
 - **Seguridad.** Content-Security-Policy restringida a recursos propios y `noopener` en todos los enlaces externos. No hay claves en el frontend porque no hace falta ninguna.
 - **Imágenes.** Las fotos se convierten a AVIF/WebP en varios tamaños durante la compilación. Las fichas indican «imagen de carácter ilustrativo».
 
+## Legal
+
+**Páginas publicadas** en `/{idioma}/legal/…`, en los 3 idiomas y enlazadas desde el pie y el formulario:
+
+- **Política de privacidad:** sin cookies ni analítica; datos solo por WhatsApp; derechos según RGPD, LGPD y la ley 172-13 de República Dominicana.
+- **Aviso legal y condiciones:** una cotización no es una reserva, la web no cobra pagos, operadores locales, requisitos de las actividades de riesgo, imágenes ilustrativas y marcas de terceros.
+- **Declaración de accesibilidad.**
+- **Créditos de imágenes.**
+
+Los textos describen cómo funciona hoy la web. Si se añade analítica, pagos o un formulario con servidor, hay que actualizarlos antes de publicar.
+
+**`npm run prelaunch`** bloquea la publicación definitiva mientras falten:
+
+- el nombre legal y el RNC del titular;
+- el correo para que los usuarios ejerzan sus derechos de privacidad;
+- el crédito de cualquier foto `commons-*`.
+
+También avisa de lo que hay que confirmar con el cliente.
+
+**Recomendación:** que un abogado de República Dominicana revise los textos antes del lanzamiento, en especial la ley aplicable y la política de cancelación, que dependen del negocio.
+
+## Fotografías de terceros
+
+Las fotos `src/assets/images/commons-*.jpg` vienen de Wikimedia Commons. Son fotos reales de los lugares, con licencia CC BY o CC BY-SA. Cada una tiene su entrada en `src/data/credits.ts` con autor, licencia y enlace, que se muestran en la ficha de la excursión, en la galería y en la página de créditos. Se sustituyen por las del cliente en cuanto lleguen.
+
+## Criterio de diseño (Taste Skill, UI/UX Pro Max, guías de Vercel)
+
+Se aplicaron sus verificadores con criterio:
+
+- **Corregido:**
+  - textos sin fundido al hacer scroll;
+  - un único sistema de botones (turquesa para la acción principal, contorno para la secundaria, verde para WhatsApp);
+  - menos etiquetas y numeraciones;
+  - anillo de foco visible;
+  - contraste sobre la foto de portada;
+  - galería sin solapamientos.
+- **Mantenido a propósito,** porque lo pide el brief del proyecto:
+  - la inmersión 3D con WebGL;
+  - el scroll sincronizado con GSAP;
+  - la entrada animada de las fotos;
+  - los titulares con SplitText;
+  - el número real de WhatsApp en el pie.
+
+  Taste Skill desaconseja estos efectos en webs de servicios.
+
 ## Control de calidad (`npm test`)
 
-95 comprobaciones:
+98 comprobaciones:
 
 - **Estáticas:** 38 páginas, enlaces internos, `srcset`, títulos y descripciones, canonical, `hreflang`, un único `h1`, JSON-LD sin precios ni reseñas inventadas, `alt` en todas las imágenes.
 - **En navegador:** Android 360×640, Pixel 7, Android en horizontal, tablet y escritorio. Comprueba consola sin errores, ausencia de desborde horizontal, carga de imágenes y objetivos táctiles de al menos 44 px.
@@ -80,7 +125,9 @@ tests/site.test.mjs     Control de calidad automatizado.
 
 | Dato | Dónde se añade |
 |---|---|
-| Fotos reales de Isla Saona, Isla Catalina, Scape Park, Fun Park, Monkeyland y Party Boat (hoy usan una portada tipográfica) | `src/assets/images/` + campo `image` en `src/data/tours.ts` |
+| Fotos propias de cada excursión (hoy: fotos de Wikimedia Commons o portada tipográfica) | `src/assets/images/` + campo `image` en `src/data/tours.ts` |
+| Nombre legal, RNC, correo y domicilio del titular | `src/config/site.ts` (`npm run prelaunch` lo exige) |
+| Confirmación de derechos de uso de las fotos que entregó el cliente | por escrito, antes de publicar |
 | Vehículos de transporte: modelos, capacidad y fotos | `src/data/fleet.ts` (la sección los muestra sola) |
 | Email, Instagram y Facebook | `src/config/site.ts` (aparecen solos en el pie) |
 | Dominio definitivo | `SITE_URL` / `BASE_PATH` |

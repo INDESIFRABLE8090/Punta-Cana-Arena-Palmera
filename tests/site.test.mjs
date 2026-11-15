@@ -43,7 +43,11 @@ function staticChecks() {
   console.log('\nRevisión estática de dist/');
   check('dist existe (ejecuta npm run build)', existsSync(dist));
   const pages = walk(dist).filter((f) => f.endsWith('.html'));
-  check('38 páginas HTML (raíz, 404, 3 portadas, 33 fichas)', pages.length === 38, `hay ${pages.length}`);
+  check('50 páginas HTML (raíz, 404, 3 portadas, 33 fichas, 12 legales)', pages.length === 50, `hay ${pages.length}`);
+  for (const [lang, slugs] of Object.entries({ es: ['privacidad', 'condiciones', 'accesibilidad', 'creditos'], en: ['privacy', 'terms', 'accessibility', 'credits'], pt: ['privacidade', 'termos', 'acessibilidade', 'creditos'] })) {
+    const missing = slugs.filter((s) => !existsSync(join(dist, lang, 'legal', s, 'index.html')));
+    check(`páginas legales en /${lang}/legal/`, missing.length === 0, missing.join(', '));
+  }
   for (const [lang, seg] of Object.entries(LANGS)) {
     check(`portada /${lang}/`, existsSync(join(dist, lang, 'index.html')));
     const missing = SLUGS.filter((s) => !existsSync(join(dist, lang, seg, s, 'index.html')));
