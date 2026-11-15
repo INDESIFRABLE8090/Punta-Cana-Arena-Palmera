@@ -1,0 +1,8 @@
+{
+  "name": "Punta Cana Arena y Palmera",
+  "short_name": "Arena y Palmera",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" }],
+  "theme_color": "#05242f",
+  "background_color": "#fbf7ef",
+  "display": "browser"
+}

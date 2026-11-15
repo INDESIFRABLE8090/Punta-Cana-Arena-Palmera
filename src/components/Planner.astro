@@ -1,0 +1,186 @@
+---
+import Icon from './Icon.astro';
+import { t } from '@/i18n/ui';
+import type { Lang } from '@/i18n/config';
+import { tours } from '@/data/tours';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = t(lang);
+const p = d.planner;
+---
+
+<section class="section planner" id="itinerario" aria-labelledby="pl-title">
+  <div class="shell">
+    <div class="section-head">
+      <p class="eyebrow" data-reveal>{p.eyebrow}</p>
+      <h2 class="display h-xl" id="pl-title" data-reveal style="--i:1">{p.title} <em>{p.titleEm}</em></h2>
+      <p class="lead" data-reveal style="--i:2">{p.lead}</p>
+    </div>
+
+    <form class="board" data-planner novalidate>
+      <div class="pick">
+        <fieldset>
+          <legend><span>01</span>{p.step1}</legend>
+          <ul class="options">
+            {tours.map((x) => (
+              <li>
+                <button type="button" class="opt" data-add={x.slug} aria-pressed="false" style={`--accent:${x.accent}`}>
+                  <span class="dot" aria-hidden="true"></span>
+                  <span class="txt"><strong>{x.name[lang]}</strong><small>{d.categories[x.category]}</small></span>
+                  <span class="mark" aria-hidden="true"><span class="i-plus"><Icon name="plus" /></span><span class="i-check"><Icon name="check" /></span></span>
+                </button>
+              </li>
+            ))}
+            <li>
+              <button type="button" class="opt opt-transport" data-add-transport aria-pressed="false" style="--accent:var(--gold-500)">
+                <span class="dot" aria-hidden="true"></span>
+                <span class="txt"><strong>{p.transportToggle}</strong><small>{d.transport.eyebrow}</small></span>
+                <span class="mark" aria-hidden="true"><span class="i-plus"><Icon name="plus" /></span><span class="i-check"><Icon name="check" /></span></span>
+              </button>
+            </li>
+          </ul>
+        </fieldset>
+      </div>
+
+      <div class="plan">
+        <fieldset>
+          <legend><span>02</span>{p.step2}</legend>
+          <p class="empty" data-itinerary-empty>{p.empty}</p>
+          <ol class="days" data-itinerary-list aria-live="polite"></ol>
+          <div class="field route" data-route-field hidden>
+            <label for="pl-route">{p.transportRoute}</label>
+            <input id="pl-route" name="route" type="text" maxlength="160" placeholder={p.transportRoutePh} autocomplete="off" />
+            <p class="err" data-err="route"></p>
+          </div>
+          <p class="err err-block" data-err="items"></p>
+        </fieldset>
+
+        <fieldset>
+          <legend><span>03</span>{p.step3}</legend>
+          <div class="fields">
+            <div class="field">
+              <label for="pl-date">{p.date}</label>
+              <input id="pl-date" name="date" type="date" required />
+              <p class="err" data-err="date"></p>
+            </div>
+            <div class="field half">
+              <label for="pl-adults">{p.adults}</label>
+              <input id="pl-adults" name="adults" type="number" inputmode="numeric" min="1" max="60" value="2" required />
+              <p class="err" data-err="adults"></p>
+            </div>
+            <div class="field half">
+              <label for="pl-children">{p.children}</label>
+              <input id="pl-children" name="children" type="number" inputmode="numeric" min="0" max="30" value="0" />
+              <p class="err" data-err="children"></p>
+            </div>
+            <div class="field" data-ages-field hidden>
+              <label for="pl-ages">{p.childrenAges}</label>
+              <input id="pl-ages" name="ages" type="text" maxlength="80" placeholder={p.childrenAgesPh} autocomplete="off" />
+              <p class="err" data-err="ages"></p>
+            </div>
+            <div class="field">
+              <label for="pl-hotel">{p.hotel}</label>
+              <input id="pl-hotel" name="hotel" type="text" maxlength="120" placeholder={p.hotelPh} autocomplete="off" required />
+              <p class="err" data-err="hotel"></p>
+            </div>
+            <div class="field">
+              <label for="pl-name">{p.name}</label>
+              <input id="pl-name" name="name" type="text" maxlength="80" autocomplete="name" required />
+              <p class="err" data-err="name"></p>
+            </div>
+            <div class="field">
+              <label for="pl-notes">{p.notes}</label>
+              <textarea id="pl-notes" name="notes" rows="3" maxlength="500"></textarea>
+            </div>
+            <!-- Señuelo contra envíos automáticos: invisible para personas -->
+            <div class="hp" aria-hidden="true">
+              <label for="pl-web">{p.hp}</label>
+              <input id="pl-web" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+            <div class="field consent">
+              <label><input type="checkbox" name="consent" required /><span>{p.consent}</span></label>
+              <p class="err" data-err="consent"></p>
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="send">
+          <p class="summary"><span>{p.summary}</span><strong data-itinerary-summary>—</strong></p>
+          <button type="submit" class="btn btn-wa"><Icon name="whatsapp" size={20} />{p.submit}</button>
+          <button type="button" class="text-link" data-copy>{p.copy}</button>
+          <p class="status" data-status role="status" aria-live="polite"></p>
+          <p class="disclaimer">{p.disclaimer}</p>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<style>
+  .planner { background: linear-gradient(180deg, var(--turq-100), var(--sand-50) 55%); }
+  .board { display: grid; gap: 2rem; }
+  fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+  legend { display: flex; align-items: baseline; gap: 0.9rem; padding: 0; margin-bottom: 1.25rem; font-family: var(--font-display); font-size: clamp(1.4rem, 3vw, 1.8rem); font-weight: 380; }
+  legend span { font-style: italic; font-weight: 300; color: var(--turq-700); font-size: 1.1rem; }
+  .options { display: grid; gap: 0.5rem; }
+  .opt { width: 100%; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.9rem; min-height: 3.75rem; padding: 0.6rem 0.75rem 0.6rem 1rem; text-align: left; border-radius: var(--radius-sm); border: 1px solid rgb(10 30 38 / 0.14); background: rgb(255 255 255 / 0.7); transition: border-color 0.3s, background-color 0.3s, transform 0.4s var(--ease); }
+  .opt:hover { border-color: var(--ink); transform: translateX(3px); }
+  .dot { width: 0.7rem; height: 0.7rem; border-radius: 50%; background: var(--accent); }
+  .txt { display: grid; line-height: 1.25; }
+  .txt strong { font-weight: 650; }
+  .txt small { font-size: 0.75rem; color: var(--ink-soft); letter-spacing: 0.04em; }
+  .mark { width: 2.25rem; height: 2.25rem; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgb(10 30 38 / 0.2); }
+  .opt .i-check, .opt[aria-pressed='true'] .i-plus { display: none; }
+  .opt[aria-pressed='true'] .i-check { display: inline-flex; }
+  .opt[aria-pressed='true'] { background: var(--ink); color: var(--white); border-color: var(--ink); }
+  .opt[aria-pressed='true'] .txt small { color: rgb(255 255 255 / 0.7); }
+  .opt[aria-pressed='true'] .mark { background: var(--accent); border-color: transparent; color: var(--ocean-950); }
+
+  .plan { display: grid; gap: 2rem; padding: clamp(1.25rem, 4vw, 2.5rem); background: var(--white); border-radius: var(--radius); box-shadow: 0 30px 70px -40px rgb(3 26 36 / 0.4); }
+  .empty { padding: 1.25rem; border: 1px dashed rgb(10 30 38 / 0.25); border-radius: var(--radius-sm); color: var(--ink-soft); font-size: 0.95rem; }
+  .empty[hidden] { display: none; }
+  .days { display: grid; gap: 0.5rem; }
+  .days :global(li) { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.75rem; padding: 0.5rem 0.5rem 0.5rem 1rem; border-radius: var(--radius-sm); background: var(--sand-50); border: 1px solid rgb(10 30 38 / 0.08); animation: day-in 0.5s var(--ease); }
+  @keyframes day-in { from { opacity: 0; transform: translateY(0.5rem); } }
+  .days :global(.day) { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; color: var(--turq-700); min-width: 3.2rem; }
+  .days :global(.name) { font-weight: 650; }
+  .days :global(.ctrl) { display: flex; }
+  .days :global(.ctrl button) { width: 2.75rem; height: 2.75rem; display: grid; place-items: center; border-radius: 50%; color: var(--ink-soft); }
+  .days :global(.ctrl button:hover:not(:disabled)) { background: var(--sand-200); color: var(--ink); }
+  .days :global(.ctrl button:disabled) { opacity: 0.25; cursor: default; }
+  .days :global(.is-transport) { background: color-mix(in srgb, var(--gold-300) 30%, white); }
+
+  .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .field { grid-column: 1 / -1; display: grid; gap: 0.35rem; }
+  .field[hidden] { display: none; }
+  .field.half { grid-column: span 1; }
+  .route { margin-top: 1rem; }
+  label { font-size: 0.85rem; font-weight: 650; }
+  input:not([type='checkbox']), textarea { width: 100%; min-height: 3.25rem; padding: 0.8rem 1rem; font-size: 1rem; border: 1px solid rgb(10 30 38 / 0.25); border-radius: var(--radius-sm); background: var(--white); transition: border-color 0.2s, box-shadow 0.2s; }
+  textarea { resize: vertical; min-height: 5.5rem; }
+  input:focus-visible, textarea:focus-visible { outline: none; border-color: var(--turq-600); box-shadow: 0 0 0 3px rgb(23 182 185 / 0.3); }
+  :global([aria-invalid='true']) { border-color: #b3261e !important; }
+  .err { font-size: 0.82rem; color: #b3261e; font-weight: 600; }
+  .err:empty { display: none; }
+  .err-block { margin-top: 0.75rem; }
+  .consent label { display: grid; grid-template-columns: auto 1fr; gap: 0.75rem; align-items: start; font-weight: 500; font-size: 0.9rem; min-height: 3rem; cursor: pointer; }
+  .consent input { width: 1.5rem; height: 1.5rem; margin: 0.1rem 0 0; accent-color: var(--turq-700); }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  .send { display: grid; gap: 0.75rem; padding-top: 1.5rem; border-top: 1px solid rgb(10 30 38 / 0.12); }
+  .summary { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.9rem; }
+  .summary span { color: var(--ink-soft); }
+  .send .btn { width: 100%; min-height: 3.5rem; font-size: 1rem; }
+  .send .text-link { justify-self: center; }
+  .status { font-weight: 650; font-size: 0.92rem; color: var(--palm-700); }
+  .status.is-error { color: #b3261e; }
+  .status:empty { display: none; }
+  .disclaimer { font-size: 0.8rem; color: var(--ink-soft); }
+
+  @media (min-width: 62rem) {
+    .board { grid-template-columns: 0.85fr 1.15fr; gap: 3rem; align-items: start; }
+    .pick { position: sticky; top: 6rem; }
+    .options { grid-template-columns: 1fr; }
+  }
+  @media (min-width: 40rem) and (max-width: 61.99rem) { .options { grid-template-columns: 1fr 1fr; } }
+</style>

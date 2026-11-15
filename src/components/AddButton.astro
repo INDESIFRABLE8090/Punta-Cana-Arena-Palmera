@@ -1,0 +1,17 @@
+---
+import Icon from './Icon.astro';
+import { t } from '@/i18n/ui';
+import type { Lang } from '@/i18n/config';
+interface Props { lang: Lang; slug: string; class?: string }
+const { lang, slug, class: cls = 'btn btn-ghost' } = Astro.props;
+const d = t(lang).experiences;
+---
+<button type="button" class={cls} data-add={slug} aria-pressed="false">
+  <span class="i-plus"><Icon name="plus" /></span><span class="i-check"><Icon name="check" /></span>
+  <span data-add-label>{d.add}</span>
+</button>
+<style>
+  button .i-check, button[aria-pressed='true'] .i-plus { display: none; }
+  button[aria-pressed='true'] .i-check { display: inline-flex; }
+  button[aria-pressed='true'] { background: var(--accent, var(--turq-500)); color: var(--ocean-950); border-color: transparent; }
+</style>

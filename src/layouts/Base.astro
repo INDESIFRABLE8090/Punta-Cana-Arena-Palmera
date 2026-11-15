@@ -1,0 +1,91 @@
+---
+import '@fontsource-variable/fraunces/opsz.css';
+import '@fontsource-variable/fraunces/opsz-italic.css';
+import '@fontsource-variable/manrope/wght.css';
+import '@/styles/global.css';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import WhatsAppFab from '@/components/WhatsAppFab.astro';
+import { languages, langMeta, href, type Lang } from '@/i18n/config';
+import { t } from '@/i18n/ui';
+import { site } from '@/config/site';
+import { tours } from '@/data/tours';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** Ruta de esta página en cada idioma (con subcarpeta), para hreflang. */
+  alternates: Record<Lang, string>;
+  image?: string;
+  jsonLd?: object[];
+  /** La cabecera arranca transparente sobre una portada oscura. */
+  overlayHeader?: boolean;
+  /** Mensaje de WhatsApp del botón flotante. */
+  waMessage?: string;
+}
+
+const { lang, title, description, alternates, image, jsonLd = [], overlayHeader = false, waMessage } = Astro.props;
+const d = t(lang);
+const abs = (p: string) => new URL(p, Astro.site).href;
+const canonical = abs(alternates[lang]);
+const ogImage = abs(image ?? href('/og.jpg'));
+
+// Datos que necesitan los scripts del navegador (sin información personal).
+const clientData = {
+  lang,
+  whatsapp: site.whatsapp,
+  strings: d.client,
+  tours: tours.map((x) => ({ slug: x.slug, name: x.name[lang] })),
+};
+---
+
+<!doctype html>
+<html lang={langMeta[lang].htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {languages.map((l) => <link rel="alternate" hreflang={langMeta[l].htmlLang} href={abs(alternates[l])} />)}
+    <link rel="alternate" hreflang="x-default" href={abs(alternates.es)} />
+    <meta name="theme-color" content="#05242f" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
+    <link rel="manifest" href={href('/site.webmanifest')} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={langMeta[lang].ogLocale} />
+    {languages.filter((l) => l !== lang).map((l) => <meta property="og:locale:alternate" content={langMeta[l].ogLocale} />)}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+    {jsonLd.map((item) => <script is:inline type="application/ld+json" set:html={JSON.stringify(item)} />)}
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#contenido">{d.nav.skip}</a>
+    <Header lang={lang} alternates={alternates} overlay={overlayHeader} />
+    <main id="contenido" tabindex="-1">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+    <WhatsAppFab lang={lang} message={waMessage ?? d.client.waGeneral} />
+    <div class="sr-only" role="status" aria-live="polite" id="live-region"></div>
+    <script is:inline type="application/json" id="client-data" set:html={JSON.stringify(clientData)} />
+    <script>
+      import '@/scripts/app';
+    </script>
+  </body>
+</html>

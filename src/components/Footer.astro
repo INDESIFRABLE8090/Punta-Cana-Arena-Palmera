@@ -1,0 +1,74 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { homePath, tourPath, type Lang } from '@/i18n/config';
+import { t } from '@/i18n/ui';
+import { site } from '@/config/site';
+import { tours } from '@/data/tours';
+import { waLink } from '@/scripts/whatsapp';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = t(lang);
+const social: { label: string; url: string }[] = [
+  { label: 'Instagram', url: site.instagram as string },
+  { label: 'Facebook', url: site.facebook as string },
+].filter((x) => x.url);
+---
+
+<footer class="footer">
+  <div class="shell">
+    <p class="display line">{d.footer.line}</p>
+    <div class="cols">
+      <div class="col brand">
+        <Logo size={52} />
+        <p><strong>{site.name}</strong><br />{site.region}</p>
+      </div>
+      <nav class="col" aria-label={d.nav.experiences}>
+        <h2>{d.nav.experiences}</h2>
+        <ul class="tours">
+          {tours.map((x) => <li><a href={tourPath(lang, x.slug)}>{x.name[lang]}</a></li>)}
+        </ul>
+      </nav>
+      <div class="col">
+        <h2>{d.footer.contact}</h2>
+        <ul>
+          <li>
+            <a class="wa" href={waLink(d.client.waGeneral)} target="_blank" rel="noopener noreferrer" data-wa>
+              <Icon name="whatsapp" /> {site.whatsappDisplay}
+            </a>
+          </li>
+          {(site.email as string) && <li><a href={`mailto:${site.email}`}>{site.email}</a></li>}
+          {social.map((s) => <li><a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></li>)}
+          <li><a href={homePath(lang, '#itinerario')}>{d.nav.planner}</a></li>
+          <li><a href={homePath(lang, '#transporte')}>{d.nav.transport}</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="base">
+      <p>© {new Date().getFullYear()} {site.name}. {d.footer.rights}</p>
+      <p>{d.footer.legal}</p>
+      <a class="top" href="#contenido">{d.footer.top} ↑</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer { background: var(--ocean-950); color: var(--sand-100); padding-block: clamp(4rem, 9vw, 7rem) calc(2rem + env(safe-area-inset-bottom)); }
+  .line { font-size: clamp(2.2rem, 7vw, 5rem); color: var(--sand-50); max-width: 16ch; margin-bottom: clamp(3rem, 7vw, 5rem); }
+  .cols { display: grid; gap: 2.5rem; }
+  .col h2 { font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-300); margin-bottom: 1rem; font-weight: 700; }
+  .col a { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; text-decoration: none; color: var(--sand-100); opacity: 0.85; }
+  .col a:hover { opacity: 1; color: var(--turq-300); }
+  .tours { columns: 2; column-gap: 1.5rem; }
+  .brand { display: flex; gap: 1rem; align-items: center; color: var(--sand-50); }
+  .brand p { font-size: 0.95rem; opacity: 0.85; }
+  .brand strong { font-family: var(--font-display); font-weight: 420; font-size: 1.15rem; opacity: 1; }
+  .base { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid rgb(255 255 255 / 0.12); display: grid; gap: 0.6rem; font-size: 0.8rem; color: rgb(244 236 220 / 0.7); }
+  .top { color: inherit; text-decoration: none; min-height: 2.75rem; display: inline-flex; align-items: center; }
+  @media (min-width: 56rem) {
+    .cols { grid-template-columns: 1.2fr 1.6fr 1fr; }
+    .brand { align-items: flex-start; }
+    .base { grid-template-columns: auto 1fr auto; align-items: center; gap: 2rem; }
+  }
+</style>

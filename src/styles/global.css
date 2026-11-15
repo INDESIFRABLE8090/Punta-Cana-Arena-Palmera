@@ -1,0 +1,330 @@
+/* Sistema visual: Caribe cinematográfico. Mobile-first. */
+:root {
+  --ocean-950: #031a24;
+  --ocean-900: #05242f;
+  --ocean-800: #083646;
+  --ocean-700: #0b4c60;
+  --turq-700: #0b7780;
+  --turq-600: #0e9aa3;
+  --turq-500: #17b6b9;
+  --turq-300: #7fdcd6;
+  --turq-100: #d6f4f0;
+  --sand-50: #fbf7ef;
+  --sand-100: #f4ecdc;
+  --sand-200: #e8dcc4;
+  --sand-400: #c9b48c;
+  --palm-700: #17503c;
+  --palm-500: #2a7d5c;
+  --gold-500: #c9a35a;
+  --gold-300: #e3c88f;
+  --ink: #0a1e26;
+  --ink-soft: #3d535c;
+  --white: #fff;
+  --wa: #0f7a41;
+
+  --font-display: 'Fraunces Variable', 'Iowan Old Style', Georgia, serif;
+  --font-body: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --gutter: clamp(1.25rem, 5vw, 4rem);
+  --max: 82rem;
+  --radius: 1.25rem;
+  --radius-sm: 0.75rem;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --header-h: 4.25rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 1rem);
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.lenis) {
+    scroll-behavior: smooth;
+  }
+}
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--sand-50);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+img,
+picture,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+img {
+  height: auto;
+}
+h1,
+h2,
+h3,
+p,
+ul,
+ol,
+figure {
+  margin: 0;
+}
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+a {
+  color: inherit;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+:focus-visible {
+  outline: 3px solid var(--gold-500);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 200;
+  padding: 0.75rem 1rem;
+  background: var(--ink);
+  color: var(--white);
+  border-radius: var(--radius-sm);
+  transform: translateY(-200%);
+}
+.skip-link:focus {
+  transform: none;
+}
+
+.shell {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Tipografía editorial */
+.display {
+  font-family: var(--font-display);
+  font-weight: 340;
+  font-optical-sizing: auto;
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.display em {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--turq-700);
+}
+.h-xl {
+  font-size: clamp(2.6rem, 9vw, 6.5rem);
+}
+.h-lg {
+  font-size: clamp(2.2rem, 6.5vw, 4.5rem);
+}
+.h-md {
+  font-size: clamp(1.7rem, 4.2vw, 2.75rem);
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--turq-700);
+}
+.eyebrow::before {
+  content: '';
+  width: 2rem;
+  height: 1px;
+  background: currentColor;
+}
+.lead {
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 38rem;
+  text-wrap: pretty;
+}
+
+/* Botones: objetivo táctil mínimo de 48 px */
+.btn {
+  --btn-bg: var(--ink);
+  --btn-fg: var(--white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: 999px;
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-weight: 650;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition:
+    transform 0.4s var(--ease),
+    background-color 0.3s,
+    box-shadow 0.3s,
+    border-color 0.3s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -12px rgb(3 26 36 / 0.55);
+}
+.btn:active {
+  transform: scale(0.98);
+}
+.btn-turq {
+  --btn-bg: var(--turq-500);
+  --btn-fg: var(--ocean-950);
+}
+.btn-gold {
+  --btn-bg: var(--gold-500);
+  --btn-fg: var(--ocean-950);
+}
+.btn-wa {
+  --btn-bg: var(--wa);
+  --btn-fg: var(--white);
+}
+.btn-ghost {
+  --btn-bg: transparent;
+  --btn-fg: currentColor;
+  border-color: currentColor;
+}
+.btn-glass {
+  --btn-bg: rgb(255 255 255 / 0.14);
+  --btn-fg: var(--white);
+  border-color: rgb(255 255 255 / 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.btn[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+.btn .arrow {
+  transition: transform 0.4s var(--ease);
+}
+.btn:hover .arrow {
+  transform: translate(3px, -3px);
+}
+
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  font-weight: 650;
+  text-decoration: none;
+  background: linear-gradient(currentColor, currentColor) 0 calc(100% - 0.7rem) / 100% 1px no-repeat;
+  transition: background-size 0.4s var(--ease);
+}
+.text-link:hover {
+  background-size: 0 1px;
+  background-position: 100% calc(100% - 0.7rem);
+}
+
+.section {
+  padding-block: clamp(4.5rem, 11vw, 9rem);
+  position: relative;
+}
+.section-head {
+  display: grid;
+  gap: 1.25rem;
+  margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+/* Aparición al hacer scroll. Sin JS todo es visible. */
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(2rem);
+}
+html.js [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.9s var(--ease),
+    transform 1.1s var(--ease);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+/* La máscara va en el hijo: un elemento recortado por completo nunca dispara IntersectionObserver. */
+html.js [data-reveal='mask'] {
+  opacity: 1;
+  transform: none;
+}
+html.js [data-reveal='mask'] > * {
+  clip-path: inset(0 0 100% 0);
+}
+html.js [data-reveal='mask'].is-in > * {
+  clip-path: inset(0);
+  transition: clip-path 1.3s var(--ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  html.js [data-reveal],
+  html.js [data-reveal='mask'] > * {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+  }
+}

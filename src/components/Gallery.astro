@@ -1,0 +1,96 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import coast from '@/assets/images/costa-punta-cana.jpg';
+import { t } from '@/i18n/ui';
+import type { Lang } from '@/i18n/config';
+import { tours } from '@/data/tours';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = t(lang);
+
+const shots = [
+  { src: coast, alt: d.hero.imageAlt, caption: d.gallery.coastCaption, shape: 'wide' },
+  ...tours.filter((x) => x.image).map((x, i) => ({
+    src: x.image!.src,
+    alt: x.image!.alt[lang],
+    caption: x.name[lang],
+    shape: x.slug === 'coco-bongo' ? 'tall' : i % 2 ? 'std' : 'wide',
+  })),
+];
+const items = await Promise.all(
+  shots.map(async (s) => ({ ...s, full: (await getImage({ src: s.src, width: Math.min(1600, s.src.width), format: 'webp', quality: 78 })).src })),
+);
+---
+
+<section class="section gallery" id="galeria" aria-labelledby="gal-title">
+  <div class="shell section-head">
+    <p class="eyebrow" data-reveal>{d.gallery.eyebrow}</p>
+    <h2 class="display h-lg" id="gal-title" data-reveal style="--i:1">{d.gallery.title} <em>{d.gallery.titleEm}</em></h2>
+  </div>
+  <ul class="rail" data-gallery>
+    {items.map((it, i) => (
+      <li class={`shot is-${it.shape}`} data-reveal style={`--i:${i % 3}`}>
+        <button type="button" data-shot={i} data-full={it.full} data-alt={it.alt} data-caption={it.caption} aria-label={`${d.gallery.open}: ${it.caption}`}>
+          <Picture src={it.src} alt={it.alt} formats={['webp']} widths={[400, 720, 1080]} sizes="(min-width: 64rem) 45vw, 82vw" loading="lazy" decoding="async" quality={66} />
+        </button>
+        <p><span>{String(i + 1).padStart(2, '0')}</span>{it.caption}</p>
+      </li>
+    ))}
+  </ul>
+
+  <dialog class="lightbox" data-lightbox aria-label={d.gallery.dialog}>
+    <button type="button" class="lb-btn lb-close" data-lb-close aria-label={d.gallery.close}>✕</button>
+    <button type="button" class="lb-btn lb-prev" data-lb-prev aria-label={d.gallery.prev}>←</button>
+    <figure>
+      <img data-lb-img alt="" />
+      <figcaption><span data-lb-count></span><span data-lb-caption></span></figcaption>
+    </figure>
+    <button type="button" class="lb-btn lb-next" data-lb-next aria-label={d.gallery.next}>→</button>
+  </dialog>
+</section>
+
+<style>
+  .gallery { background: var(--sand-100); overflow: clip; }
+  .rail { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 var(--gutter) 1rem; scrollbar-width: none; align-items: flex-start; }
+  .rail::-webkit-scrollbar { display: none; }
+  .shot { flex: none; width: 80vw; scroll-snap-align: center; }
+  .shot.is-tall { width: 45vw; }
+  .shot button { display: block; width: 100%; overflow: hidden; border-radius: var(--radius); aspect-ratio: 4 / 3; background: var(--ocean-800); cursor: zoom-in; }
+  .shot.is-tall button { aspect-ratio: 3 / 4; }
+  @media (max-width: 63.99rem) { .shot button, .shot.is-tall button { aspect-ratio: auto; height: 60vw; max-height: 70svh; } }
+  .shot :global(picture), .shot :global(img) { display: block; width: 100%; height: 100%; }
+  .shot :global(img) { object-fit: cover; transition: transform 1.2s var(--ease); }
+  .shot button:hover :global(img) { transform: scale(1.05); }
+  .shot p { display: flex; gap: 0.75rem; align-items: baseline; margin-top: 0.75rem; font-size: 0.9rem; font-weight: 600; }
+  .shot p span { font-family: var(--font-display); font-style: italic; color: var(--turq-700); }
+
+  @media (min-width: 64rem) {
+    .rail { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2rem; overflow: visible; max-width: var(--max); margin-inline: auto; align-items: start; }
+    .shot, .shot.is-tall { width: auto; }
+    .shot:nth-child(1) { grid-column: 1 / 9; }
+    .shot:nth-child(1) button { aspect-ratio: 16 / 9; }
+    .shot:nth-child(2) { grid-column: 9 / 13; margin-top: 6rem; }
+    .shot:nth-child(2) button { aspect-ratio: 4 / 5; }
+    .shot:nth-child(3) { grid-column: 2 / 7; }
+    .shot:nth-child(4) { grid-column: 7 / 13; margin-top: -4rem; }
+    .shot:nth-child(4) button { aspect-ratio: 16 / 10; }
+    .shot:nth-child(5) { grid-column: 1 / 8; }
+    .shot:nth-child(5) button { aspect-ratio: 16 / 10; }
+    .shot:nth-child(6) { grid-column: 8 / 12; margin-top: -8rem; }
+  }
+
+  .lightbox { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: rgb(3 26 36 / 0.96); color: var(--white); }
+  .lightbox[open] { display: grid; place-items: center; animation: lb 0.4s var(--ease); }
+  .lightbox::backdrop { background: rgb(3 26 36 / 0.9); }
+  @keyframes lb { from { opacity: 0; } }
+  .lightbox figure { display: grid; gap: 0.75rem; justify-items: center; padding: 4rem 1rem; max-width: 100%; }
+  .lightbox img { max-width: 100%; max-height: calc(100dvh - 9rem); width: auto; object-fit: contain; border-radius: var(--radius-sm); }
+  .lightbox figcaption { display: flex; gap: 1rem; font-size: 0.9rem; }
+  .lightbox figcaption span:first-child { opacity: 0.6; }
+  .lb-btn { position: absolute; width: 3rem; height: 3rem; display: grid; place-items: center; border-radius: 999px; border: 1px solid rgb(255 255 255 / 0.35); background: rgb(3 26 36 / 0.6); color: var(--white); font-size: 1.1rem; }
+  .lb-btn:hover { background: var(--white); color: var(--ocean-950); }
+  .lb-close { top: max(1rem, env(safe-area-inset-top)); right: 1rem; }
+  .lb-prev { left: 1rem; bottom: 1rem; }
+  .lb-next { right: 1rem; bottom: 1rem; }
+  @media (min-width: 48rem) { .lb-prev, .lb-next { top: 50%; bottom: auto; transform: translateY(-50%); } }
+</style>

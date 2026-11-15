@@ -1,0 +1,31 @@
+---
+import '@fontsource-variable/fraunces/opsz.css';
+import '@/styles/global.css';
+import { languages, langMeta, homePath } from '@/i18n/config';
+import { ui } from '@/i18n/ui';
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>404 | Punta Cana Arena y Palmera</title>
+  </head>
+  <body>
+    <main class="nf">
+      <p class="eyebrow">404</p>
+      {languages.map((l) => (
+        <div lang={langMeta[l].htmlLang}>
+          <h1 class="display h-md">{ui[l].notFound.title}</h1>
+          <a class="btn btn-turq" href={homePath(l)}>{ui[l].notFound.cta}</a>
+        </div>
+      ))}
+    </main>
+    <style>
+      .nf { min-height: 100svh; display: grid; align-content: center; gap: 2rem; padding: var(--gutter); background: var(--ocean-900); color: var(--white); }
+      .nf div { display: grid; gap: 1rem; justify-items: start; }
+      .nf h1:not(:first-of-type) { font-size: 1.5rem; }
+    </style>
+  </body>
+</html>

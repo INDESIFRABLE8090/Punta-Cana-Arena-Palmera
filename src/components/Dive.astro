@@ -1,0 +1,72 @@
+---
+import { Picture } from 'astro:assets';
+import reef from '@/assets/images/scuba-doo.jpg';
+import { t } from '@/i18n/ui';
+import type { Lang } from '@/i18n/config';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = t(lang).dive;
+---
+
+<!-- Inmersión: la cámara baja del horizonte al fondo de arena. WebGL se carga en diferido;
+     sin WebGL o con movimiento reducido queda la versión estática. -->
+<section class="dive" data-dive aria-label={d.label}>
+  <div class="stage">
+    <div class="fallback" aria-hidden="true">
+      <Picture src={reef} alt="" formats={['webp']} widths={[480, 768, 1200]} sizes="100vw" loading="lazy" decoding="async" quality={60} />
+    </div>
+    <canvas data-dive-canvas aria-hidden="true"></canvas>
+    <div class="veil" data-dive-veil aria-hidden="true"></div>
+    <div class="lines shell">
+      <p class="display" data-dive-line>{d.line1}</p>
+      <p class="display" data-dive-line>{d.line2}</p>
+      <p class="display" data-dive-line>{d.line3}</p>
+      <p class="display" data-dive-line><em>{d.line4}</em></p>
+    </div>
+    <div class="depth" aria-hidden="true"><span data-dive-depth>0 m</span><i><b data-dive-bar></b></i></div>
+  </div>
+</section>
+<script is:inline>
+  // Decide el modo antes del primer pintado para que la altura de la página no cambie después.
+  (function () {
+    var el = document.currentScript.previousElementSibling;
+    var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var saver = navigator.connection && navigator.connection.saveData;
+    var gl = false;
+    try {
+      var c = document.createElement('canvas');
+      gl = !!(c.getContext('webgl2') || c.getContext('webgl'));
+    } catch (e) {}
+    if (!reduced) el.classList.add('is-live');
+    if (!reduced && gl && !saver) el.dataset.gl = '1';
+  })();
+</script>
+
+<style>
+  .dive { position: relative; background: var(--ocean-900); color: var(--white); }
+  .stage { position: relative; min-height: 100svh; overflow: clip; display: grid; }
+  .fallback, canvas, .veil { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .fallback :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .fallback::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(5 36 47 / 0.75), rgb(5 36 47 / 0.25) 45%, var(--sand-50) 100%); }
+  canvas { opacity: 0; transition: opacity 1.2s; }
+  .veil { pointer-events: none; opacity: 0; background: var(--sand-50); }
+  .lines { position: relative; align-self: center; display: grid; gap: 1.5rem; padding-block: 6rem; }
+  .lines p { font-size: clamp(2.2rem, 8.5vw, 6rem); max-width: 14ch; text-shadow: 0 2px 28px rgb(3 26 36 / 0.55), 0 0 3px rgb(3 26 36 / 0.25); }
+  .lines em { color: var(--turq-300); }
+  .depth { display: none; }
+
+  /* Modo inmersivo: lo activa el script cuando WebGL está listo. */
+  .dive.is-live { height: 420vh; }
+  .dive.is-live .stage { position: sticky; top: 0; height: 100svh; min-height: 0; }
+  .dive.has-gl .fallback { display: none; }
+  .dive.has-gl canvas { opacity: 1; }
+  .dive.is-live .lines { position: absolute; inset: 0; padding-block: 0; display: block; }
+  .dive.is-live .lines p { position: absolute; left: var(--gutter); right: var(--gutter); top: 50%; opacity: 0; transform: translateY(-50%); will-change: opacity, transform; }
+  .dive.is-live .stage::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(90deg, rgb(3 26 36 / 0.3), transparent 75%); }
+  .dive.is-live .lines, .dive.is-live .veil, .dive.is-live .depth { z-index: 2; }
+  .dive.is-live .lines p:last-child { color: var(--ocean-950); text-shadow: 0 0 24px rgb(255 255 255 / 0.5); }
+  .dive.is-live .lines p:last-child em { color: var(--ocean-800); }
+  .dive.is-live .depth { position: absolute; left: var(--gutter); bottom: calc(1.5rem + env(safe-area-inset-bottom)); justify-items: start; display: grid; gap: 0.5rem; font-size: 0.7rem; letter-spacing: 0.18em; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .depth i { display: block; width: 1px; height: 4.5rem; background: rgb(255 255 255 / 0.3); position: relative; }
+  .depth b { position: absolute; inset: 0; background: var(--white); transform-origin: top; transform: scaleY(0); }
+</style>

@@ -1,0 +1,122 @@
+---
+import Logo from './Logo.astro';
+import { languages, langMeta, homePath, type Lang } from '@/i18n/config';
+import { t } from '@/i18n/ui';
+
+interface Props { lang: Lang; alternates: Record<Lang, string>; overlay?: boolean }
+const { lang, alternates, overlay = false } = Astro.props;
+const d = t(lang);
+const links = [
+  { href: homePath(lang, '#experiencias'), label: d.nav.experiences },
+  { href: homePath(lang, '#transporte'), label: d.nav.transport },
+  { href: homePath(lang, '#galeria'), label: d.nav.gallery },
+  { href: homePath(lang, '#preguntas'), label: d.nav.faq },
+];
+---
+
+<header class:list={['site-header', { 'is-overlay': overlay }]} data-header>
+  <div class="bar shell">
+    <a class="brand" href={homePath(lang)} aria-label={`Punta Cana Arena y Palmera — ${d.nav.home}`}>
+      <Logo />
+      <span class="brand-text"><strong>Punta Cana</strong><span>Arena y Palmera</span></span>
+    </a>
+
+    <nav class="nav-desktop" aria-label={d.nav.main}>
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+
+    <div class="actions">
+      <ul class="langs" aria-label={d.nav.language}>
+        {languages.map((l) => (
+          <li>
+            <a href={alternates[l]} hreflang={langMeta[l].htmlLang} lang={langMeta[l].htmlLang} aria-current={l === lang ? 'true' : undefined} title={langMeta[l].name}>
+              {langMeta[l].label}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <a class="btn btn-turq cta" href={homePath(lang, '#itinerario')}>
+        {d.nav.planner}<span class="badge" data-itinerary-count hidden></span>
+      </a>
+      <button class="burger" type="button" aria-expanded="false" aria-controls="menu-movil" data-menu-toggle data-label-open={d.nav.menuOpen} data-label-close={d.nav.menuClose} aria-label={d.nav.menuOpen}>
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="menu" id="menu-movil" data-menu hidden>
+    <nav aria-label={d.nav.main}>
+      {links.map((l, i) => <a href={l.href} style={`--i:${i}`}>{l.label}</a>)}
+      <a href={homePath(lang, '#itinerario')} style={`--i:${links.length}`}>{d.nav.planner}</a>
+    </nav>
+    <ul class="langs langs-menu" aria-label={d.nav.language}>
+      {languages.map((l) => (
+        <li><a href={alternates[l]} hreflang={langMeta[l].htmlLang} lang={langMeta[l].htmlLang} aria-current={l === lang ? 'true' : undefined}>{langMeta[l].name}</a></li>
+      ))}
+    </ul>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+    color: var(--ink);
+    background: rgb(251 247 239 / 0.86);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    border-bottom: 1px solid rgb(10 30 38 / 0.08);
+    transition: background-color 0.4s, color 0.4s, border-color 0.4s, transform 0.5s var(--ease);
+  }
+  .site-header.is-overlay:not(.is-solid):not(.is-open) {
+    color: var(--white);
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: transparent;
+  }
+  .site-header.is-hidden:not(.is-open) { transform: translateY(-100%); }
+  .site-header.is-open { background: var(--sand-50); color: var(--ink); }
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: var(--header-h); }
+  .brand { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; min-height: 3rem; }
+  .brand-text { display: grid; line-height: 1.05; }
+  .brand-text strong { font-family: var(--font-display); font-weight: 420; font-size: 1.15rem; letter-spacing: -0.01em; }
+  .brand-text span { font-size: 0.62rem; letter-spacing: 0.24em; text-transform: uppercase; font-weight: 700; opacity: 0.8; }
+  .nav-desktop { display: none; gap: 2rem; }
+  .nav-desktop a { text-decoration: none; font-size: 0.9rem; font-weight: 600; padding-block: 0.9rem; position: relative; }
+  .nav-desktop a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0.6rem; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform 0.45s var(--ease); }
+  .nav-desktop a:hover::after { transform: scaleX(1); transform-origin: left; }
+  .actions { display: flex; align-items: center; gap: 0.75rem; }
+  .langs { display: none; align-items: center; gap: 0.15rem; }
+  .langs a { display: grid; place-items: center; min-width: 2.5rem; min-height: 2.75rem; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-decoration: none; opacity: 0.6; border-radius: 999px; }
+  .langs a:hover { opacity: 1; }
+  .langs a[aria-current] { opacity: 1; text-decoration: underline; text-underline-offset: 0.35em; text-decoration-thickness: 2px; }
+  .cta { display: none; min-height: 2.75rem; padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+  .badge { display: inline-grid; place-items: center; min-width: 1.35rem; height: 1.35rem; padding-inline: 0.3rem; border-radius: 999px; background: var(--ocean-950); color: var(--white); font-size: 0.7rem; }
+  .badge[hidden] { display: none; }
+  .burger { width: 3rem; height: 3rem; display: grid; place-content: center; gap: 0.45rem; margin-right: -0.6rem; }
+  .burger span { width: 1.6rem; height: 2px; background: currentColor; transition: transform 0.45s var(--ease); }
+  .burger[aria-expanded='true'] span:first-child { transform: translateY(0.3rem) rotate(45deg); }
+  .burger[aria-expanded='true'] span:last-child { transform: translateY(-0.28rem) rotate(-45deg); }
+
+  .menu { height: calc(100dvh - var(--header-h)); overflow-y: auto; padding: 1.5rem var(--gutter) 2.5rem; display: flex; flex-direction: column; justify-content: space-between; gap: 2rem; background: var(--sand-50); }
+  .menu[hidden] { display: none; }
+  .menu nav { display: grid; }
+  .menu nav a { font-family: var(--font-display); font-size: clamp(2rem, 9vw, 3rem); font-weight: 340; letter-spacing: -0.02em; text-decoration: none; padding-block: 0.55rem; border-bottom: 1px solid rgb(10 30 38 / 0.1); animation: menu-in 0.6s var(--ease) both; animation-delay: calc(var(--i) * 60ms); }
+  @keyframes menu-in { from { opacity: 0; transform: translateY(1rem); } }
+  .langs-menu { display: flex; gap: 0.5rem; }
+  .langs-menu a { padding-inline: 1rem; border: 1px solid rgb(10 30 38 / 0.2); font-size: 0.85rem; letter-spacing: 0; min-height: 3rem; }
+  .langs-menu a[aria-current] { background: var(--ink); color: var(--white); text-decoration: none; opacity: 1; }
+
+  @media (min-width: 30rem) { .cta { display: inline-flex; } }
+  @media (min-width: 64rem) {
+    .nav-desktop { display: flex; }
+    .langs:not(.langs-menu) { display: flex; }
+    .burger, .menu { display: none !important; }
+  }
+  @media (max-height: 30rem) and (orientation: landscape) {
+    .menu nav { grid-template-columns: 1fr 1fr; column-gap: 2rem; }
+    .menu nav a { font-size: 1.5rem; }
+  }
+</style>

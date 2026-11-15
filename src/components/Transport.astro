@@ -1,0 +1,72 @@
+---
+import Icon from './Icon.astro';
+import { t } from '@/i18n/ui';
+import type { Lang } from '@/i18n/config';
+import { waLink } from '@/scripts/whatsapp';
+import { fleet } from '@/data/fleet';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = t(lang);
+---
+
+<section class="section transport" id="transporte" aria-labelledby="tr-title">
+  <svg class="route" viewBox="0 0 1200 600" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <path data-route d="M-20 520 C 180 420, 260 560, 420 430 S 640 180, 800 260 S 1040 420, 1220 90" fill="none" stroke="url(#gold)" stroke-width="1.5" vector-effect="non-scaling-stroke" />
+    <defs><linearGradient id="gold" x1="0" x2="1"><stop stop-color="#c9a35a" stop-opacity="0" /><stop offset=".3" stop-color="#c9a35a" /><stop offset="1" stop-color="#e3c88f" /></linearGradient></defs>
+  </svg>
+  <div class="shell grid">
+    <div class="copy">
+      <p class="eyebrow" data-reveal>{d.transport.eyebrow}</p>
+      <h2 class="display h-lg" id="tr-title" data-reveal style="--i:1">{d.transport.title} <em>{d.transport.titleEm}</em></h2>
+      <p class="lead" data-reveal style="--i:2">{d.transport.lead}</p>
+      <div class="actions" data-reveal style="--i:3">
+        <a class="btn btn-gold" href={waLink(d.client.waTransport)} target="_blank" rel="noopener noreferrer" data-wa><Icon name="whatsapp" />{d.transport.cta}</a>
+        <button type="button" class="btn btn-ghost" data-add-transport aria-pressed="false">
+          <span class="i-plus"><Icon name="plus" /></span><span class="i-check"><Icon name="check" /></span>{d.transport.add}
+        </button>
+      </div>
+    </div>
+    <ol class="steps">
+      {d.transport.steps.map((s, i) => (
+        <li data-reveal style={`--i:${i + 1}`}>
+          <span class="n">{String(i + 1).padStart(2, '0')}</span>
+          <div><h3>{s.title}</h3><p>{s.copy}</p></div>
+        </li>
+      ))}
+    </ol>
+    {fleet.length > 0 && (
+      <ul class="fleet">
+        {fleet.map((v) => (
+          <li><h3 class="display">{v.name}</h3>{v.details[lang].length > 0 && <ul>{v.details[lang].map((x) => <li>{x}</li>)}</ul>}</li>
+        ))}
+      </ul>
+    )}
+  </div>
+</section>
+
+<style>
+  .transport { background: radial-gradient(120% 90% at 85% 0%, #0d3140 0%, var(--ocean-950) 60%); color: var(--sand-50); overflow: clip; isolation: isolate; }
+  .route { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; }
+  @media (min-width: 60rem) { .route { opacity: 0.45; } }
+  .eyebrow { color: var(--gold-300); }
+  .display em { color: var(--gold-300); }
+  .lead { color: rgb(244 236 220 / 0.8); }
+  .grid { display: grid; gap: 3rem; }
+  .copy { display: grid; gap: 1.25rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.5rem; }
+  .actions button .i-check, .actions button[aria-pressed='true'] .i-plus { display: none; }
+  .actions button[aria-pressed='true'] .i-check { display: inline-flex; }
+  .actions button[aria-pressed='true'] { background: var(--sand-50); color: var(--ocean-950); border-color: transparent; }
+  .steps { display: grid; }
+  .steps li { display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; padding-block: 1.5rem; border-top: 1px solid rgb(227 200 143 / 0.28); }
+  .steps li:last-child { border-bottom: 1px solid rgb(227 200 143 / 0.28); }
+  .n { font-family: var(--font-display); font-style: italic; font-weight: 300; font-size: 2rem; line-height: 1; color: var(--gold-300); }
+  .steps h3 { font-family: var(--font-display); font-weight: 380; font-size: 1.4rem; margin-bottom: 0.25rem; }
+  .steps p { color: rgb(244 236 220 / 0.72); font-size: 0.95rem; }
+  .fleet { display: grid; gap: 1rem; grid-column: 1 / -1; }
+  .fleet > li { padding: 1.5rem; border: 1px solid rgb(227 200 143 / 0.28); border-radius: var(--radius); }
+  @media (min-width: 60rem) {
+    .grid { grid-template-columns: 1.1fr 0.9fr; gap: 5rem; align-items: end; }
+    .fleet { grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
+  }
+</style>

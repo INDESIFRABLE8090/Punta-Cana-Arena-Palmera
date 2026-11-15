@@ -1,0 +1,82 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import coast from '@/assets/images/costa-punta-cana.jpg';
+import { homePath, type Lang } from '@/i18n/config';
+import { t } from '@/i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = t(lang);
+---
+
+<section class="hero" data-hero aria-labelledby="hero-title">
+  <div class="media" data-hero-media>
+    <Picture src={coast} alt={d.hero.imageAlt} formats={['avif', 'webp']} widths={[480, 768, 1080, 1376]} sizes="100vw" loading="eager" fetchpriority="high" decoding="async" quality={72} />
+  </div>
+  <div class="shade" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <div class="content shell" data-hero-content>
+    <p class="eyebrow">{d.hero.eyebrow}</p>
+    <h1 class="display" id="hero-title">
+      <span class="l"><span>{d.hero.title1}</span></span>
+      <span class="l"><span><em>{d.hero.title2}</em></span></span>
+      <span class="l"><span>{d.hero.title3}</span></span>
+    </h1>
+    <p class="lead">{d.hero.lead}</p>
+    <div class="cta">
+      <a class="btn btn-turq" href={homePath(lang, '#experiencias')}>{d.hero.primary}<span class="arrow"><Icon name="arrow" /></span></a>
+      <a class="btn btn-glass" href={homePath(lang, '#itinerario')}>{d.hero.secondary}</a>
+    </div>
+  </div>
+
+  <div class="foot shell">
+    <span class="scroll"><i aria-hidden="true"></i>{d.hero.scroll}</span>
+    <span class="coord" aria-hidden="true">18° 34′ N — 68° 22′ W</span>
+    <button class="sound" type="button" data-sound aria-pressed="false" aria-label={d.sound.label}>
+      <span class="on"><Icon name="sound" /></span><span class="off"><Icon name="mute" /></span>
+      <span data-sound-label>{d.sound.off}</span>
+    </button>
+  </div>
+</section>
+
+<style>
+  .hero { position: relative; min-height: 100svh; display: grid; grid-template-rows: 1fr auto; color: var(--white); background: var(--ocean-900); overflow: clip; isolation: isolate; }
+  .media { position: absolute; inset: -6% 0; z-index: -3; will-change: transform; }
+  .media :global(picture) { display: block; width: 100%; height: 100%; }
+  .media :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 62% 50%; animation: drift 26s ease-in-out infinite alternate; }
+  @keyframes drift { from { transform: scale(1.04); } to { transform: scale(1.14) translate(-1.5%, 1%); } }
+  .shade { position: absolute; inset: 0; z-index: -2; background:
+    linear-gradient(180deg, rgb(3 26 36 / 0.55) 0%, rgb(3 26 36 / 0.05) 28%, rgb(3 26 36 / 0.1) 55%, rgb(3 26 36 / 0.78) 100%),
+    linear-gradient(90deg, rgb(3 26 36 / 0.55) 0%, rgb(3 26 36 / 0) 65%); }
+  .grain { position: absolute; inset: 0; z-index: -1; opacity: 0.09; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .content { align-self: end; padding-top: calc(var(--header-h) + 2rem); padding-bottom: clamp(1.5rem, 4vh, 3rem); display: grid; gap: 1.25rem; }
+  .eyebrow { color: var(--gold-300); }
+  h1 { font-size: clamp(3.1rem, 13.5vw, 9rem); }
+  h1 em { color: var(--turq-300); }
+  .l { display: block; overflow: hidden; padding-bottom: 0.08em; }
+  .l > span { display: block; animation: rise 1.3s var(--ease) both; }
+  .l:nth-child(2) > span { animation-delay: 0.12s; }
+  .l:nth-child(3) > span { animation-delay: 0.24s; }
+  @keyframes rise { from { transform: translateY(110%); } }
+  .lead { color: rgb(255 255 255 / 0.9); max-width: 32rem; animation: fade 1.2s 0.5s var(--ease) both; }
+  .cta { display: flex; flex-wrap: wrap; gap: 0.75rem; animation: fade 1.2s 0.65s var(--ease) both; }
+  @keyframes fade { from { opacity: 0; transform: translateY(1rem); } }
+  .foot { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 1rem calc(1.25rem + env(safe-area-inset-bottom)); border-top: 1px solid rgb(255 255 255 / 0.22); font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; }
+  .scroll { display: inline-flex; align-items: center; gap: 0.75rem; }
+  .scroll i { width: 1px; height: 2.2rem; background: linear-gradient(var(--white), transparent); animation: cue 2.2s var(--ease) infinite; transform-origin: top; }
+  @keyframes cue { 0% { transform: scaleY(0); } 60% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+  .coord { display: none; opacity: 0.75; }
+  .sound { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 3rem; padding: 0 0.9rem; border: 1px solid rgb(255 255 255 / 0.4); border-radius: 999px; letter-spacing: 0.04em; text-transform: none; font-size: 0.78rem; font-weight: 600; background: rgb(3 26 36 / 0.25); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .sound .on, .sound[aria-pressed='true'] .off { display: none; }
+  .sound[aria-pressed='true'] .on { display: inline; }
+  .sound [data-sound-label] { display: none; }
+  @media (min-width: 40rem) { .coord { display: inline; } .sound [data-sound-label] { display: inline; } }
+  @media (max-height: 32rem) and (orientation: landscape) {
+    h1 { font-size: clamp(2.2rem, 11vh, 4rem); }
+    .content { gap: 0.6rem; padding-top: calc(var(--header-h) + 0.5rem); }
+    .lead { display: none; }
+    .foot { padding-block: 0.4rem; }
+    .scroll i { height: 1.2rem; }
+  }
+</style>

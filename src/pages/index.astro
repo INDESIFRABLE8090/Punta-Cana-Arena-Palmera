@@ -1,0 +1,27 @@
+---
+import { languages, langMeta, homePath } from '@/i18n/config';
+import { ui } from '@/i18n/ui';
+// Raíz del sitio: envía al idioma del navegador (español por defecto).
+const target = homePath('es');
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{ui.es.meta.homeTitle}</title>
+    <meta name="description" content={ui.es.meta.homeDescription} />
+    <meta name="robots" content="noindex, follow" />
+    <link rel="canonical" href={new URL(target, Astro.site).href} />
+    {languages.map((l) => <link rel="alternate" hreflang={langMeta[l].htmlLang} href={new URL(homePath(l), Astro.site).href} />)}
+    <script is:inline define:vars={{ paths: Object.fromEntries(languages.map((l) => [l, homePath(l)])) }}>
+      var pref = (navigator.languages || [navigator.language || 'es']).map(function (l) { return l.slice(0, 2).toLowerCase(); });
+      var hit = pref.find(function (l) { return paths[l]; }) || 'es';
+      location.replace(paths[hit] + location.hash);
+    </script>
+    <noscript><meta http-equiv="refresh" content={`0; url=${target}`} /></noscript>
+  </head>
+  <body>
+    <p><a href={target}>Punta Cana Arena y Palmera</a></p>
+  </body>
+</html>
