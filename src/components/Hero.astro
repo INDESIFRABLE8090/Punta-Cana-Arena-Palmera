@@ -1,6 +1,7 @@
 ---
 import { Picture } from 'astro:assets';
 import Icon from './Icon.astro';
+import Magnet from './reactbits/Magnet';
 import coast from '@/assets/images/costa-punta-cana.jpg';
 import { homePath, type Lang } from '@/i18n/config';
 import { t } from '@/i18n/ui';
@@ -25,7 +26,9 @@ const d = t(lang);
     </h1>
     <p class="lead">{d.hero.lead}</p>
     <div class="cta">
-      <a class="btn btn-turq" href={homePath(lang, '#experiencias')}>{d.hero.primary}<span class="arrow"><Icon name="arrow" /></span></a>
+      <Magnet client:idle padding={50}>
+        <a class="btn btn-turq" href={homePath(lang, '#experiencias')}>{d.hero.primary}<span class="arrow"><Icon name="arrow" /></span></a>
+      </Magnet>
       <a class="btn btn-glass" href={homePath(lang, '#itinerario')}>{d.hero.secondary}</a>
     </div>
   </div>

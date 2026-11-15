@@ -48,17 +48,25 @@ function initReveal() {
 function initFilters() {
   const chips = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
   const chapters = [...document.querySelectorAll<HTMLElement>('[data-chapters] > [data-category]')];
-  chips.forEach((chip) =>
-    chip.addEventListener('click', () => {
-      const filter = chip.dataset.filter!;
-      chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
-      chapters.forEach((ch) => {
-        ch.hidden = filter !== 'all' && ch.dataset.category !== filter;
-        ch.querySelectorAll('[data-reveal]').forEach((n) => n.classList.add('is-in'));
-      });
-      window.dispatchEvent(new CustomEvent('pcap:layout'));
-    }),
-  );
+  const apply = (filter: string, updateUrl: boolean) => {
+    if (!chips.some((c) => c.dataset.filter === filter)) filter = 'all';
+    chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.filter === filter)));
+    chapters.forEach((ch) => {
+      ch.hidden = filter !== 'all' && ch.dataset.category !== filter;
+      if (filter !== 'all') ch.querySelectorAll('[data-reveal]').forEach((n) => n.classList.add('is-in'));
+    });
+    // El filtro queda en la URL para poder compartir «solo excursiones de mar», por ejemplo.
+    if (updateUrl) {
+      const url = new URL(location.href);
+      if (filter === 'all') url.searchParams.delete('filtro');
+      else url.searchParams.set('filtro', filter);
+      history.replaceState(history.state, '', url);
+    }
+    window.dispatchEvent(new CustomEvent('pcap:layout'));
+  };
+  chips.forEach((chip) => chip.addEventListener('click', () => apply(chip.dataset.filter!, true)));
+  const initial = new URL(location.href).searchParams.get('filtro');
+  if (initial) apply(initial, false);
 }
 
 function initChrome() {

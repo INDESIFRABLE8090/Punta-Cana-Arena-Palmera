@@ -1,0 +1,10 @@
+---
+import SplitText from './reactbits/SplitText';
+/** Titular de sección animado palabra a palabra (React Bits · SplitText). */
+interface Props { text: string; em?: string; id?: string; class?: string }
+const { text, em, id, class: cls } = Astro.props;
+const shared = { tag: 'span', splitType: 'words', textAlign: 'left', duration: 1, delay: 60, rootMargin: '-40px' } as const;
+---
+<h2 class:list={['display', cls]} id={id}>
+  <SplitText client:visible {...shared} text={text} />{em && <Fragment>{' '}<em><SplitText client:visible {...shared} text={em} /></em></Fragment>}
+</h2>

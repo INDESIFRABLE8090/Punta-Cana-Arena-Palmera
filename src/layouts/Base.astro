@@ -10,6 +10,8 @@ import { languages, langMeta, href, type Lang } from '@/i18n/config';
 import { t } from '@/i18n/ui';
 import { site } from '@/config/site';
 import { tours } from '@/data/tours';
+import displayFont from '@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2?url';
+import bodyFont from '@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url';
 
 interface Props {
   lang: Lang;
@@ -45,6 +47,11 @@ const clientData = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <!-- Sitio estático sin backend: solo se permiten recursos propios. WhatsApp se abre como enlace. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={bodyFont} as="font" type="font/woff2" crossorigin />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />

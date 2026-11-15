@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import SplitHeading from './SplitHeading.astro';
 import { t } from '@/i18n/ui';
 import type { Lang } from '@/i18n/config';
 import { tours } from '@/data/tours';
@@ -13,7 +14,7 @@ const p = d.planner;
   <div class="shell">
     <div class="section-head">
       <p class="eyebrow" data-reveal>{p.eyebrow}</p>
-      <h2 class="display h-xl" id="pl-title" data-reveal style="--i:1">{p.title} <em>{p.titleEm}</em></h2>
+      <SplitHeading class="h-xl" id="pl-title" text={p.title} em={p.titleEm} />
       <p class="lead" data-reveal style="--i:2">{p.lead}</p>
     </div>
 

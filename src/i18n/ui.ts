@@ -6,7 +6,7 @@ const es = {
   meta: {
     homeTitle: 'Punta Cana Arena y Palmera | Excursiones y transporte privado en Punta Cana',
     homeDescription:
-      'Isla Saona, Isla Catalina, buggies, Scape Park, delfines, Coco Bongo y más. Elige tus excursiones en Punta Cana, arma tu itinerario y pide tu cotización por WhatsApp.',
+      'Isla Saona, Isla Catalina, buggies, Scape Park, delfines y Coco Bongo. Elige tus excursiones en Punta Cana, arma tu itinerario y cotiza por WhatsApp.',
     tourTitle: (name: string) => `${name} en Punta Cana | Punta Cana Arena y Palmera`,
   },
   nav: {
@@ -109,12 +109,12 @@ const es = {
     remove: 'Quitar',
     transportToggle: 'Necesito transporte privado',
     transportRoute: 'Ruta del traslado',
-    transportRoutePh: 'Ej.: del aeropuerto a mi hotel en Bávaro',
+    transportRoutePh: 'Ej.: del aeropuerto a mi hotel en Bávaro…',
     date: 'Fecha de inicio',
     adults: 'Adultos',
     children: 'Niños',
     childrenAges: 'Edades de los niños',
-    childrenAgesPh: 'Ej.: 6 y 9 años',
+    childrenAgesPh: 'Ej.: 6 y 9 años…',
     hotel: 'Hotel o zona de recogida',
     hotelPh: '¿Dónde te hospedas?',
     name: 'Tu nombre',
@@ -225,7 +225,7 @@ const en: Dictionary = {
   meta: {
     homeTitle: 'Punta Cana Arena y Palmera | Excursions and private transport in Punta Cana',
     homeDescription:
-      'Saona Island, Catalina Island, buggies, Scape Park, dolphins, Coco Bongo and more. Choose your Punta Cana excursions, build your itinerary and request a quote on WhatsApp.',
+      'Saona Island, Catalina Island, buggies, Scape Park, dolphins and Coco Bongo. Choose your Punta Cana excursions, build your itinerary and get a WhatsApp quote.',
     tourTitle: (name) => `${name} in Punta Cana | Punta Cana Arena y Palmera`,
   },
   nav: {
@@ -328,12 +328,12 @@ const en: Dictionary = {
     remove: 'Remove',
     transportToggle: 'I need private transport',
     transportRoute: 'Transfer route',
-    transportRoutePh: 'E.g. from the airport to my hotel in Bávaro',
+    transportRoutePh: 'E.g. from the airport to my hotel in Bávaro…',
     date: 'Start date',
     adults: 'Adults',
     children: 'Children',
     childrenAges: 'Children’s ages',
-    childrenAgesPh: 'E.g. 6 and 9 years old',
+    childrenAgesPh: 'E.g. 6 and 9 years old…',
     hotel: 'Hotel or pickup area',
     hotelPh: 'Where are you staying?',
     name: 'Your name',
@@ -441,7 +441,7 @@ const pt: Dictionary = {
   meta: {
     homeTitle: 'Punta Cana Arena y Palmera | Excursões e transporte privado em Punta Cana',
     homeDescription:
-      'Ilha Saona, Ilha Catalina, buggies, Scape Park, golfinhos, Coco Bongo e mais. Escolha suas excursões em Punta Cana, monte seu roteiro e peça seu orçamento pelo WhatsApp.',
+      'Ilha Saona, Ilha Catalina, buggies, Scape Park, golfinhos e Coco Bongo. Escolha suas excursões em Punta Cana, monte seu roteiro e peça orçamento pelo WhatsApp.',
     tourTitle: (name) => `${name} em Punta Cana | Punta Cana Arena y Palmera`,
   },
   nav: {
@@ -544,12 +544,12 @@ const pt: Dictionary = {
     remove: 'Remover',
     transportToggle: 'Preciso de transporte privado',
     transportRoute: 'Rota do traslado',
-    transportRoutePh: 'Ex.: do aeroporto ao meu hotel em Bávaro',
+    transportRoutePh: 'Ex.: do aeroporto ao meu hotel em Bávaro…',
     date: 'Data de início',
     adults: 'Adultos',
     children: 'Crianças',
     childrenAges: 'Idades das crianças',
-    childrenAgesPh: 'Ex.: 6 e 9 anos',
+    childrenAgesPh: 'Ex.: 6 e 9 anos…',
     hotel: 'Hotel ou área de embarque',
     hotelPh: 'Onde você está hospedado?',
     name: 'Seu nome',

@@ -1,4 +1,4 @@
-name: Deploy Vite site to GitHub Pages
+name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
@@ -13,25 +13,21 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # Para dominio propio: SITE_URL=https://tudominio.com y BASE_PATH=/
+      SITE_URL: https://indesifrable8090.github.io
+      BASE_PATH: /Punta-Cana-Arena-Palmera
     steps:
       - uses: actions/checkout@v4
-      - name: Restore website source
-        run: |
-          base64 --decode project-source.zip.b64 > /tmp/project.zip
-          mkdir -p site
-          unzip -q /tmp/project.zip -d site
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - name: Install dependencies
-        working-directory: site/punta-cana-arena-palmera
-        run: npm install --no-audit --no-fund
-      - name: Build website
-        working-directory: site/punta-cana-arena-palmera
-        run: npm run build
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site/punta-cana-arena-palmera/dist
+          path: dist
   deploy:
     environment:
       name: github-pages

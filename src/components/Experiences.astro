@@ -1,5 +1,6 @@
 ---
 import TourChapter from './TourChapter.astro';
+import SplitHeading from './SplitHeading.astro';
 import { t } from '@/i18n/ui';
 import type { Lang } from '@/i18n/config';
 import { tours, type Category } from '@/data/tours';
@@ -13,7 +14,7 @@ const cats: Category[] = ['sea', 'adventure', 'nature', 'night'];
   <div class="shell">
     <div class="section-head">
       <p class="eyebrow" data-reveal>{d.experiences.eyebrow}</p>
-      <h2 class="display h-xl" id="exp-title" data-reveal style="--i:1">{d.experiences.title} <em>{d.experiences.titleEm}</em></h2>
+      <SplitHeading class="h-xl" id="exp-title" text={d.experiences.title} em={d.experiences.titleEm} />
       <p class="lead" data-reveal style="--i:2">{d.experiences.lead}</p>
       <div class="filters" role="group" aria-label={d.experiences.filterLabel} data-reveal style="--i:3">
         <button type="button" class="chip" data-filter="all" aria-pressed="true">{d.experiences.all}</button>

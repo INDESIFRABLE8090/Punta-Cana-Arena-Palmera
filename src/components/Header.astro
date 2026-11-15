@@ -16,9 +16,9 @@ const links = [
 
 <header class:list={['site-header', { 'is-overlay': overlay }]} data-header>
   <div class="bar shell">
-    <a class="brand" href={homePath(lang)} aria-label={`Punta Cana Arena y Palmera — ${d.nav.home}`}>
+    <a class="brand" href={homePath(lang)}>
       <Logo />
-      <span class="brand-text"><strong>Punta Cana</strong><span>Arena y Palmera</span></span>
+      <span class="brand-text" translate="no"><strong>Punta Cana</strong> <span>Arena y Palmera</span></span><span class="sr-only"> — {d.nav.home}</span>
     </a>
 
     <nav class="nav-desktop" aria-label={d.nav.main}>
@@ -100,7 +100,7 @@ const links = [
   .burger[aria-expanded='true'] span:first-child { transform: translateY(0.3rem) rotate(45deg); }
   .burger[aria-expanded='true'] span:last-child { transform: translateY(-0.28rem) rotate(-45deg); }
 
-  .menu { height: calc(100dvh - var(--header-h)); overflow-y: auto; padding: 1.5rem var(--gutter) 2.5rem; display: flex; flex-direction: column; justify-content: space-between; gap: 2rem; background: var(--sand-50); }
+  .menu { height: calc(100dvh - var(--header-h)); overflow-y: auto; padding: 1.5rem var(--gutter) 2.5rem; display: flex; flex-direction: column; justify-content: space-between; gap: 2rem; background: var(--sand-50); overscroll-behavior: contain; }
   .menu[hidden] { display: none; }
   .menu nav { display: grid; }
   .menu nav a { font-family: var(--font-display); font-size: clamp(2rem, 9vw, 3rem); font-weight: 340; letter-spacing: -0.02em; text-decoration: none; padding-block: 0.55rem; border-bottom: 1px solid rgb(10 30 38 / 0.1); animation: menu-in 0.6s var(--ease) both; animation-delay: calc(var(--i) * 60ms); }

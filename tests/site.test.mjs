@@ -9,7 +9,7 @@
  * (npm i -g playwright && npx playwright install chromium).
  */
 import { createRequire } from 'node:module';
-import { execSync, spawn } from 'node:child_process';
+import { execSync } from 'node:child_process';
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -26,6 +26,7 @@ const SLUGS = ['scuba-doo', 'isla-saona', 'isla-catalina', 'buggies-polaris-atv'
 let passed = 0;
 const failures = [];
 function check(name, ok, detail = '') {
+  detail = String(detail).slice(0, 240);
   if (ok) passed++;
   else failures.push(`${name}${detail ? ` — ${detail}` : ''}`);
   console.log(`${ok ? '  ok ' : 'FAIL '} ${name}${ok || !detail ? '' : ` — ${detail}`}`);
@@ -80,7 +81,7 @@ function staticChecks() {
       if ((html.match(/rel="alternate" hreflang=/g) ?? []).length !== 4) seo.push(`${rel}: hreflang incompleto`);
       if ((html.match(/<h1[\s>]/g) ?? []).length !== 1) seo.push(`${rel}: debe tener un único h1`);
       if (!/application\/ld\+json/.test(html)) seo.push(`${rel}: sin datos estructurados`);
-      if (/<img(?![^>]*\salt=)[^>]*>/.test(html)) seo.push(`${rel}: imagen sin atributo alt`);
+      if (/<img(?![^>]*\salt[\s=>])[^>]*>/.test(html)) seo.push(`${rel}: imagen sin atributo alt`);
       if (/undefined|\[object Object\]|NaN/.test(html.replace(/<script[\s\S]*?<\/script>/g, ''))) seo.push(`${rel}: texto sin resolver`);
       if (/aggregateRating|"review"|"price"/.test(html)) seo.push(`${rel}: datos estructurados no autorizados`);
     }
@@ -110,7 +111,14 @@ async function waitForServer() {
 
 async function browserChecks() {
   const { chromium, devices } = loadPlaywright();
-  const server = spawn('npx', ['astro', 'preview', '--port', String(PORT)], { cwd: root, stdio: 'ignore', detached: true });
+  // `astro preview` queda en segundo plano; se detiene al terminar.
+  const astro = (args) => {
+    try {
+      execSync(`npx astro preview ${args}`, { cwd: root, stdio: 'ignore' });
+    } catch {}
+  };
+  astro('stop');
+  astro(`--port ${PORT}`);
   const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
   try {
     await waitForServer();
@@ -260,6 +268,32 @@ async function browserChecks() {
       await ctx.close();
     }
 
+    console.log('\nAuditoría automática WCAG 2.1 AA (axe-core)');
+    const axeSource = readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
+    for (const [name, opts, path] of [
+      ['móvil · /es/', pixel, '/es/'],
+      ['escritorio · /en/', { viewport: { width: 1440, height: 900 } }, '/en/'],
+      ['móvil · ficha Monkeyland (pt)', pixel, '/pt/excursoes/monkeyland/'],
+      ['móvil · ficha Coco Bongo (es)', pixel, '/es/excursiones/coco-bongo/'],
+    ]) {
+      const { ctx, page } = await open({ ...opts, reducedMotion: 'reduce' }, path);
+      await page.addScriptTag({ content: axeSource });
+      const result = await page.evaluate(async () => {
+        const r = await window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] } });
+        return r.violations.map((v) => `${v.id} (${v.nodes.length}): ${v.nodes.slice(0, 2).map((n) => n.target.join(' ')).join(', ')}`);
+      });
+      check(`axe ${name}: sin infracciones WCAG A/AA`, result.length === 0, result.join(' | '));
+      await ctx.close();
+    }
+    {
+      const { ctx, page } = await open(pixel, '/es/?filtro=adventure');
+      const shown = await page.locator('[data-chapters] > li:not([hidden])').count();
+      check('enlace con ?filtro=adventure abre ya filtrado (2 excursiones)', shown === 2, `muestra ${shown}`);
+      await page.click('[data-filter="sea"]');
+      check('el filtro elegido queda en la URL', page.url().includes('filtro=sea'));
+      await ctx.close();
+    }
+
     console.log('\nIdiomas');
     for (const [lang, h1, submit, tourSeg, tourMsg] of [
       ['en', 'The Caribbean', 'Send request on WhatsApp', 'excursions', 'quote for the excursion: Saona Island'],
@@ -330,9 +364,7 @@ async function browserChecks() {
     }
   } finally {
     await browser.close();
-    try {
-      process.kill(-server.pid);
-    } catch {}
+    astro('stop');
   }
 }
 

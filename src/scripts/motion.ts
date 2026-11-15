@@ -31,12 +31,6 @@ function initParallax() {
   gsap.utils.toArray<HTMLElement>('[data-parallax]').forEach((el) => {
     gsap.fromTo(el, { yPercent: -4 }, { yPercent: 4, ease: 'none', scrollTrigger: { trigger: el.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } });
   });
-  const route = document.querySelector<SVGPathElement>('[data-route]');
-  if (route) {
-    const length = route.getTotalLength();
-    gsap.set(route, { strokeDasharray: length, strokeDashoffset: length });
-    gsap.to(route, { strokeDashoffset: 0, ease: 'none', scrollTrigger: { trigger: '#transporte', start: 'top 80%', end: 'bottom 60%', scrub: true } });
-  }
 }
 
 /** Inmersión: sincroniza el scroll con la cámara 3D, los textos y el sonido. */

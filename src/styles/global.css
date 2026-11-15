@@ -40,6 +40,7 @@
 }
 
 html {
+  color-scheme: light;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   scroll-padding-top: calc(var(--header-h) + 1rem);
@@ -101,6 +102,13 @@ select,
 textarea {
   font: inherit;
   color: inherit;
+}
+button,
+a,
+label,
+summary {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 button {
   cursor: pointer;
@@ -284,6 +292,11 @@ button {
   display: grid;
   gap: 1.25rem;
   margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+/* SplitText (React Bits) oculta el titular hasta animarlo: sin JavaScript debe verse. */
+html:not(.js) .split-parent {
+  visibility: visible !important;
 }
 
 /* Aparición al hacer scroll. Sin JS todo es visible. */
