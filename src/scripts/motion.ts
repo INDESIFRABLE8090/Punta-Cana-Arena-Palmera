@@ -96,11 +96,65 @@ function initDive() {
   io.observe(dive);
 }
 
+
+/**
+ * Capítulos fotográficos: la sección se fija y cada foto se descubre desde abajo sobre la anterior
+ * (clip-path), asentándose desde un ligero zoom; el panel cambia de capítulo a mitad del barrido.
+ * Solo en pantallas de 600 px de alto o más; si no, se queda la versión en reposo (fotos en rejilla).
+ */
+function initPhotoChapters() {
+  const root = document.querySelector<HTMLElement>('[data-photo-chapters]');
+  if (!root || window.innerHeight < 600) return;
+  const box = root.querySelector<HTMLElement>('.pc')!;
+  const list = root.querySelector<HTMLElement>('.pc__list')!;
+  const chapters = [...root.querySelectorAll<HTMLElement>('.pc__ch')];
+  const pics = chapters.map((c) => c.querySelector<HTMLElement>('.pc__pic')!);
+  const n = chapters.length;
+  if (n < 2 || pics.some((p) => !p)) return;
+
+  const stage = document.createElement('div');
+  stage.className = 'pc__stage';
+  const panel = document.createElement('div');
+  panel.className = 'pc__panel';
+  const count = document.createElement('p');
+  count.className = 'pc__count';
+  count.setAttribute('aria-hidden', 'true');
+  panel.append(count, list);
+  pics.forEach((p) => stage.append(p));
+  stage.append(panel);
+  box.append(stage);
+  root.classList.add('is-live');
+
+  const zoom = 1.06;
+  const pad = (v: number) => String(v).padStart(2, '0');
+  let on = -1;
+  const draw = (p: number) => {
+    const seg = 1 / n;
+    let k = 0;
+    pics.forEach((pic, i) => {
+      const u = i === 0 ? 1 : Math.min(1, Math.max(0, (p - (i - 0.25) * seg) / (0.45 * seg)));
+      const e = 1 - Math.pow(1 - u, 3);
+      pic.style.setProperty('--c', `${((1 - e) * 100).toFixed(2)}%`);
+      pic.style.setProperty('--z', (zoom - (zoom - 1) * e).toFixed(4));
+      if (u >= 0.5) k = i;
+    });
+    if (k !== on) {
+      on = k;
+      chapters.forEach((c, i) => c.classList.toggle('is-on', i === k));
+      count.textContent = `${pad(k + 1)} / ${pad(n)}`;
+    }
+  };
+  draw(0);
+  ScrollTrigger.create({ trigger: root, start: 'top top', end: 'bottom bottom', onUpdate: (self) => draw(self.progress) });
+  ScrollTrigger.refresh();
+}
+
 export function initMotion() {
   if (prefersReducedMotion()) return;
   initSmoothScroll();
   initParallax();
   initDive();
+  initPhotoChapters();
   window.addEventListener('pcap:layout', () => ScrollTrigger.refresh());
   window.addEventListener('load', () => ScrollTrigger.refresh());
 }

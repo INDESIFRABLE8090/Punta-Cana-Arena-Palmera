@@ -42,6 +42,17 @@ const es = {
     line3: 'Y debajo, otro mundo.',
     line4: 'Bienvenido a Punta Cana.',
   },
+  chapters: {
+    title: 'Cuatro maneras de vivir Punta Cana.',
+    lead: 'Once excursiones agrupadas por lo que te apetece: el mar, el fondo marino, la tierra y la noche.',
+    see: 'Ver estas excursiones',
+    items: [
+      { id: 'sea', title: 'El mar', text: 'Isla Saona e Isla Catalina, la lancha rápida por la costa de Bávaro y el Party Boat con piscina natural.' },
+      { id: 'under', title: 'Bajo el agua', text: 'Scuba Doo con barco de fondo de cristal y una hora junto a los delfines en Dolphin Explorer.' },
+      { id: 'land', title: 'La tierra', text: 'Buggies, Polaris y ATV hasta Playa Macao, Fun Park, Scape Park con el Hoyo Azul y Monkeyland.' },
+      { id: 'night', title: 'La noche', text: 'Coco Bongo Regular con transporte grupal y, a tu elección, Drink Pack u Open Bar.' },
+    ],
+  },
   experiences: {
     eyebrow: 'Las once experiencias',
     title: 'Por mar, por tierra',
@@ -261,6 +272,17 @@ const en: Dictionary = {
     line3: 'And beneath it, another world.',
     line4: 'Welcome to Punta Cana.',
   },
+  chapters: {
+    title: 'Four ways to live Punta Cana.',
+    lead: 'Eleven excursions grouped by what you feel like: the sea, the reef, the land and the night.',
+    see: 'See these excursions',
+    items: [
+      { id: 'sea', title: 'The sea', text: 'Saona and Catalina islands, the speedboat along the Bávaro coast and the Party Boat with a natural pool.' },
+      { id: 'under', title: 'Under the water', text: 'Scuba Doo with a glass-bottom boat, and one hour alongside the dolphins at Dolphin Explorer.' },
+      { id: 'land', title: 'The land', text: 'Buggies, Polaris and ATV to Macao Beach, Fun Park, Scape Park with the Blue Hole, and Monkeyland.' },
+      { id: 'night', title: 'The night', text: 'Coco Bongo Regular with group transportation and your choice of Drink Pack or Open Bar.' },
+    ],
+  },
   experiences: {
     eyebrow: 'The eleven experiences',
     title: 'By sea, by land',
@@ -476,6 +498,17 @@ const pt: Dictionary = {
     line2: 'Depois, a água.',
     line3: 'E, lá embaixo, outro mundo.',
     line4: 'Bem-vindo a Punta Cana.',
+  },
+  chapters: {
+    title: 'Quatro jeitos de viver Punta Cana.',
+    lead: 'Onze excursões agrupadas pelo que você quer fazer: o mar, o fundo do mar, a terra e a noite.',
+    see: 'Ver estas excursões',
+    items: [
+      { id: 'sea', title: 'O mar', text: 'Ilha Saona e Ilha Catalina, a lancha rápida pela costa de Bávaro e o Party Boat com piscina natural.' },
+      { id: 'under', title: 'Debaixo d’água', text: 'Scuba Doo com barco de fundo de vidro e uma hora ao lado dos golfinhos no Dolphin Explorer.' },
+      { id: 'land', title: 'A terra', text: 'Buggies, Polaris e ATV até a Praia Macao, Fun Park, Scape Park com o Buraco Azul e Monkeyland.' },
+      { id: 'night', title: 'A noite', text: 'Coco Bongo Regular com transporte em grupo e, à sua escolha, Drink Pack ou Open Bar.' },
+    ],
   },
   experiences: {
     eyebrow: 'As onze experiências',
