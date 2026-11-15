@@ -151,7 +151,7 @@ export function legalText(lang: Lang, doc: LegalDoc, owner: Owner, updated: stri
       },
       credits: {
         title: 'Créditos de imágenes',
-        intro: 'Fotografías de terceros usadas en este sitio, con su autor y licencia. Las imágenes se han recortado y comprimido para la web.',
+        intro: 'Fotografías de terceros usadas en este sitio, con su autor y licencia. Las imágenes se han recortado, comprimido y, en algún caso, ajustado de color para la web.',
         sections: [],
       },
     },
@@ -259,7 +259,7 @@ export function legalText(lang: Lang, doc: LegalDoc, owner: Owner, updated: stri
       },
       credits: {
         title: 'Image credits',
-        intro: 'Third-party photographs used on this site, with their author and licence. Images have been cropped and compressed for the web.',
+        intro: 'Third-party photographs used on this site, with their author and licence. Images have been cropped, compressed and in some cases colour-adjusted for the web.',
         sections: [],
       },
     },
@@ -367,7 +367,7 @@ export function legalText(lang: Lang, doc: LegalDoc, owner: Owner, updated: stri
       },
       credits: {
         title: 'Créditos das imagens',
-        intro: 'Fotografias de terceiros usadas neste site, com autor e licença. As imagens foram recortadas e comprimidas para a web.',
+        intro: 'Fotografias de terceiros usadas neste site, com autor e licença. As imagens foram recortadas, comprimidas e, em alguns casos, ajustadas de cor para a web.',
         sections: [],
       },
     },

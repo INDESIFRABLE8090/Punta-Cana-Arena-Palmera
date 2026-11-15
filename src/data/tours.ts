@@ -10,6 +10,7 @@ import playaMacao from '@/assets/images/commons-playa-macao.jpg';
 import islaSaona from '@/assets/images/commons-isla-saona.jpg';
 import islaCatalina from '@/assets/images/commons-isla-catalina.jpg';
 import monoArdilla from '@/assets/images/commons-mono-ardilla.jpg';
+import piscinaNatural from '@/assets/images/commons-piscina-natural.jpg';
 
 /**
  * Catálogo comercial autorizado: 11 excursiones.
@@ -358,6 +359,16 @@ export const tours: Tour[] = [
     },
     accent: '#f0806a',
     deep: '#162a5c',
+    image: {
+      src: piscinaNatural,
+      alt: {
+        es: 'Piscina natural de agua turquesa y poco profunda cerca de Bávaro, con lanchas y veleros al fondo',
+        en: 'Shallow turquoise natural pool near Bávaro, with boats and sailboats in the distance',
+        pt: 'Piscina natural de água turquesa e rasa perto de Bávaro, com lanchas e veleiros ao fundo',
+      },
+      position: '50% 60%',
+      credit: 'commons-piscina-natural.jpg',
+    },
   },
   {
     slug: 'coco-bongo',

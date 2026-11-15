@@ -16,6 +16,14 @@ export interface Credit {
 
 export const credits: Credit[] = [
   {
+    file: 'commons-piscina-natural.jpg',
+    title: 'Mar Caribe',
+    author: 'Melodygar',
+    license: 'CC BY-SA 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+    source: 'https://commons.wikimedia.org/wiki/File:Mar_Caribe.jpg',
+  },
+  {
     file: 'commons-mono-ardilla.jpg',
     title: 'Saimiri sciureus 184553489',
     author: 'Lennart Hudel',
