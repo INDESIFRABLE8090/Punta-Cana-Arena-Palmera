@@ -47,6 +47,7 @@ jobs:
           const results=[];
           for(const [name,width,height] of [['mobile',390,844],['tablet',768,1024],['desktop',1440,900]]){
             const page=await browser.newPage({viewport:{width,height},reducedMotion:'reduce'});
+            page.setDefaultTimeout(8000);
             const errors=[];
             page.on('pageerror',e=>errors.push(e.message));
             page.on('response',r=>{if(r.status()>=400)errors.push(r.status()+' '+r.url());});
