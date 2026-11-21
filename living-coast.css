@@ -153,3 +153,6 @@ body{background:#f4f6f1}
   .hero[data-living-coast] h1 .cinematic-line{animation:none!important;transform:none!important;filter:none!important;opacity:1!important}
   .coast-chapter,.living-coast-stage,#livingCoastCanvas{transition:none!important}
 }
+
+/* Keep the conversion shortcut available in later sections, without covering the scene selector. */
+body.coast-hero-in-view .floating-cta{opacity:0!important;pointer-events:none!important;transform:translateY(20px)!important}
