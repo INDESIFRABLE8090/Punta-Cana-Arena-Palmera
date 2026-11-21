@@ -4,7 +4,7 @@
 
 ## Fuente primaria y cobertura
 
-Se recibieron diez capturas de folletos en la conversación. Se identificaron **diez actividades distintas** (incluyendo las dos anteriormente pendientes: Buggies y Saona). La undécima ficha del prototipo, **Isla Catalina**, no aparece en estas diez imágenes y sigue pendiente de cotejo directo con su folleto; esta limitación no implica que el operador no la ofrezca. Los flyers sí muestran textos ES/EN/PT; el sitio solo tiene ES/EN y debe incorporar PT con revisión comercial antes de publicar.
+Se recibieron diez capturas iniciales y una segunda tanda que incluyó **Isla Catalina** y un duplicado de Scape Park, además de fotografías ilustrativas. Con ello se ha identificado **un folleto para cada una de las once actividades distintas** en el catálogo. Esto valida su descripción frente a los documentos, no la disponibilidad ni las condiciones comerciales actuales. Los flyers sí muestran textos ES/EN/PT; el sitio solo tiene ES/EN y debe incorporar PT con revisión comercial antes de publicar.
 
 Los identificadores siguientes describen las capturas de la conversación, **no fotos de alta resolución listas para usar en producción**. No se han distribuido esas fotografías en el sitio ni se ha verificado licencia comercial de imágenes de terceros.
 
@@ -20,20 +20,20 @@ Los identificadores siguientes describen las capturas de la conversación, **no 
 | `dolphin` | Dolphin Explorer | `1001279634.jpg` | Transporte, aves exóticas, interacción con león marino y delfines (folleto indica 1 hora), lockers, guías y equipamiento de seguridad. | **Respaldada por folleto**, bienestar animal y condiciones del operador por confirmar |
 | `monkeyland` | Monkeyland | `1001279635.jpg` | Transporte, monos ardilla, guías, jardín botánico, flora/árboles frutales/plantas medicinales, plantación de café/cacao con degustación, otros animales; menores de 11 precio especial. | **Respaldada por folleto**, condiciones de interacción por confirmar |
 | `scuba-doo` | Scuba Doo | `1001279636.jpg` | Transporte, bebidas no alcohólicas, snorkel 1 h, experiencia de inmersión 1 h según flyer, snacks, seguridad y barco fondo de cristal. | **Respaldada por folleto**, límites/edad/salud de la inmersión por confirmar |
-| `catalina` | Isla Catalina | *No identificada entre las diez capturas de esta tanda* | El prototipo lista transporte, snorkel, almuerzo y guía. **No declarar verificado sin confrontar el folleto exacto**. | **Pendiente de trazabilidad visual en esta tanda** |
+| `catalina` | Isla Catalina | `1001279638.jpg` (segunda tanda) | Transporte terrestre y marítimo, equipo de snorkel, visita al banco de peces, almuerzo buffet, bebidas alcohólicas/no alcohólicas, guía y animación; nota sobre tarifa especial para menores de 11 años. | **Respaldada por folleto**, sujeto a condiciones actualizadas del operador |
 
 ## Resultado comparativo
 
 - Las fichas `buggies` y `saona` **ya no están ausentes de la evidencia aportada**: existían en `app.js` y sus puntos centrales coinciden con los folletos recién compartidos.
 - Para las otras ocho excursiones documentadas, las inclusiones principales en `app.js` son coherentes con el folleto. Las notas cautelares de `party-boat` y `coco-bongo` preservan correctamente suplementos/modalidades.
-- El sitio presenta **11 tarjetas**, pero en esta auditoría **10/11 tienen referencia visual a la captura recibida**. El catálogo no debe presentarse como 11/11 comprobadas hasta localizar el folleto de Catalina u otra prueba del operador.
+- El sitio presenta **11 tarjetas y 11/11 tienen ahora una referencia visual a un folleto aportado**. Eso NO equivale a verificación comercial de precios, fechas, disponibilidad, permisos ni prestaciones vigentes.
 - Las fotos de los flyers son miniaturas ilustrativas, no media HD usable para hero ni prueba de titularidad comercial. **No subirlas a la web como galerías premium.**
 - Si un flyer tiene falta ortográfica o traducción imperfecta, transcribir contenido sin convertir erratas en promesas. Los textos portugueses del flyer son materia de referencia, no una traducción final automáticamente aprobada.
 - No se validaron precios vigentes, calendario, reservas reales, horarios, rutas, flota, permisos, licencias, disponibilidad ni pagos.
 
 ## Próximas tareas de producto
 
-1. Cotejar ficha de Isla Catalina y cualquier material adicional del usuario.
+1. Revisar las condiciones comerciales actuales de las 11 fichas con el operador, especialmente requisitos de conducción, niños, transporte, animales y actividades acuáticas.
 2. Completar portugués brasileño ES/EN/PT, incluidos filtros, fichas, interfaz de itinerario y WhatsApp.
 3. Usar material fotográfico de calidad con derechos confirmados y, si son ilustraciones IA, declararlo con una nota discreta.
 4. Añadir cotizador separado de traslados nacionales punto a punto, sin distancias ni tarifas inventadas.
