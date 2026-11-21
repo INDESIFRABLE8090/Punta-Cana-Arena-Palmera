@@ -12,6 +12,7 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="planner.css" />
+  <link rel="stylesheet" href="living-coast.css" />
 </head>
 <body>
   <div class="topbar flex items-center justify-center gap-2"><span class="sun-dot"></span> PUNTA CANA · REPÚBLICA DOMINICANA <span class="topbar-divider">/</span> EXPERIENCIAS EN EL CARIBE</div>
@@ -35,19 +36,27 @@
   <div class="mobile-menu" id="mobileMenu"><a href="#inicio" data-i18n="navHome">Inicio</a><a href="#excursiones" data-i18n="navTours">Excursiones</a><a href="#mi-viaje" data-i18n="navPlanner">Mi viaje</a><a href="#transporte" data-i18n="navTransport">Transporte</a><a href="#nosotros" data-i18n="navAbout">Nosotros</a><a href="#preguntas" data-i18n="navFaq">Preguntas</a><a href="#cotizar" data-i18n="navCta">Cotizar viaje ↗</a></div>
 
   <main>
-    <section class="hero" id="inicio">
+    <section class="hero" id="inicio" data-living-coast data-coast-scene="sea">
+      <div class="living-coast-stage" aria-hidden="true"><canvas id="livingCoastCanvas" aria-hidden="true"></canvas></div>
       <div class="hero-image" aria-hidden="true"></div>
       <div class="hero-sky-glow" aria-hidden="true"></div>
-      <canvas id="hero3d" aria-hidden="true"></canvas>
       <div class="hero-grain" aria-hidden="true"></div>
       <div class="hero-content shell">
         <div class="eyebrow eyebrow-light"><span class="eyebrow-line"></span><span data-i18n="heroEyebrow">EL LADO MÁS VIVO DEL CARIBE</span></div>
-        <h1><span data-i18n="heroLine1">El Caribe</span><br /><em data-i18n="heroLine2">no se cuenta.</em><br /><span class="hero-third" data-i18n="heroLine3">Se vive.</span></h1>
+        <h1 class="cinematic-headline"><span class="cinematic-line" data-i18n="heroLine1">El Caribe</span><br /><em class="cinematic-line" data-i18n="heroLine2">no se mira.</em><br /><span class="hero-third cinematic-line" data-i18n="heroLine3">Se vive.</span></h1>
         <p class="hero-description" data-i18n="heroDescription">Playas que parecen un sueño, aventuras que te suben la adrenalina y momentos dominicanos que se quedan contigo.</p>
         <div class="hero-buttons flex flex-wrap items-center gap-3"><a class="button button-coral" href="#excursiones" data-i18n="heroExplore">Explorar experiencias <span>↗</span></a><a class="button button-glass" href="#cotizar" data-i18n="heroQuote">Planear mi aventura</a></div>
         <div class="hero-footnote"><span class="location-pin">⌖</span><span data-i18n="heroLocation">Punta Cana · Bávaro · República Dominicana</span></div>
       </div>
       <div class="hero-side-note"><span class="hero-side-number">18°</span><span>CARIBE<br />TROPICAL</span></div>
+      <div class="coast-archive" aria-hidden="true"><strong>18° N</strong><span>MAR CARIBE<br />REPÚBLICA DOMINICANA</span></div>
+      <div class="coast-chapters" role="group" aria-label="Explora el Caribe a tu ritmo">
+        <p class="coast-chapters-title" data-i18n="coastTitle">ELIGE TU RITMO</p>
+        <button class="coast-chapter" type="button" data-coast-chapter="sea" aria-pressed="true"><span data-i18n="coastSea">MAR</span><span class="coast-chapter-num">01</span></button>
+        <button class="coast-chapter" type="button" data-coast-chapter="adventure" aria-pressed="false"><span data-i18n="coastLand">TIERRA</span><span class="coast-chapter-num">02</span></button>
+        <button class="coast-chapter" type="button" data-coast-chapter="night" aria-pressed="false"><span data-i18n="coastNight">NOCHE</span><span class="coast-chapter-num">03</span></button>
+        <p class="coast-chapter-status" id="coastChapterStatus" role="status" aria-live="polite">El océano marca el comienzo.</p>
+      </div>
       <div class="hero-bottom shell"><span class="scroll-cue"><i></i></span><span data-i18n="scrollText">DESLIZA PARA DESCUBRIR</span><span class="hero-bottom-line"></span><span class="hero-bottom-coord">18° 34' N — 68° 24' W</span></div>
       <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="false"><span class="sound-icon">♫</span><span data-i18n="soundOff">Sonido: apagado</span></button>
     </section>
