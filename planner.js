@@ -10,7 +10,7 @@ export function initTripPlanner({ tours, getLanguage, getModalTour }) {
   const byId = id => document.getElementById(id);
   const copy = {
     es: {
-      nav: 'Mi viaje', eyebrow: 'TU AVENTURA, A TU RITMO',
+      nav: 'Mi viaje', explore: 'Explorar experiencias', eyebrow: 'TU AVENTURA, A TU RITMO',
       title: 'Diseña tu propio Caribe.', intro: 'Combina excursiones, organízalas por días y prepara una sola solicitud. Tú eliges el plan; el operador confirma la logística.',
       selected: 'experiencias guardadas', listTitle: 'Tu selección', emptyTitle: 'Tu viaje empieza con una elección.',
       emptyBody: 'Explora las excursiones y toca “Añadir al viaje”. Aquí aparecerá tu plan personalizado.',
@@ -30,7 +30,7 @@ export function initTripPlanner({ tours, getLanguage, getModalTour }) {
       planLabel: 'Plan de viaje', forQuote: 'Selección de excursiones y días sugeridos (pendientes de confirmar):'
     },
     en: {
-      nav: 'My trip', eyebrow: 'YOUR ADVENTURE, YOUR WAY',
+      nav: 'My trip', explore: 'Explore experiences', eyebrow: 'YOUR ADVENTURE, YOUR WAY',
       title: 'Design your Caribbean escape.', intro: 'Combine experiences, organize them by day, and prepare one enquiry. You choose; the operator confirms the details.',
       selected: 'saved experiences', listTitle: 'Your selection', emptyTitle: 'Every journey starts with a choice.',
       emptyBody: 'Explore the experiences and tap “Add to trip”. Your personalized plan will appear here.',
