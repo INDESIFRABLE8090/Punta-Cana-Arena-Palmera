@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#062d3a" />
+  <meta name="description" content="Descubre excursiones, aventuras y transporte en Punta Cana y la República Dominicana con Punta Cana Arena y Palmera. El Caribe no se cuenta. Se vive." />
+  <meta property="og:title" content="Punta Cana Arena y Palmera | El Caribe no se cuenta. Se vive." />
+  <meta property="og:description" content="Excursiones, mar, aventura y transporte en el Caribe dominicano." />
+  <meta property="og:type" content="website" />
+  <title>Punta Cana Arena y Palmera | Experiencias en el Caribe</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="topbar flex items-center justify-center gap-2"><span class="sun-dot"></span> PUNTA CANA · REPÚBLICA DOMINICANA <span class="topbar-divider">/</span> EXPERIENCIAS EN EL CARIBE</div>
+  <header class="site-header flex items-center justify-between" id="top">
+    <a class="brand" href="#inicio" aria-label="Punta Cana Arena y Palmera, inicio">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 56 56" role="img"><circle cx="28" cy="28" r="26" fill="#f7c86a"/><path d="M8 35c9-5 17-5 25 0s12 4 16 1v11H8z" fill="#0e9da6"/><path d="M29 33V13" stroke="#236b54" stroke-width="2.5" stroke-linecap="round"/><path d="M29 15c-7-7-14-6-16-5 4 5 9 8 16 8M29 15c4-9 11-10 15-9-2 6-7 10-15 12M29 18c-1-8 2-13 5-15 3 5 2 11-3 17M29 19c7-4 13-3 17 0-5 4-11 5-18 3" fill="none" stroke="#236b54" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="brand-copy"><strong>PUNTA CANA</strong><small>ARENA Y PALMERA</small></span>
+    </a>
+    <nav class="desktop-nav" aria-label="Navegación principal">
+      <a href="#inicio" data-i18n="navHome">Inicio</a><a href="#excursiones" data-i18n="navTours">Excursiones</a><a href="#transporte" data-i18n="navTransport">Transporte</a><a href="#nosotros" data-i18n="navAbout">Nosotros</a><a href="#preguntas" data-i18n="navFaq">Preguntas</a>
+    </nav>
+    <div class="header-actions">
+      <button class="language-toggle" id="languageToggle" aria-label="Cambiar idioma">ES <span>/</span> EN</button>
+      <a class="button button-small button-coral" href="#cotizar" data-i18n="navCta">Cotizar viaje <span>↗</span></a>
+      <button class="mobile-menu-button" id="mobileMenuButton" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span></button>
+    </div>
+  </header>
+  <div class="mobile-menu" id="mobileMenu"><a href="#inicio" data-i18n="navHome">Inicio</a><a href="#excursiones" data-i18n="navTours">Excursiones</a><a href="#transporte" data-i18n="navTransport">Transporte</a><a href="#nosotros" data-i18n="navAbout">Nosotros</a><a href="#preguntas" data-i18n="navFaq">Preguntas</a><a href="#cotizar" data-i18n="navCta">Cotizar viaje ↗</a></div>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="hero-image" aria-hidden="true"></div>
+      <div class="hero-sky-glow" aria-hidden="true"></div>
+      <canvas id="hero3d" aria-hidden="true"></canvas>
+      <div class="hero-grain" aria-hidden="true"></div>
+      <div class="hero-content shell">
+        <div class="eyebrow eyebrow-light"><span class="eyebrow-line"></span><span data-i18n="heroEyebrow">EL LADO MÁS VIVO DEL CARIBE</span></div>
+        <h1><span data-i18n="heroLine1">El Caribe</span><br /><em data-i18n="heroLine2">no se cuenta.</em><br /><span class="hero-third" data-i18n="heroLine3">Se vive.</span></h1>
+        <p class="hero-description" data-i18n="heroDescription">Playas que parecen un sueño, aventuras que te suben la adrenalina y momentos dominicanos que se quedan contigo.</p>
+        <div class="hero-buttons flex flex-wrap items-center gap-3"><a class="button button-coral" href="#excursiones" data-i18n="heroExplore">Explorar experiencias <span>↗</span></a><a class="button button-glass" href="#cotizar" data-i18n="heroQuote">Planear mi aventura</a></div>
+        <div class="hero-footnote"><span class="location-pin">⌖</span><span data-i18n="heroLocation">Punta Cana · Bávaro · República Dominicana</span></div>
+      </div>
+      <div class="hero-side-note"><span class="hero-side-number">18°</span><span>CARIBE<br />TROPICAL</span></div>
+      <div class="hero-bottom shell"><span class="scroll-cue"><i></i></span><span data-i18n="scrollText">DESLIZA PARA DESCUBRIR</span><span class="hero-bottom-line"></span><span class="hero-bottom-coord">18° 34' N — 68° 24' W</span></div>
+      <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="false"><span class="sound-icon">♫</span><span data-i18n="soundOff">Sonido: apagado</span></button>
+    </section>
+
+    <section class="intro-strip">
+      <div class="shell intro-strip-inner"><span class="intro-asterisk">✳</span><p data-i18n="introStrip">EL SOL PONE EL ESCENARIO. <strong>TÚ PONES LA HISTORIA.</strong></p><span class="intro-strip-tail">RD · 809</span></div>
+    </section>
+
+    <section class="section excursions-section" id="excursiones">
+      <div class="shell">
+        <div class="section-heading reveal">
+          <div><div class="eyebrow"><span class="eyebrow-line"></span><span data-i18n="toursEyebrow">ELIGE TU PRÓXIMO RECUERDO</span></div><h2 data-i18n="toursTitle">Aventuras para<br /><em>salir de la rutina.</em></h2></div>
+          <p class="section-heading-copy" data-i18n="toursCopy">Del azul transparente de nuestras islas a la emoción de recorrer caminos tropicales. Hay una experiencia esperando por ti.</p>
+        </div>
+        <div class="tour-controls reveal">
+          <div class="filter-pills" role="group" aria-label="Filtrar excursiones"><button class="filter-pill active" data-filter="all" data-i18n="filterAll">Todas</button><button class="filter-pill" data-filter="sea" data-i18n="filterSea">Mar</button><button class="filter-pill" data-filter="adventure" data-i18n="filterAdventure">Aventura</button><button class="filter-pill" data-filter="nature" data-i18n="filterNature">Naturaleza</button><button class="filter-pill" data-filter="night" data-i18n="filterNight">Noche</button></div>
+          <label class="search-box"><span>⌕</span><input id="tourSearch" type="search" placeholder="Buscar una experiencia..." aria-label="Buscar excursiones" data-i18n-placeholder="searchPlaceholder" /></label>
+        </div>
+        <div class="immersive-hint reveal"><span class="immersive-orbit">◉</span><div><strong>Una vista diferente para cada aventura.</strong><p>Cada excursión abre un escenario 3D temático. Las ilustraciones y los paisajes sonoros se generan con código; activa el sonido cuando quieras.</p></div><span class="immersive-hint-tag">3D · AUDIO GENERATIVO</span></div><div class="tour-grid grid gap-4" id="tourGrid"></div>
+        <div class="catalogue-note reveal"><span>✳</span><p data-i18n="catalogueNote">Los precios y la disponibilidad se confirman al cotizar. Las experiencias y sus inclusiones pueden variar según el operador y la fecha.</p></div>
+      </div>
+    </section>
+
+    <section class="transport-section" id="transporte">
+      <div class="transport-overlay"></div><div class="transport-3d-wrap" aria-hidden="true"><canvas id="transport3d"></canvas><span>RUTA CARIBEÑA · 3D</span></div>
+      <div class="shell transport-content reveal">
+        <div class="eyebrow eyebrow-light"><span class="eyebrow-line"></span><span data-i18n="transportEyebrow">EL VIAJE TAMBIÉN IMPORTA</span></div>
+        <h2 data-i18n="transportTitle">Muévete por<br /><em>el paraíso.</em></h2>
+        <p data-i18n="transportCopy">Que el camino sea parte de la experiencia. Cuéntanos desde dónde sales y hacia dónde quieres llegar.</p>
+        <div class="transport-options grid gap-0"><article><span class="transport-icon">↗</span><h3 data-i18n="transferAirport">Traslados privados</h3><p data-i18n="transferAirportCopy">Consulta traslados desde y hacia el aeropuerto.</p></article><article><span class="transport-icon">⌖</span><h3 data-i18n="transferHotels">Hoteles y excursiones</h3><p data-i18n="transferHotelsCopy">Coordina tu recogida para disfrutar sin complicaciones.</p></article><article><span class="transport-icon">◉</span><h3 data-i18n="transferGroups">Grupos y familias</h3><p data-i18n="transferGroupsCopy">Cuéntanos cuántas personas viajan y armamos una cotización.</p></article></div>
+        <a class="button button-coral" href="#cotizar" data-i18n="transportCta">Cotizar transporte <span>↗</span></a>
+      </div>
+    </section>
+
+    <section class="why-section" id="nosotros">
+      <div class="shell why-grid">
+        <div class="why-left reveal"><div class="eyebrow"><span class="eyebrow-line"></span><span data-i18n="aboutEyebrow">EL ESPÍRITU DOMINICANO</span></div><h2 data-i18n="aboutTitle">Más que un destino.<br /><em>Una forma de sentir.</em></h2><p data-i18n="aboutCopy">Aquí el mar tiene mil tonos de azul, la música aparece sin avisar y cada rincón invita a descubrir algo nuevo. Queremos ayudarte a vivir esa energía desde que comienza el viaje.</p><a class="text-link" href="#cotizar" data-i18n="aboutCta">Vamos a planearlo <span>↗</span></a></div>
+        <div class="why-collage reveal"><div class="code-island-art" role="img" aria-label="Ilustración generada por código del mar, una isla tropical y palmeras dominicanas"><svg viewBox="0 0 620 460" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="rdSea" x2="0" y2="1"><stop stop-color="#87e2dc"/><stop offset="1" stop-color="#087e9b"/></linearGradient><linearGradient id="rdSky" x2="0" y2="1"><stop stop-color="#76c9df"/><stop offset="1" stop-color="#f8d69c"/></linearGradient></defs><rect width="620" height="460" fill="url(#rdSky)"/><circle cx="470" cy="100" r="54" fill="#ffe5a8"/><path d="M0 255 Q160 205 310 250 T620 245 V460 H0Z" fill="#e9d09a"/><path d="M0 285 Q150 245 310 280 T620 275 V460 H0Z" fill="url(#rdSea)"/><path d="M0 344 Q125 308 260 342 T620 332 V460 H0Z" fill="#13b8b4"/><path d="M0 395 Q130 365 260 391 T620 387" fill="none" stroke="#d7fff3" stroke-width="7" opacity=".7"/><path d="M360 274 Q410 193 510 232 L590 269Z" fill="#25764f"/><g stroke-linecap="round" fill="none"><path d="M450 253 Q436 171 468 103" stroke="#8b5d3b" stroke-width="16"/><path d="M468 105 Q402 48 350 79 M468 105 Q432 28 473 16 M468 105 Q523 42 573 74 M468 105 Q546 108 590 142 M468 105 Q402 119 365 161" stroke="#236b54" stroke-width="13"/><path d="M468 105 Q402 48 350 79 M468 105 Q432 28 473 16 M468 105 Q523 42 573 74 M468 105 Q546 108 590 142 M468 105 Q402 119 365 161" stroke="#55a76e" stroke-width="4"/></g><path d="M85 323 Q140 285 210 317 L245 339 Q162 364 85 323Z" fill="#fff4dc"/><path d="M159 319 V236" stroke="#fff7e7" stroke-width="6"/><path d="M164 243 L164 314 L218 304Z" fill="#fff0d5"/><path d="M150 251 L150 310 L111 301Z" fill="#ff8069"/></svg><span class="collage-stamp">100%<small>CARIBE</small></span></div><div class="collage-code-badge"><span>GENERADO EN CÓDIGO</span><strong>RD</strong></div><div class="collage-caption"><span>ISLAS · MAR · AVENTURA</span><strong>809</strong></div></div>
+      </div>
+    </section>
+
+    <section class="steps-section">
+      <div class="shell">
+        <div class="section-heading section-heading-center reveal"><div class="eyebrow"><span class="eyebrow-line"></span><span data-i18n="stepsEyebrow">FÁCIL, CLARO Y A TU RITMO</span><span class="eyebrow-line"></span></div><h2 data-i18n="stepsTitle">Tu aventura empieza<br /><em>con tres pasos.</em></h2></div>
+        <div class="steps-grid grid gap-4"><article class="step-card reveal"><span class="step-number">01</span><div class="step-symbol">✳</div><h3 data-i18n="step1Title">Elige la experiencia</h3><p data-i18n="step1Copy">Explora las excursiones y encuentra la que va contigo.</p></article><article class="step-card reveal"><span class="step-number">02</span><div class="step-symbol">↗</div><h3 data-i18n="step2Title">Pide tu cotización</h3><p data-i18n="step2Copy">Dinos la fecha, cuántos viajan y dónde te encuentras.</p></article><article class="step-card reveal"><span class="step-number">03</span><div class="step-symbol">☼</div><h3 data-i18n="step3Title">Confirma y disfruta</h3><p data-i18n="step3Copy">El operador confirma disponibilidad, precio y detalles. ¡A vivir el Caribe!</p></article></div>
+      </div>
+    </section>
+
+    <section class="quote-section" id="cotizar">
+      <div class="quote-decor" aria-hidden="true"></div>
+      <div class="shell quote-grid">
+        <div class="quote-copy reveal"><div class="eyebrow eyebrow-light"><span class="eyebrow-line"></span><span data-i18n="quoteEyebrow">VAMOS A HACERLO REALIDAD</span></div><h2 data-i18n="quoteTitle">Cuéntanos qué<br /><em>te gustaría vivir.</em></h2><p data-i18n="quoteCopy">Completa los detalles y prepara tu solicitud. Te ayudaremos a confirmar disponibilidad, precio y logística.</p><div class="quote-assurance"><span>✳</span><p data-i18n="quoteAssurance">Tu solicitud no es una reserva confirmada. El operador debe validar todos los detalles antes de cerrar.</p></div></div>
+        <form class="quote-form reveal" id="quoteForm">
+          <div class="form-topline"><span data-i18n="formTitle">PLANEA TU EXPERIENCIA</span><span>01 — 08</span></div>
+          <label class="form-field full"><span data-i18n="fieldExperience">¿Qué te interesa?</span><select name="experience" id="experienceSelect" required><option value="" data-i18n="selectExperience">Selecciona una experiencia</option><option value="Transporte / traslado">Transporte / traslado</option></select></label>
+          <div class="form-row grid gap-3"><label class="form-field"><span data-i18n="fieldDate">Fecha deseada</span><input type="date" name="date" id="dateInput" required /></label><label class="form-field"><span data-i18n="fieldPeople">Personas</span><input type="number" name="people" min="1" max="60" value="2" required /></label></div>
+          <div class="form-row grid gap-3"><label class="form-field"><span data-i18n="fieldChildren">Menores y edades</span><input type="text" name="children" placeholder="Ej. 1 niño de 8 años" data-i18n-placeholder="childrenPlaceholder" /></label><label class="form-field"><span data-i18n="fieldPickup">Hotel / zona de recogida</span><input type="text" name="pickup" placeholder="¿Dónde te hospedas?" data-i18n-placeholder="pickupPlaceholder" /></label></div>
+          <div class="form-row grid gap-3"><label class="form-field"><span data-i18n="fieldName">Tu nombre</span><input type="text" name="name" autocomplete="name" placeholder="Nombre y apellido" required data-i18n-placeholder="namePlaceholder" /></label><label class="form-field"><span data-i18n="fieldContact">WhatsApp o email</span><input type="text" name="contact" autocomplete="email" placeholder="¿Cómo te contactamos?" required data-i18n-placeholder="contactPlaceholder" /></label></div>
+          <label class="form-field full"><span data-i18n="fieldNotes">Algo más que debamos saber (opcional)</span><textarea name="notes" rows="2" placeholder="Horario preferido, detalles del traslado..." data-i18n-placeholder="notesPlaceholder"></textarea></label>
+          <label class="consent"><input type="checkbox" required /><span data-i18n="privacyConsent">Acepto que utilicen estos datos para responder mi solicitud de cotización.</span></label>
+          <button class="button button-coral form-submit" type="submit"><span data-i18n="sendQuote">Preparar mi cotización</span><span>↗</span></button>
+          <p class="form-feedback" id="formFeedback" role="status" aria-live="polite"></p>
+          <p class="form-privacy" data-i18n="formPrivacy">No se procesa ningún pago aquí. La reserva solo queda confirmada cuando el operador lo indique expresamente.</p>
+        </form>
+      </div>
+    </section>
+
+    <section class="faq-section" id="preguntas">
+      <div class="shell faq-grid"><div class="faq-heading reveal"><div class="eyebrow"><span class="eyebrow-line"></span><span data-i18n="faqEyebrow">ANTES DE LANZARTE</span></div><h2 data-i18n="faqTitle">Lo que quieres<br /><em>saber.</em></h2><p data-i18n="faqCopy">Una buena aventura empieza con información clara. Aquí van algunas respuestas útiles.</p></div><div class="faq-list reveal" id="faqList"></div></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-top"><a class="brand brand-footer" href="#inicio"><span class="brand-mark"><svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="26" fill="#f7c86a"/><path d="M8 35c9-5 17-5 25 0s12 4 16 1v11H8z" fill="#0e9da6"/><path d="M29 33V13" stroke="#236b54" stroke-width="2.5" stroke-linecap="round"/><path d="M29 15c-7-7-14-6-16-5 4 5 9 8 16 8M29 15c4-9 11-10 15-9-2 6-7 10-15 12M29 18c-1-8 2-13 5-15 3 5 2 11-3 17M29 19c7-4 13-3 17 0-5 4-11 5-18 3" fill="none" stroke="#236b54" stroke-width="2.4" stroke-linecap="round"/></svg></span><span class="brand-copy"><strong>PUNTA CANA</strong><small>ARENA Y PALMERA</small></span></a><p data-i18n="footerLine">El Caribe no se cuenta. Se vive.</p><a class="back-top" href="#top" aria-label="Volver arriba">↑</a></div>
+    <div class="shell footer-bottom"><span>© <span id="year"></span> PUNTA CANA ARENA Y PALMERA</span><span data-i18n="footerLocation">Punta Cana · República Dominicana</span><span data-i18n="footerNote">Experiencias sujetas a confirmación del operador.</span></div>
+  </footer>
+
+  <a class="floating-cta" href="#cotizar" aria-label="Cotizar ahora"><span class="floating-cta-icon">↗</span><span data-i18n="floatingCta">Cotiza tu aventura</span></a>
+
+  <div class="modal-backdrop" id="tourModal" aria-hidden="true"><div class="tour-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button class="modal-close" id="modalClose" aria-label="Cerrar">×</button><div class="modal-image" id="modalImage"><canvas id="tour3dCanvas" aria-label="Escena 3D interactiva de la excursión seleccionada"></canvas><div class="scene-label" id="sceneLabel"><span>◉</span> EXPERIENCIA 3D INTERACTIVA</div><div class="scene-fallback" id="sceneFallback">Vista 3D cargando…</div></div><div class="modal-body"><div class="modal-category" id="modalCategory"></div><h2 id="modalTitle"></h2><p id="modalDescription"></p><h3 data-i18n="includedTitle">¿Qué incluye?</h3><ul id="modalInclusions"></ul><div class="modal-note" id="modalNote"></div><a class="button button-coral" id="modalQuote" href="#cotizar" data-i18n="modalCta">Cotizar esta experiencia <span>↗</span></a></div></div></div>
+
+  <script src="config.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
