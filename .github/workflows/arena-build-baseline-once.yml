@@ -1,0 +1,43 @@
+name: Arena & Palmera — private baseline build (one-shot)
+
+on:
+  push:
+    branches: [chatgpt/arena-build-baseline-r1]
+    paths:
+      - ".github/workflows/arena-build-baseline-once.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify archived source and build Vite project
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/arena"
+          base64 --decode project-source.zip.b64 > "$RUNNER_TEMP/arena/source.zip"
+          unzip -tq "$RUNNER_TEMP/arena/source.zip"
+          unzip -q "$RUNNER_TEMP/arena/source.zip" -d "$RUNNER_TEMP/arena"
+          cd "$RUNNER_TEMP/arena/punta-cana-arena-palmera"
+          npm install --no-audit --no-fund --ignore-scripts
+          npm run build
+          test -s dist/index.html
+          echo "Build generated dist/index.html and other static assets"
+          find dist -type f -printf '%P\n' | sort
+      - name: Save private production build for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: arena-palmera-baseline-dist
+          path: ${{ runner.temp }}/arena/punta-cana-arena-palmera/dist/
+          if-no-files-found: error
+          retention-days: 3
