@@ -108,11 +108,12 @@ export function initLivingCoast() {
       resize();
       draw(performance.now());
       canvas.classList.add('coast-ready');
+      root.classList.add('coast-has-webgl');
       startedAt=performance.now();
       start();
     }catch(error) {
       failed=true;gl=null;
-      canvas.classList.remove('coast-ready');
+      canvas.classList.remove('coast-ready');root.classList.remove('coast-has-webgl');
     }
   }
 
@@ -131,6 +132,7 @@ export function initLivingCoast() {
   if('IntersectionObserver' in window) {
     const view=new IntersectionObserver(entries=>{
       visible=entries.some(e=>e.isIntersecting);
+      document.body.classList.toggle('coast-hero-in-view',visible);
       if(visible)start();else stop();
     },{threshold:.01});
     view.observe(root);
@@ -140,8 +142,9 @@ export function initLivingCoast() {
   document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();else start();});
   window.addEventListener('resize',()=>{if(gl){resize();draw(performance.now());}},{passive:true});
   canvas.addEventListener('webglcontextlost',event=>{
-    event.preventDefault();stop();gl=null;failed=true;canvas.classList.remove('coast-ready');
+    event.preventDefault();stop();gl=null;failed=true;canvas.classList.remove('coast-ready');root.classList.remove('coast-has-webgl');
   });
+  document.body.classList.add('coast-hero-in-view');
   setChapter('sea',false);
   initializeGL();
 }
