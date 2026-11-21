@@ -11,6 +11,7 @@
   <title>Punta Cana Arena y Palmera | Experiencias en el Caribe</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="planner.css" />
 </head>
 <body>
   <div class="topbar flex items-center justify-center gap-2"><span class="sun-dot"></span> PUNTA CANA · REPÚBLICA DOMINICANA <span class="topbar-divider">/</span> EXPERIENCIAS EN EL CARIBE</div>
@@ -22,15 +23,16 @@
       <span class="brand-copy"><strong>PUNTA CANA</strong><small>ARENA Y PALMERA</small></span>
     </a>
     <nav class="desktop-nav" aria-label="Navegación principal">
-      <a href="#inicio" data-i18n="navHome">Inicio</a><a href="#excursiones" data-i18n="navTours">Excursiones</a><a href="#transporte" data-i18n="navTransport">Transporte</a><a href="#nosotros" data-i18n="navAbout">Nosotros</a><a href="#preguntas" data-i18n="navFaq">Preguntas</a>
+      <a href="#inicio" data-i18n="navHome">Inicio</a><a href="#excursiones" data-i18n="navTours">Excursiones</a><a href="#mi-viaje" data-i18n="navPlanner">Mi viaje</a><a href="#transporte" data-i18n="navTransport">Transporte</a><a href="#nosotros" data-i18n="navAbout">Nosotros</a><a href="#preguntas" data-i18n="navFaq">Preguntas</a>
     </nav>
     <div class="header-actions">
+      <a href="#mi-viaje" class="planner-header-shortcut" aria-label="Abrir mi viaje"><span aria-hidden="true">✳</span><span id="plannerCountPill" hidden>0</span></a>
       <button class="language-toggle" id="languageToggle" aria-label="Cambiar idioma">ES <span>/</span> EN</button>
       <a class="button button-small button-coral" href="#cotizar" data-i18n="navCta">Cotizar viaje <span>↗</span></a>
       <button class="mobile-menu-button" id="mobileMenuButton" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span></button>
     </div>
   </header>
-  <div class="mobile-menu" id="mobileMenu"><a href="#inicio" data-i18n="navHome">Inicio</a><a href="#excursiones" data-i18n="navTours">Excursiones</a><a href="#transporte" data-i18n="navTransport">Transporte</a><a href="#nosotros" data-i18n="navAbout">Nosotros</a><a href="#preguntas" data-i18n="navFaq">Preguntas</a><a href="#cotizar" data-i18n="navCta">Cotizar viaje ↗</a></div>
+  <div class="mobile-menu" id="mobileMenu"><a href="#inicio" data-i18n="navHome">Inicio</a><a href="#excursiones" data-i18n="navTours">Excursiones</a><a href="#mi-viaje" data-i18n="navPlanner">Mi viaje</a><a href="#transporte" data-i18n="navTransport">Transporte</a><a href="#nosotros" data-i18n="navAbout">Nosotros</a><a href="#preguntas" data-i18n="navFaq">Preguntas</a><a href="#cotizar" data-i18n="navCta">Cotizar viaje ↗</a></div>
 
   <main>
     <section class="hero" id="inicio">
@@ -66,6 +68,50 @@
         </div>
         <div class="immersive-hint reveal"><span class="immersive-orbit">◉</span><div><strong>Una vista diferente para cada aventura.</strong><p>Cada excursión abre un escenario 3D temático. Las ilustraciones y los paisajes sonoros se generan con código; activa el sonido cuando quieras.</p></div><span class="immersive-hint-tag">3D · AUDIO GENERATIVO</span></div><div class="tour-grid grid gap-4" id="tourGrid"></div>
         <div class="catalogue-note reveal"><span>✳</span><p data-i18n="catalogueNote">Los precios y la disponibilidad se confirman al cotizar. Las experiencias y sus inclusiones pueden variar según el operador y la fecha.</p></div>
+      </div>
+    </section>
+
+    <section class="planner-section" id="mi-viaje" aria-labelledby="plannerHeading">
+      <div class="shell planner-shell">
+        <div class="planner-heading">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-line"></span><span data-planner-i18n="eyebrow">TU AVENTURA, A TU RITMO</span></div>
+            <h2 id="plannerHeading" data-planner-i18n="title">Diseña tu propio Caribe.</h2>
+            <p data-planner-i18n="intro">Combina excursiones, organízalas por días y prepara una sola solicitud. Tú eliges el plan; el operador confirma la logística.</p>
+          </div>
+          <div class="planner-count-badge" aria-live="polite"><strong id="plannerCount">0</strong><span data-planner-i18n="selected">experiencias guardadas</span></div>
+        </div>
+        <div class="planner-layout">
+          <div class="planner-board">
+            <div class="planner-board-header">
+              <h3 data-planner-i18n="listTitle">Tu selección</h3>
+              <button id="plannerClear" class="planner-text-button" type="button" data-planner-i18n="clear" disabled>Vaciar mi viaje</button>
+            </div>
+            <div class="planner-empty" id="plannerEmpty">
+              <span aria-hidden="true" class="planner-empty-icon">✳</span>
+              <h3 data-planner-i18n="emptyTitle">Tu viaje empieza con una elección.</h3>
+              <p data-planner-i18n="emptyBody">Explora las excursiones y toca “Añadir al viaje”. Aquí aparecerá tu plan personalizado.</p>
+              <a class="planner-empty-link" href="#excursiones">Explorar experiencias <span aria-hidden="true">↗</span></a>
+            </div>
+            <ol class="planner-list" id="plannerList" aria-label="Excursiones seleccionadas" aria-live="polite" hidden></ol>
+            <p class="planner-fineprint" data-planner-i18n="noPrice">Plan orientativo: precios, horarios, traslados y disponibilidad sujetos a confirmación.</p>
+          </div>
+          <aside class="planner-share-card" aria-labelledby="plannerShareTitle">
+            <span class="planner-share-emblem" aria-hidden="true">✺</span>
+            <h3 id="plannerShareTitle" data-planner-i18n="shareTitle">Tu viaje, para compartir.</h3>
+            <p data-planner-i18n="shareBody">Comparte únicamente la selección de excursiones y días, sin nombres ni datos personales.</p>
+            <div class="planner-qr" id="plannerQR" aria-live="polite">Elige una experiencia para generar el enlace y el QR.</div>
+            <div class="planner-share-actions">
+              <button id="plannerCopy" type="button" data-planner-i18n="copyLink" disabled>Copiar enlace</button>
+              <button id="plannerShare" type="button" data-planner-i18n="share" disabled>Compartir</button>
+            </div>
+            <div class="planner-actions-divider"></div>
+            <button id="plannerQuote" class="planner-quote-button" type="button" disabled><span data-planner-i18n="quote">Cotizar mi viaje</span><span aria-hidden="true">↗</span></button>
+            <button id="plannerPrint" class="planner-print-button" type="button" data-planner-i18n="print" disabled>Imprimir plan</button>
+            <p class="planner-quote-hint" data-planner-i18n="quoteHint">Un solo mensaje, varias experiencias. No confirma una reserva.</p>
+          </aside>
+        </div>
+        <p class="planner-status" id="plannerStatus" role="status" aria-live="polite"></p>
       </div>
     </section>
 
@@ -125,7 +171,7 @@
 
   <a class="floating-cta" href="#cotizar" aria-label="Cotizar ahora"><span class="floating-cta-icon">↗</span><span data-i18n="floatingCta">Cotiza tu aventura</span></a>
 
-  <div class="modal-backdrop" id="tourModal" aria-hidden="true"><div class="tour-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button class="modal-close" id="modalClose" aria-label="Cerrar">×</button><div class="modal-image" id="modalImage"><canvas id="tour3dCanvas" aria-label="Escena 3D interactiva de la excursión seleccionada"></canvas><div class="scene-label" id="sceneLabel"><span>◉</span> EXPERIENCIA 3D INTERACTIVA</div><div class="scene-fallback" id="sceneFallback">Vista 3D cargando…</div></div><div class="modal-body"><div class="modal-category" id="modalCategory"></div><h2 id="modalTitle"></h2><p id="modalDescription"></p><h3 data-i18n="includedTitle">¿Qué incluye?</h3><ul id="modalInclusions"></ul><div class="modal-note" id="modalNote"></div><a class="button button-coral" id="modalQuote" href="#cotizar" data-i18n="modalCta">Cotizar esta experiencia <span>↗</span></a></div></div></div>
+  <div class="modal-backdrop" id="tourModal" aria-hidden="true"><div class="tour-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button class="modal-close" id="modalClose" aria-label="Cerrar">×</button><div class="modal-image" id="modalImage"><canvas id="tour3dCanvas" aria-label="Escena 3D interactiva de la excursión seleccionada"></canvas><div class="scene-label" id="sceneLabel"><span>◉</span> EXPERIENCIA 3D INTERACTIVA</div><div class="scene-fallback" id="sceneFallback">Vista 3D cargando…</div></div><div class="modal-body"><div class="modal-category" id="modalCategory"></div><h2 id="modalTitle"></h2><p id="modalDescription"></p><h3 data-i18n="includedTitle">¿Qué incluye?</h3><ul id="modalInclusions"></ul><div class="modal-note" id="modalNote"></div><button class="modal-save-tour" id="modalSaveTour" type="button" aria-pressed="false">+ Añadir al viaje</button><a class="button button-coral" id="modalQuote" href="#cotizar" data-i18n="modalCta">Cotizar esta experiencia <span>↗</span></a></div></div></div>
 
   <script src="config.js"></script>
   <script type="module" src="app.js"></script>
