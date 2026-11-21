@@ -74,6 +74,13 @@ export function initTripPlanner({ tours, getLanguage, getModalTour }) {
   let items;
   if (urlParams.has('plan')) {
     items = decodePlan(urlParams.get('plan'));
+    // Import a shared plan only once. On the next reload, the visitor should see
+    // the changes saved locally, rather than resetting to the original link.
+    try {
+      const clean = new URL(location.href);
+      clean.searchParams.delete('plan');
+      history.replaceState(history.state, '', clean.pathname + clean.search + clean.hash);
+    } catch { /* still safe to display the imported plan */ }
   } else {
     try { items = normalize(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); }
     catch { items = []; }
