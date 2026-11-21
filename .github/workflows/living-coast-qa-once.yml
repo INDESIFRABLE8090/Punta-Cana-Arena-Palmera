@@ -73,7 +73,8 @@ jobs:
                 if(chosen!==id||count!==expected)throw Error('chapter '+id+' '+chosen+' '+count);
               }
               await page.locator('#languageToggle').click();
-              if(!(await page.locator('h1').innerText()).includes('The Caribbean'))throw Error('language change failed');
+              const english=(await page.locator('h1').innerText()).toLowerCase();
+              if(!english.includes('the caribbean'))throw Error('language change failed: '+english);
               await page.locator('#tourGrid [data-save-tour="saona"]').click();
               if(await page.locator('#plannerList .planner-item').count()!==1)throw Error('planner regression');
               state.chapters='pass';state.language='pass';state.planner='pass';
