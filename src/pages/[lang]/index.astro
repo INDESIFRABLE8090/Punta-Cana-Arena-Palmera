@@ -8,6 +8,7 @@ import Transport from '@/components/Transport.astro';
 import Gallery from '@/components/Gallery.astro';
 import Planner from '@/components/Planner.astro';
 import Faq from '@/components/Faq.astro';
+import Quote from '@/components/Quote.astro';
 import { languages, homePath, tourPath, type Lang } from '@/i18n/config';
 import { t } from '@/i18n/ui';
 import { site } from '@/config/site';
@@ -52,6 +53,7 @@ const jsonLd = [
 <Base lang={lang} title={d.meta.homeTitle} description={d.meta.homeDescription} alternates={alternates} jsonLd={jsonLd} overlayHeader>
   <Hero lang={lang} />
   <Experiences lang={lang} />
+  <Quote lang={lang} />
   <Dive lang={lang} />
   <PhotoChapters lang={lang} />
   <Transport lang={lang} />

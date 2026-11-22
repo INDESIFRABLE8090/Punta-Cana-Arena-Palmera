@@ -1,0 +1,85 @@
+---
+/** Cotización rápida por WhatsApp (excursión o traslado). La lógica vive en scripts/quick.ts. */
+import Icon from './Icon.astro';
+import { type Lang } from '@/i18n/config';
+import { t } from '@/i18n/ui';
+import { tours } from '@/data/tours';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const q = t(lang).quick;
+---
+
+<section class="bar" id="cotizar" aria-label={q.label}>
+    <form class="quick shell" data-quick novalidate aria-label={q.label}>
+      <h2 class="tag">{q.tagline}</h2>
+      <fieldset class="modes">
+        <legend class="sr-only">{q.label}</legend>
+        <label><input type="radio" name="mode" value="tour" checked /><span>{q.tabTour}</span></label>
+        <label><input type="radio" name="mode" value="transfer" /><span>{q.tabTransfer}</span></label>
+      </fieldset>
+      <div class="fields">
+        <label class="f" data-for="tour">
+          <span>{q.tour}</span>
+          <select name="tour">
+            <option value="">{q.tourPh}</option>
+            {tours.map((x) => <option value={x.slug}>{x.name[lang]}</option>)}
+          </select>
+        </label>
+        <label class="f" data-for="transfer" hidden>
+          <span>{q.from}</span>
+          <input name="from" type="text" maxlength="120" placeholder={`${q.fromPh}…`} autocomplete="off" />
+        </label>
+        <label class="f" data-for="transfer" hidden>
+          <span>{q.to}</span>
+          <input name="to" type="text" maxlength="120" placeholder={`${q.toPh}…`} autocomplete="off" />
+        </label>
+        <label class="f">
+          <span>{q.date}</span>
+          <input name="date" type="date" />
+        </label>
+        <label class="f">
+          <span>{q.people}</span>
+          <input name="people" type="number" inputmode="numeric" min="1" max="60" value="2" />
+        </label>
+      </div>
+      <button type="submit" class="btn btn-wa submit"><Icon name="whatsapp" size={20} />{q.submit}</button>
+      <p class="note" data-quick-status role="status" aria-live="polite">{q.note}</p>
+    </form>
+  </section>
+
+<style>
+  /* ---------- Franja de cotización ---------- */
+  .bar { background: var(--ocean-900); color: var(--white); padding-block: 2.2rem 2.4rem; border-top: 1px solid rgb(127 220 214 / 0.18); }
+  .quick { display: grid; gap: 0.6rem; }
+  .tag { margin: 0; font-family: 'Fraunces Variable', Georgia, serif; font-style: italic; font-size: 1.35rem; color: var(--sand-200); }
+  .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; padding: 0.25rem; margin: 0; border: 0; border-radius: 999px; background: rgb(255 255 255 / 0.08); }
+  .modes label { position: relative; }
+  .modes input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .modes span { display: grid; place-items: center; min-height: 2.6rem; border-radius: 999px; font-weight: 650; font-size: 0.9rem; color: var(--white); transition: background-color 0.3s, color 0.3s; }
+  .modes input:checked + span { background: var(--sand-200); color: var(--ocean-950); }
+  .modes input:focus-visible + span { outline: 3px solid var(--turq-300); outline-offset: 2px; }
+  .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+  .f { display: grid; gap: 0.1rem; padding: 0.4rem 0.85rem; border: 1px solid rgb(255 255 255 / 0.16); border-radius: 1rem; background: rgb(255 255 255 / 0.96); color: var(--ink); cursor: text; }
+  .f[data-for] { grid-column: 1 / -1; }
+  .f[hidden] { display: none; }
+  .f span { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+  .f input, .f select { border: 0; padding: 0; min-height: 1.6rem; font-size: 1rem; background: transparent; color: var(--ink); width: 100%; }
+  .f input:focus-visible, .f select:focus-visible { outline: none; }
+  .f:focus-within { border-color: var(--turq-300); box-shadow: 0 0 0 3px rgb(127 220 214 / 0.4); }
+  .f.is-invalid { border-color: #ff9b94; box-shadow: 0 0 0 3px rgb(255 155 148 / 0.35); }
+  .submit { width: 100%; min-height: 3.1rem; font-size: 1rem; }
+  .note { margin: 0; font-size: 0.74rem; line-height: 1.35; color: rgb(255 255 255 / 0.74); text-align: center; }
+  .note.is-error { color: #ffb4ad; font-weight: 650; }
+
+  @media (min-width: 64rem) {
+    .quick { grid-template-columns: auto minmax(0, 1fr) auto; align-items: end; column-gap: 1.25rem; row-gap: 0.7rem; }
+    .tag { display: block; grid-column: 1 / -1; }
+    .modes { width: 16rem; }
+    .fields { grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); }
+    .f[data-for] { grid-column: auto; }
+    .f[data-for='tour'] { min-width: 14rem; }
+    .submit { width: auto; padding-inline: 1.75rem; }
+    .note { grid-column: 1 / -1; text-align: left; }
+    .tag { grid-column: 1 / -1; font-size: 2rem; }
+  }
+</style>

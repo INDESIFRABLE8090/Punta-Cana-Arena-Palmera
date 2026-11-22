@@ -21,37 +21,32 @@ function initSmoothScroll() {
   window.addEventListener('pcap:unlock', () => lenis.start());
 }
 
-/** Portada: la ventana de la foto se abre con el scroll y, en escritorio, las capas reaccionan al puntero. */
+/** Portada: paralaje por capas con el scroll (--p) y, en escritorio, con el puntero (--mx/--my). */
 function initHero() {
-  const stage = document.querySelector<HTMLElement>('[data-hero] [data-stage]');
-  const track = document.querySelector<HTMLElement>('[data-hero] [data-track]');
-  if (stage && track) {
-    track.closest('[data-hero]')!.classList.add('is-live');
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  if (hero) {
     ScrollTrigger.create({
-      trigger: track,
+      trigger: hero,
       start: 'top top',
-      end: 'bottom bottom',
+      end: 'bottom top',
       scrub: true,
-      onUpdate: (self) => {
-        stage.style.setProperty('--p', self.progress.toFixed(4));
-        stage.style.setProperty('--e', smooth(0.05, 0.85, self.progress).toFixed(4));
-      },
+      onUpdate: (self) => hero.style.setProperty('--p', self.progress.toFixed(4)),
     });
     if (window.matchMedia('(pointer: fine) and (min-width: 64rem)').matches) {
       let tx = 0, ty = 0, cx = 0, cy = 0;
-      stage.addEventListener('pointermove', (ev) => {
-        const r = stage.getBoundingClientRect();
+      hero.addEventListener('pointermove', (ev) => {
+        const r = hero.getBoundingClientRect();
         tx = ((ev.clientX - r.left) / r.width - 0.5) * 2;
         ty = ((ev.clientY - r.top) / r.height - 0.5) * 2;
       });
-      stage.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
+      hero.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
       gsap.ticker.add(() => {
         const dx = tx - cx, dy = ty - cy;
         if (Math.abs(dx) < 0.0005 && Math.abs(dy) < 0.0005) return;
-        cx += dx * 0.07;
-        cy += dy * 0.07;
-        stage.style.setProperty('--mx', cx.toFixed(4));
-        stage.style.setProperty('--my', cy.toFixed(4));
+        cx += dx * 0.06;
+        cy += dy * 0.06;
+        hero.style.setProperty('--mx', cx.toFixed(4));
+        hero.style.setProperty('--my', cy.toFixed(4));
       });
     }
   }
