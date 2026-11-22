@@ -37,8 +37,9 @@ async function ready(timeout = 30000) {
 }
 
 async function main() {
-  if (!existsSync(join(root, 'dist', 'es', 'index.html')))
-    throw new Error('Run npm run build first');
+  const devMode = process.env.JARVIS_SMOKE_DEV === '1';
+  if (!devMode && !existsSync(join(root, 'dist', 'es', 'index.html')))
+    throw new Error('Run npm run build first or enable JARVIS_SMOKE_DEV=1');
   let chromium;
   try {
     ({ chromium } = require('playwright'));
@@ -48,7 +49,7 @@ async function main() {
   }
 
   server = spawn(join(root, 'node_modules', '.bin', 'astro'),
-    ['preview', '--host', '127.0.0.1', '--port', String(PORT)],
+    [devMode ? 'dev' : 'preview', '--host', '127.0.0.1', '--port', String(PORT)],
     { cwd: root, stdio: 'ignore' });
   await ready();
 
