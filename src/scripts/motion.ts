@@ -87,6 +87,16 @@ function initCursor() {
   });
 }
 
+/** Galería: cada escena fijada asienta su foto con el scroll y muestra su texto al llegar. */
+function initScenes() {
+  gsap.utils.toArray<HTMLElement>('[data-scene]').forEach((scene) => {
+    scene.classList.add('is-pending');
+    const img = scene.querySelector('img');
+    if (img) gsap.fromTo(img, { scale: 1.16 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: scene, start: 'top bottom', end: 'top top', scrub: true } });
+    ScrollTrigger.create({ trigger: scene, start: 'top 60%', onEnter: () => scene.classList.remove('is-pending'), onLeaveBack: () => scene.classList.add('is-pending') });
+  });
+}
+
 /** Inmersión: sincroniza el scroll con la cámara 3D, los textos y el sonido. */
 function initDive() {
   const dive = document.querySelector<HTMLElement>('[data-dive].is-live');
@@ -208,6 +218,7 @@ export function initMotion() {
   initSmoothScroll();
   initHero();
   initMarquee();
+  initScenes();
   initCursor();
   initDive();
   initPhotoChapters();

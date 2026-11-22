@@ -48,13 +48,3 @@ export function initGallery() {
   });
 }
 
-/** Arrastrar la tira de postales con el ratón (en táctil ya es nativo). Un arrastre no abre el visor. */
-export function initDrag() {
-  document.querySelectorAll<HTMLElement>('[data-drag]').forEach((rail) => {
-    let down = false, moved = false, x0 = 0, s0 = 0;
-    rail.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') return; down = true; moved = false; x0 = e.clientX; s0 = rail.scrollLeft; });
-    window.addEventListener('pointermove', (e) => { if (!down) return; const dx = e.clientX - x0; if (Math.abs(dx) > 5) { moved = true; rail.classList.add('is-dragging'); } rail.scrollLeft = s0 - dx; });
-    window.addEventListener('pointerup', () => { down = false; rail.classList.remove('is-dragging'); });
-    rail.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
-  });
-}

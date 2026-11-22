@@ -2,7 +2,7 @@ import { waLink } from './whatsapp';
 import { initItinerary } from './itinerary';
 import { initPlanner } from './planner';
 import { initAudio } from './audio';
-import { initGallery, initDrag } from './gallery';
+import { initGallery } from './gallery';
 import { initQuick } from './quick';
 import { prefersReducedMotion } from './client';
 
@@ -178,7 +178,6 @@ initReveal();
 initChrome();
 initAudio();
 initGallery();
-initDrag();
 initQuick();
 
 const idle = window.requestIdleCallback ?? ((fn: () => void) => setTimeout(fn, 200));
