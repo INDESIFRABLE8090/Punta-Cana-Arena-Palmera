@@ -30,3 +30,9 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Check types and production build for ES, EN, PT
         run: npm run build
+      - name: Install Chromium for real website interaction tests
+        run: |
+          npm install --global playwright
+          npx playwright install --with-deps chromium
+      - name: Run responsive, browser, accessibility and gallery regression tests
+        run: npm test
