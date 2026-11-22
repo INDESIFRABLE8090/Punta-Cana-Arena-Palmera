@@ -9,7 +9,7 @@
  * (npm i -g playwright && npx playwright install chromium).
  */
 import { createRequire } from 'node:module';
-import { execSync } from 'node:child_process';
+import { execSync, spawn } from 'node:child_process';
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -121,16 +121,14 @@ async function waitForServer() {
 
 async function browserChecks() {
   const { chromium, devices } = loadPlaywright();
-  // `astro preview` queda en segundo plano; se detiene al terminar.
-  const astro = (args) => {
-    try {
-      execSync(`npx astro preview ${args}`, { cwd: root, stdio: 'ignore' });
-    } catch {}
-  };
-  astro('stop');
-  astro(`--port ${PORT}`);
-  const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+  // Iniciar preview como proceso hijo asíncrono; execSync bloquearía la
+  // ejecución indefinidamente mientras Astro escucha el puerto.
+  const preview = spawn(join(root, 'node_modules', '.bin', 'astro'),
+    ['preview', '--port', String(PORT), '--host', '127.0.0.1'],
+    { cwd: root, stdio: 'ignore' });
+  let browser;
   try {
+    browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
     await waitForServer();
     const url = (p) => `${origin}${BASE}${p}`;
     const open = async (ctxOptions, path) => {
@@ -421,8 +419,8 @@ async function browserChecks() {
       await ctx.close();
     }
   } finally {
-    await browser.close();
-    astro('stop');
+    if (browser) await browser.close();
+    preview.kill('SIGTERM');
   }
 }
 
