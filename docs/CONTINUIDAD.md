@@ -39,3 +39,20 @@ Documento para retomar el trabajo desde el último commit de la rama `claude/pun
 5. Galería, planificador/itinerario, fichas y pie: llevarlos al mismo universo visual.
 6. Medir rendimiento en Android de gama media (LCP, fluidez).
 7. Issue #5 (automatización con IA): sin empezar.
+
+## Auditoría de material visual (22 nov 2026)
+Material **presente** en el Codespace (búsqueda completa de `/workspaces`): 11 folletos (`cliente/folletos/`, solo catálogo), 11 imágenes en `src/assets/images/`, render Blender propio (`public/media/sunset.*`, `art/blender/`). Ningún adjunto en issues/PR.
+
+| Imagen | Resolución | Procedencia | Uso decidido |
+|---|---|---|---|
+| commons-isla-catalina | 3000×1996 | Commons CC BY-SA 3.0 | Galería (escena 1), ficha |
+| commons-isla-saona | 1920×1152 | Commons CC BY-SA 4.0 | Galería (escena 2), ficha |
+| commons-mono-ardilla | 1920×1280 | Commons CC BY 4.0 | Galería (escena 3), ficha |
+| commons-playa-macao | 1600×1063 | Commons CC BY 2.0 | Solo ficha (plana para pantalla completa) |
+| commons-piscina-natural | 1920×1152 | Commons CC BY-SA 4.0 | Solo ficha (foto de móvil, brumosa) |
+| buggies, lancha-rapida | 1200×896 | sin procedencia, aspecto generado | Solo ficha, marcada «ilustrativa» |
+| scuba-doo, dolphin-explorer | 2752×1536 | sin procedencia, aspecto generado | Solo ficha/índice, marcada «ilustrativa» |
+| coco-bongo | 1536×2752 | sin procedencia, aspecto generado | Solo ficha/índice, marcada «ilustrativa» |
+| costa-punta-cana | 1376×768 | generada (issue #2) | Retirada de portada y galería |
+
+**Falta (bloqueo humano):** los originales del propietario citados en issue #2 y PR #6 — clips reales `1001285018/5019/5021/5026.mp4`, clips `1001284176/4144/4146.mp4` y vídeos de referencia `1001284464/4468/4500.mp4` — no están en el Codespace ni adjuntos en GitHub. Para usarlos: subirlos (arrastrar al Explorador de VS Code) a `/workspaces/arena-palmera-work/originales/` (fuera del repo público) y confirmar derechos de uso. Con ellos: reel real de excursiones en capítulos de experiencias y escenas de galería con vídeo propio.
