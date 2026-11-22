@@ -23,7 +23,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   chromium:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 16
     env:
       SITE_URL: https://indesifrable8090.github.io
