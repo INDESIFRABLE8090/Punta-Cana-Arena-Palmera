@@ -2,7 +2,7 @@ import { initItinerary } from './itinerary';
 import { initPlanner } from './planner';
 import { initAudio } from './audio';
 import { initGallery } from './gallery';
-import { initSlides, initQuick } from './quick';
+import { initQuick } from './quick';
 import { prefersReducedMotion } from './client';
 
 /** Arranque: primero lo imprescindible para interactuar; el movimiento se carga en reposo. */
@@ -114,7 +114,6 @@ initReveal();
 initChrome();
 initAudio();
 initGallery();
-initSlides();
 initQuick();
 
 const idle = window.requestIdleCallback ?? ((fn: () => void) => setTimeout(fn, 200));

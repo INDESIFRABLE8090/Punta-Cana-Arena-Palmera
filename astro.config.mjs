@@ -10,6 +10,7 @@ export default defineConfig({
   site,
   base,
   trailingSlash: 'always',
+  devToolbar: { enabled: false },
   integrations: [
     react(),
     sitemap({

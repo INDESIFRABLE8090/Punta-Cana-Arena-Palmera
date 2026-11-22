@@ -53,6 +53,10 @@ function staticChecks() {
     const missing = SLUGS.filter((s) => !existsSync(join(dist, lang, seg, s, 'index.html')));
     check(`11 fichas en /${lang}/${seg}/`, missing.length === 0, missing.join(', '));
   }
+  // Cada excursión del catálogo debe salir de un folleto del cliente (el número «11» se demuestra con estos archivos).
+  const flyers = readdirSync(join(root, 'cliente', 'folletos')).map((f) => f.replace(/\.\w+$/, ''));
+  const noFlyer = SLUGS.filter((s) => !flyers.some((f) => f === s || f.startsWith(`${s}-`)));
+  check(`cada excursión tiene folleto en cliente/folletos (${SLUGS.length} fichas, ${flyers.length} folletos)`, noFlyer.length === 0 && SLUGS.length === flyers.length, noFlyer.join(', '));
   check('sitemap-index.xml', existsSync(join(dist, 'sitemap-index.xml')));
   check('robots.txt apunta al sitemap', existsSync(join(dist, 'robots.txt')) && readFileSync(join(dist, 'robots.txt'), 'utf8').includes('sitemap-index.xml'));
 
@@ -86,7 +90,9 @@ function staticChecks() {
       if ((html.match(/<h1[\s>]/g) ?? []).length !== 1) seo.push(`${rel}: debe tener un único h1`);
       if (!/application\/ld\+json/.test(html)) seo.push(`${rel}: sin datos estructurados`);
       if (/<img(?![^>]*\salt[\s=>])[^>]*>/.test(html)) seo.push(`${rel}: imagen sin atributo alt`);
-      if (/undefined|\[object Object\]|NaN/.test(html.replace(/<script[\s\S]*?<\/script>/g, ''))) seo.push(`${rel}: texto sin resolver`);
+      // Se ignoran <script> y los atributos de <astro-island>: su uid es aleatorio y puede contener «NaN» por azar.
+      const visible = html.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<astro-island[^>]*>/g, '');
+      if (/\bundefined\b|\[object Object\]|\bNaN\b/.test(visible)) seo.push(`${rel}: texto sin resolver`);
       if (/aggregateRating|"review"|"price"/.test(html)) seo.push(`${rel}: datos estructurados no autorizados`);
     }
   }
@@ -292,7 +298,8 @@ async function browserChecks() {
       opened = await page.evaluate(() => window.__opened);
       msg = opened[1] ? decodeURIComponent(opened[1].split('?text=')[1]) : '';
       check('cotización de traslado: origen, destino, fecha y personas', msg.includes('traslado privado') && msg.includes('Aeropuerto de Punta Cana') && msg.includes('Hotel en Bávaro') && msg.includes('Personas: 4'), msg.slice(0, 120));
-      check('las fotos de portada tienen botón de pausa', (await page.locator('[data-slides-toggle]').count()) === 1);
+      // La portada ya no tiene carrusel automático (WCAG 2.2.2): una sola foto, sin contenido que cambie solo.
+      check('portada: sin carrusel automático y un solo CTA (sin botón de WhatsApp compitiendo)', (await page.locator('[data-slides], [data-slides-toggle]').count()) === 0 && (await page.locator('[data-hero] a[href="#cotizar"]').count()) === 1 && (await page.locator('[data-hero] a[data-wa]').count()) === 0);
       await ctx.close();
     }
 

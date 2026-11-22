@@ -21,12 +21,39 @@ function initSmoothScroll() {
   window.addEventListener('pcap:unlock', () => lenis.start());
 }
 
-function initParallax() {
-  const heroMedia = document.querySelector('[data-hero-media]');
-  const heroContent = document.querySelector('[data-hero-content]');
-  if (heroMedia) {
-    gsap.to(heroMedia, { yPercent: 9, scale: 1.08, ease: 'none', scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true } });
-    gsap.to(heroContent, { yPercent: -14, opacity: 0, ease: 'none', scrollTrigger: { trigger: '[data-hero]', start: '35% top', end: 'bottom top', scrub: true } });
+/** Portada: la ventana de la foto se abre con el scroll y, en escritorio, las capas reaccionan al puntero. */
+function initHero() {
+  const stage = document.querySelector<HTMLElement>('[data-hero] [data-stage]');
+  const track = document.querySelector<HTMLElement>('[data-hero] [data-track]');
+  if (stage && track) {
+    track.closest('[data-hero]')!.classList.add('is-live');
+    ScrollTrigger.create({
+      trigger: track,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: true,
+      onUpdate: (self) => {
+        stage.style.setProperty('--p', self.progress.toFixed(4));
+        stage.style.setProperty('--e', smooth(0.05, 0.85, self.progress).toFixed(4));
+      },
+    });
+    if (window.matchMedia('(pointer: fine) and (min-width: 64rem)').matches) {
+      let tx = 0, ty = 0, cx = 0, cy = 0;
+      stage.addEventListener('pointermove', (ev) => {
+        const r = stage.getBoundingClientRect();
+        tx = ((ev.clientX - r.left) / r.width - 0.5) * 2;
+        ty = ((ev.clientY - r.top) / r.height - 0.5) * 2;
+      });
+      stage.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
+      gsap.ticker.add(() => {
+        const dx = tx - cx, dy = ty - cy;
+        if (Math.abs(dx) < 0.0005 && Math.abs(dy) < 0.0005) return;
+        cx += dx * 0.07;
+        cy += dy * 0.07;
+        stage.style.setProperty('--mx', cx.toFixed(4));
+        stage.style.setProperty('--my', cy.toFixed(4));
+      });
+    }
   }
   gsap.utils.toArray<HTMLElement>('[data-parallax]').forEach((el) => {
     gsap.fromTo(el, { yPercent: -4 }, { yPercent: 4, ease: 'none', scrollTrigger: { trigger: el.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } });
@@ -152,7 +179,7 @@ function initPhotoChapters() {
 export function initMotion() {
   if (prefersReducedMotion()) return;
   initSmoothScroll();
-  initParallax();
+  initHero();
   initDive();
   initPhotoChapters();
   window.addEventListener('pcap:layout', () => ScrollTrigger.refresh());

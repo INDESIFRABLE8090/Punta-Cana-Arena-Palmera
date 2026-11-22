@@ -1,40 +1,5 @@
-import { clientData, s, tourName, prefersReducedMotion } from './client';
+import { clientData, s, tourName } from './client';
 import { waLink } from './whatsapp';
-
-/** Portada: fotos que se suceden (con pausa accesible) y cotización rápida por WhatsApp. */
-export function initSlides() {
-  const hero = document.querySelector<HTMLElement>('[data-hero]');
-  const slides = [...document.querySelectorAll<HTMLElement>('[data-slides] .slide')];
-  const toggle = document.querySelector<HTMLButtonElement>('[data-slides-toggle]');
-  if (!hero || slides.length < 2) return;
-  let i = 0;
-  let timer = 0;
-  const next = () => {
-    slides[i]!.classList.remove('is-on');
-    i = (i + 1) % slides.length;
-    slides[i]!.classList.add('is-on');
-  };
-  const play = () => {
-    clearInterval(timer);
-    timer = window.setInterval(next, 6500);
-    hero.classList.remove('is-paused');
-    toggle?.setAttribute('aria-pressed', 'false');
-    toggle?.setAttribute('aria-label', toggle.dataset.labelPause!);
-  };
-  const pause = () => {
-    clearInterval(timer);
-    hero.classList.add('is-paused');
-    toggle?.setAttribute('aria-pressed', 'true');
-    toggle?.setAttribute('aria-label', toggle.dataset.labelPlay!);
-  };
-  toggle?.addEventListener('click', () => (hero.classList.contains('is-paused') ? play() : pause()));
-  if (prefersReducedMotion()) {
-    pause();
-    return;
-  }
-  // Solo avanza mientras la portada está a la vista.
-  new IntersectionObserver(([e]) => (e!.isIntersecting && !hero.classList.contains('is-paused') ? play() : clearInterval(timer))).observe(hero);
-}
 
 const today = () => {
   const d = new Date();
