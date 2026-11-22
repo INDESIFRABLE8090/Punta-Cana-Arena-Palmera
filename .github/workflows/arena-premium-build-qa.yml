@@ -32,6 +32,8 @@ jobs:
           cache: npm
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
+      - name: Syntax check of browser test harness
+        run: node --check tests/site.test.mjs
       - name: Astro typecheck and production build (no deploy)
         run: npm run build
       - name: Legal/publication gate — report blockers, do not publish
