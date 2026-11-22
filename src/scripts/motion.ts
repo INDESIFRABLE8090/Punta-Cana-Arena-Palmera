@@ -55,6 +55,38 @@ function initHero() {
   });
 }
 
+/** Banda tipográfica: cada línea se desliza con el scroll en sentidos opuestos. */
+function initMarquee() {
+  document.querySelectorAll<HTMLElement>('[data-mq]').forEach((ln) => {
+    const dir = Number(ln.dataset.mq);
+    gsap.fromTo(ln, { xPercent: dir > 0 ? -2 : -38 }, { xPercent: dir > 0 ? -30 : -8, ease: 'none', scrollTrigger: { trigger: ln.closest('[data-marquee]'), start: 'top bottom', end: 'bottom top', scrub: 0.6 } });
+  });
+}
+
+/** Cursor propio en escritorio: anillo con inercia que crece sobre enlaces y muestra «Ver» sobre fotos. */
+function initCursor() {
+  if (!window.matchMedia('(pointer: fine) and (min-width: 64rem)').matches) return;
+  const dot = document.createElement('div');
+  dot.className = 'cursor';
+  dot.setAttribute('aria-hidden', 'true');
+  dot.innerHTML = '<span></span>';
+  document.body.append(dot);
+  document.documentElement.classList.add('has-cursor');
+  const label = dot.firstElementChild as HTMLElement;
+  const xTo = gsap.quickTo(dot, 'x', { duration: 0.35, ease: 'power3' });
+  const yTo = gsap.quickTo(dot, 'y', { duration: 0.35, ease: 'power3' });
+  window.addEventListener('pointermove', (e) => { xTo(e.clientX); yTo(e.clientY); dot.classList.add('is-on'); }, { passive: true });
+  document.addEventListener('pointerleave', () => dot.classList.remove('is-on'));
+  document.addEventListener('pointerover', (e) => {
+    const t = e.target as Element;
+    const view = t.closest('[data-index-link], [data-shot]');
+    const link = t.closest('a, button, label, select, input');
+    dot.classList.toggle('is-view', Boolean(view));
+    dot.classList.toggle('is-link', Boolean(link) && !view);
+    label.textContent = view ? (document.documentElement.lang.startsWith('en') ? 'View' : 'Ver') : '';
+  });
+}
+
 /** Inmersión: sincroniza el scroll con la cámara 3D, los textos y el sonido. */
 function initDive() {
   const dive = document.querySelector<HTMLElement>('[data-dive].is-live');
@@ -175,6 +207,8 @@ export function initMotion() {
   if (prefersReducedMotion()) return;
   initSmoothScroll();
   initHero();
+  initMarquee();
+  initCursor();
   initDive();
   initPhotoChapters();
   window.addEventListener('pcap:layout', () => ScrollTrigger.refresh());

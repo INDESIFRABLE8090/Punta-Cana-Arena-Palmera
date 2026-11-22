@@ -2,7 +2,7 @@ import { waLink } from './whatsapp';
 import { initItinerary } from './itinerary';
 import { initPlanner } from './planner';
 import { initAudio } from './audio';
-import { initGallery } from './gallery';
+import { initGallery, initDrag } from './gallery';
 import { initQuick } from './quick';
 import { prefersReducedMotion } from './client';
 
@@ -77,14 +77,16 @@ function initChrome() {
   const hero = document.querySelector<HTMLElement>('[data-hero]');
   const planner = document.querySelector<HTMLElement>('[data-planner]');
   const quote = document.querySelector<HTMLElement>('[data-quick]');
+  const finale = document.querySelector<HTMLElement>('.finale');
   let last = 0;
   let heroVisible = Boolean(hero);
   let plannerVisible = false;
   let quoteVisible = false;
+  let finaleVisible = false;
 
   // El botón flotante se retira donde ya hay una acción de WhatsApp a la vista (portada, cotizador, planificador).
   const paintFab = () => {
-    const away = heroVisible || plannerVisible || quoteVisible;
+    const away = heroVisible || plannerVisible || quoteVisible || finaleVisible;
     fab?.classList.toggle('is-away', away);
     fab?.classList.toggle('is-shown', !away);
   };
@@ -94,12 +96,14 @@ function initChrome() {
         if (e.target === hero) heroVisible = e.isIntersecting;
         if (e.target === planner) plannerVisible = e.isIntersecting;
         if (e.target === quote) quoteVisible = e.isIntersecting;
+        if (e.target === finale) finaleVisible = e.isIntersecting;
       });
       paintFab();
     }, { threshold: 0.15 });
     if (hero) io.observe(hero);
     if (planner) io.observe(planner);
     if (quote) io.observe(quote);
+    if (finale) io.observe(finale);
   }
   paintFab();
 
@@ -174,6 +178,7 @@ initReveal();
 initChrome();
 initAudio();
 initGallery();
+initDrag();
 initQuick();
 
 const idle = window.requestIdleCallback ?? ((fn: () => void) => setTimeout(fn, 200));

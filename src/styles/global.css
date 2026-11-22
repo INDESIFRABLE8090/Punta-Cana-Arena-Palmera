@@ -351,3 +351,10 @@ html.js [data-reveal='mask'].is-in > * {
 :is(.hero, .dive, .transport, .footer, .lightbox, .is-night, .is-poster, .cover, .option) :focus-visible {
   outline-color: var(--gold-300);
 }
+
+/* Cursor propio (solo escritorio con movimiento permitido; lo crea motion.ts) */
+.cursor { position: fixed; left: 0; top: 0; z-index: 200; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; border: 1.5px solid #fff; mix-blend-mode: difference; pointer-events: none; opacity: 0; display: grid; place-items: center; transition: width 0.4s var(--ease), height 0.4s var(--ease), margin 0.4s var(--ease), opacity 0.3s, background-color 0.3s; }
+.cursor.is-on { opacity: 1; }
+.cursor.is-link { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
+.cursor.is-view { width: 84px; height: 84px; margin: -42px 0 0 -42px; background: #fff; }
+.cursor span { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #000; }

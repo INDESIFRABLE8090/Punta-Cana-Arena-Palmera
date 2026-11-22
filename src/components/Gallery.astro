@@ -1,7 +1,6 @@
 ---
 import { Picture, getImage } from 'astro:assets';
 import SplitHeading from './SplitHeading.astro';
-import coast from '@/assets/images/costa-punta-cana.jpg';
 import { t } from '@/i18n/ui';
 import type { Lang } from '@/i18n/config';
 import { tours } from '@/data/tours';
@@ -11,8 +10,9 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const d = t(lang);
 
+// Solo imágenes de las fichas. Las que no son fotos acreditadas se marcan como ilustrativas.
+const illus = { es: 'Imagen ilustrativa', en: 'Illustrative image', pt: 'Imagem ilustrativa' }[lang];
 const shots = [
-  { src: coast, alt: d.hero.imageAlt, caption: d.gallery.coastCaption, shape: 'wide', credit: undefined },
   ...tours.filter((x) => x.image).map((x, i) => ({
     src: x.image!.src,
     alt: x.image!.alt[lang],
@@ -30,13 +30,13 @@ const items = await Promise.all(
   <div class="shell section-head">
     <SplitHeading class="h-lg" id="gal-title" text={d.gallery.title} em={d.gallery.titleEm} />
   </div>
-  <ul class="rail" data-gallery>
+  <ul class="rail" data-gallery data-drag>
     {items.map((it, i) => (
       <li class={`shot is-${it.shape}`}>
-        <button type="button" data-shot={i} data-full={it.full} data-alt={it.alt} data-caption={it.credit ? `${it.caption} · ${legalUi[lang].photo}: ${it.credit.author} (${it.credit.license})` : it.caption} aria-label={`${d.gallery.open}: ${it.caption}`}>
+        <button type="button" data-shot={i} data-full={it.full} data-alt={it.alt} data-caption={it.credit ? `${it.caption} · ${legalUi[lang].photo}: ${it.credit.author} (${it.credit.license})` : `${it.caption} · ${illus}`} aria-label={`${d.gallery.open}: ${it.caption}`}>
           <Picture src={it.src} alt={it.alt} formats={['webp']} widths={[400, 720, 1080]} sizes="(min-width: 64rem) 45vw, 82vw" loading="lazy" decoding="async" quality={66} />
         </button>
-        <p>{it.caption}{it.credit && <small class="credit">{legalUi[lang].photo}: {it.credit.author} · {it.credit.license}</small>}</p>
+        <p><span class="cap">{it.caption}</span>{it.credit ? <small class="credit">{legalUi[lang].photo}: {it.credit.author} · {it.credit.license}</small> : <small class="credit">{illus}</small>}</p>
       </li>
     ))}
   </ul>
@@ -53,36 +53,26 @@ const items = await Promise.all(
 </section>
 
 <style>
-  .gallery { background: var(--sand-100); overflow: clip; }
-  .rail { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 var(--gutter) 1rem; scrollbar-width: none; align-items: flex-start; }
+  .gallery { position: relative; padding-block: clamp(5rem, 10vw, 8rem); background: linear-gradient(180deg, var(--ocean-950), #0d1a2b 60%, #1b0c22); color: #f6e9e2; overflow: clip; }
+  .gallery :global(.display) { color: #fff3ea; }
+  .gallery :global(.display em) { color: #f2a7bf; }
+  .section-head { margin-bottom: clamp(2rem, 5vw, 3.5rem); }
+  .rail { display: flex; gap: clamp(1.2rem, 3vw, 2.6rem); overflow-x: auto; scroll-snap-type: x proximity; padding: 2rem max(var(--gutter), calc((100vw - var(--max)) / 2)) 2.5rem; scrollbar-width: none; align-items: center; cursor: grab; }
+  .rail.is-dragging { cursor: grabbing; scroll-snap-type: none; }
   .rail::-webkit-scrollbar { display: none; }
-  .shot { flex: none; width: 80vw; scroll-snap-align: center; }
-  .shot.is-tall { width: 45vw; }
-  .shot button { display: block; width: 100%; overflow: hidden; border-radius: var(--radius); aspect-ratio: 4 / 3; background: var(--ocean-800); cursor: zoom-in; }
+  /* Postal: marco de papel, leve giro alterno, pie manuscrito. */
+  .shot { flex: none; width: min(78vw, 30rem); scroll-snap-align: center; padding: 0.7rem 0.7rem 1rem; background: #fff6ee; color: #2a1233; border-radius: 0.35rem; box-shadow: 0 30px 70px -30px rgb(0 0 0 / 0.8); rotate: -1.6deg; transition: rotate 0.7s var(--ease), translate 0.7s var(--ease); }
+  .shot:nth-child(even) { rotate: 1.4deg; translate: 0 1.4rem; }
+  .shot:nth-child(3n) { width: min(62vw, 24rem); }
+  .shot:hover, .shot:focus-within { rotate: 0deg; translate: 0 -0.4rem; }
+  .shot button { display: block; width: 100%; overflow: hidden; border-radius: 0.2rem; aspect-ratio: 4 / 3; background: #2a1233; cursor: zoom-in; }
   .shot.is-tall button { aspect-ratio: 3 / 4; }
-  @media (max-width: 63.99rem) { .shot button, .shot.is-tall button { aspect-ratio: auto; height: 60vw; max-height: 70svh; } }
-  .shot :global(picture), .shot :global(img) { display: block; width: 100%; height: 100%; }
-  .shot :global(img) { object-fit: cover; transition: transform 1.2s var(--ease); }
-  .shot button:hover :global(img) { transform: scale(1.05); }
-  .shot p { display: flex; gap: 0.75rem; align-items: baseline; margin-top: 0.75rem; font-size: 0.9rem; font-weight: 600; }
-  .shot .credit { display: block; font-weight: 500; font-size: 0.72rem; color: var(--ink-soft); }
-  .shot p { flex-wrap: wrap; }
-  .shot p span { font-family: var(--font-display); color: var(--turq-700); }
-
-  @media (min-width: 64rem) {
-    .rail { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2rem; overflow: visible; max-width: var(--max); margin-inline: auto; align-items: start; }
-    .shot, .shot.is-tall { width: auto; }
-    .shot:nth-child(1) { grid-column: 1 / 9; }
-    .shot:nth-child(1) button { aspect-ratio: 16 / 9; }
-    .shot:nth-child(2) { grid-column: 9 / 13; margin-top: 6rem; }
-    .shot:nth-child(2) button { aspect-ratio: 4 / 5; }
-    .shot:nth-child(3) { grid-column: 2 / 7; }
-    .shot:nth-child(4) { grid-column: 7 / 13; }
-    .shot:nth-child(4) button { aspect-ratio: 16 / 10; }
-    .shot:nth-child(5) { grid-column: 1 / 8; }
-    .shot:nth-child(5) button { aspect-ratio: 16 / 10; }
-    .shot:nth-child(6) { grid-column: 8 / 12; }
-  }
+  .shot :global(picture), .shot :global(img) { display: block; width: 100%; height: 100%; pointer-events: none; }
+  .shot :global(img) { object-fit: cover; transition: scale 1.2s var(--ease); }
+  .shot button:hover :global(img) { scale: 1.05; }
+  .shot p { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.3rem 1rem; margin-top: 0.75rem; }
+  .cap { font-family: var(--font-display); font-style: italic; font-size: 1.25rem; }
+  .shot .credit { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8a6a86; }
 
   .lightbox { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: rgb(3 26 36 / 0.96); color: var(--white); overscroll-behavior: contain; }
   .lightbox[open] { display: grid; place-items: center; animation: lb 0.4s var(--ease); }

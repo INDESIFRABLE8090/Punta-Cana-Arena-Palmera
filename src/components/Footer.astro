@@ -1,6 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
+import Palms from './Palms.astro';
 import { homePath, tourPath, legalPath, type Lang } from '@/i18n/config';
 import { legalDocs, legalSlugs, legalUi } from '@/i18n/legal';
 import { t } from '@/i18n/ui';
@@ -17,9 +18,20 @@ const social: { label: string; url: string }[] = [
 ].filter((x) => x.url);
 ---
 
+<section class="finale" aria-labelledby="finale-title">
+  <div class="sun" aria-hidden="true"></div>
+  <div class="fp fp-l" aria-hidden="true"><Palms side="left" /></div>
+  <div class="fp fp-r" aria-hidden="true"><Palms side="right" /></div>
+  <div class="fin shell">
+    <p class="kick">Beyond Paradise</p>
+    <h2 id="finale-title" class="word" translate="no">Arena <em>y</em> Palma</h2>
+    <p class="fline">{d.footer.line}</p>
+    <a class="go" href={`${homePath(lang)}#cotizar`}>{d.quick.cta}<Icon name="arrow" size={18} /></a>
+  </div>
+</section>
+
 <footer class="footer">
   <div class="shell">
-    <p class="display line">{d.footer.line}</p>
     <div class="cols">
       <div class="col brand">
         <Logo size={52} />
@@ -58,6 +70,27 @@ const social: { label: string; url: string }[] = [
 </footer>
 
 <style>
+  .finale { position: relative; overflow: clip; isolation: isolate; min-height: min(100svh, 52rem); display: grid; align-items: end; padding-block: 8rem 5rem; color: #2a1233;
+    background: linear-gradient(180deg, #3b1846 0%, #b04f7c 24%, #e9a3b8 48%, #f6c49c 72%, #fbe1c4 100%); }
+  .sun { position: absolute; left: 50%; bottom: 12%; z-index: -1; width: min(70vw, 34rem); aspect-ratio: 1; translate: -50% 0; border-radius: 50%;
+    background: radial-gradient(circle, #fff8ec 0 38%, rgb(255 236 214 / 0.55) 52%, transparent 70%); }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .sun { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% cover 60%; }
+      @keyframes rise { from { transform: translateY(45%) scale(0.85); opacity: 0.4; } }
+    }
+  }
+  .fp { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+  .fp :global(.palms) { width: min(60vw, 38rem); top: -8%; left: -12%; }
+  .fp-r :global(.palms) { left: auto; right: -10%; width: min(42vw, 26rem); }
+  .fin { display: grid; justify-items: center; text-align: center; gap: 1rem; }
+  .kick { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; color: #6b2a52; }
+  .word { font-family: var(--font-display); font-weight: 340; font-variation-settings: 'opsz' 144, 'SOFT' 50; font-size: clamp(3.6rem, 16vw, 13rem); line-height: 0.88; letter-spacing: -0.04em; }
+  .word em { font-style: italic; font-weight: 280; color: #a3365c; }
+  .fline { font-family: var(--font-display); font-style: italic; font-size: clamp(1.1rem, 2.6vw, 1.6rem); }
+  .go { display: inline-flex; align-items: center; gap: 0.6rem; min-height: 3.3rem; margin-top: 0.6rem; padding: 0 1.6rem; border-radius: 999px; background: #2a1233; color: #fff3ea; font-weight: 700; text-decoration: none; transition: transform 0.5s var(--ease); }
+  .go:hover { transform: translateY(-2px); }
+
   .footer { background: var(--ocean-950); color: var(--sand-100); padding-block: clamp(4rem, 9vw, 7rem) calc(2rem + env(safe-area-inset-bottom)); }
   .line { font-size: clamp(2.2rem, 7vw, 5rem); color: var(--sand-50); max-width: 16ch; margin-bottom: clamp(3rem, 7vw, 5rem); }
   .cols { display: grid; gap: 2.5rem; }
