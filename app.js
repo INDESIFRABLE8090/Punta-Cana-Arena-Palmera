@@ -1,3 +1,5 @@
+import { initTripPlanner } from './planner.js';
+
 const tours = [
   {
     id:'scape-park', name:'Scape Park', en:'Scape Park', category:'nature', categoryLabel:'NATURALEZA · AVENTURA', categoryEn:'NATURE · ADVENTURE',
@@ -102,7 +104,7 @@ const tours = [
 
 const translations = {
   es: {
-    navHome:'Inicio',navTours:'Excursiones',navTransport:'Transporte',navAbout:'Nosotros',navFaq:'Preguntas',navCta:'Cotizar viaje',
+    navHome:'Inicio',navTours:'Excursiones',navPlanner:'Mi viaje',navTransport:'Transporte',navAbout:'Nosotros',navFaq:'Preguntas',navCta:'Cotizar viaje',
     heroEyebrow:'EL LADO MÁS VIVO DEL CARIBE',heroLine1:'El Caribe',heroLine2:'no se cuenta.',heroLine3:'Se vive.',heroDescription:'Playas que parecen un sueño, aventuras que te suben la adrenalina y momentos dominicanos que se quedan contigo.',heroExplore:'Explorar experiencias',heroQuote:'Planear mi aventura',heroLocation:'Punta Cana · Bávaro · República Dominicana',scrollText:'DESLIZA PARA DESCUBRIR',soundOff:'Sonido: apagado',soundOn:'Sonido: encendido',
     introStrip:'EL SOL PONE EL ESCENARIO. <strong>TÚ PONES LA HISTORIA.</strong>',toursEyebrow:'ELIGE TU PRÓXIMO RECUERDO',toursTitle:'Aventuras para<br /><em>salir de la rutina.</em>',toursCopy:'Del azul transparente de nuestras islas a la emoción de recorrer caminos tropicales. Hay una experiencia esperando por ti.',filterAll:'Todas',filterSea:'Mar',filterAdventure:'Aventura',filterNature:'Naturaleza',filterNight:'Noche',searchPlaceholder:'Buscar una experiencia...',catalogueNote:'Los precios y la disponibilidad se confirman al cotizar. Las experiencias y sus inclusiones pueden variar según el operador y la fecha.',
     transportEyebrow:'EL VIAJE TAMBIÉN IMPORTA',transportTitle:'Muévete por<br /><em>el paraíso.</em>',transportCopy:'Que el camino sea parte de la experiencia. Cuéntanos desde dónde sales y hacia dónde quieres llegar.',transferAirport:'Traslados privados',transferAirportCopy:'Consulta traslados desde y hacia el aeropuerto.',transferHotels:'Hoteles y excursiones',transferHotelsCopy:'Coordina tu recogida para disfrutar sin complicaciones.',transferGroups:'Grupos y familias',transferGroupsCopy:'Cuéntanos cuántas personas viajan y armamos una cotización.',transportCta:'Cotizar transporte',
@@ -111,7 +113,7 @@ const translations = {
     faqEyebrow:'ANTES DE LANZARTE',faqTitle:'Lo que quieres<br /><em>saber.</em>',faqCopy:'Una buena aventura empieza con información clara. Aquí van algunas respuestas útiles.',footerLine:'El Caribe no se cuenta. Se vive.',footerLocation:'Punta Cana · República Dominicana',footerNote:'Experiencias sujetas a confirmación del operador.',floatingCta:'Cotiza tu aventura',includedTitle:'¿Qué incluye?',modalCta:'Cotizar esta experiencia',viewDetails:'Ver experiencia',askPrice:'Consultar precio',noResults:'No encontramos experiencias con esa búsqueda. Prueba con otra palabra.',transportOption:'Transporte / traslado',formSuccess:'Tu solicitud está preparada. ',copySuccess:'El mensaje se copió. Puedes pegarlo en tu WhatsApp o enviarlo a tu asesor.',configureWhatsapp:'El WhatsApp oficial aún no está configurado. Copia el mensaje y compártelo con tu asesor.',copyFailed:'No se pudo copiar automáticamente. Revisa los datos y vuelve a intentarlo.',selectTourError:'Selecciona una experiencia o transporte.',faqQuestions:[['¿Los precios están publicados?','Todavía no se han facilitado tarifas oficiales. Solicita una cotización para confirmar el precio vigente, la moneda y lo que incluye.'],['¿La solicitud confirma mi reserva?','No. El formulario prepara una solicitud. La reserva queda confirmada solo cuando el operador verifica disponibilidad, precio, punto de recogida y condiciones.'],['¿Incluyen transporte?','Cada ficha muestra los traslados que aparecen en el folleto. Para transporte privado, aeropuerto, hotel o rutas concretas, solicita una cotización indicando origen y destino.'],['¿Hay tarifa para niños?','El folleto menciona tarifa especial para menores de 11 años en Scape Park, Isla Catalina e Isla Saona. Confirma el precio y las edades con el operador antes de reservar.'],['¿Qué debo llevar?','Como orientación general: traje de baño, toalla, protección solar, ropa cómoda y una identificación. Revisa las instrucciones específicas que te envíe el operador.'],['¿Cuáles son las políticas de cancelación?','Las condiciones pueden depender de la excursión y del operador. Pide las políticas vigentes por escrito antes de realizar cualquier pago.']] 
   },
   en: {
-    navHome:'Home',navTours:'Excursions',navTransport:'Transportation',navAbout:'About us',navFaq:'FAQs',navCta:'Get a quote',
+    navHome:'Home',navTours:'Excursions',navPlanner:'My trip',navTransport:'Transportation',navAbout:'About us',navFaq:'FAQs',navCta:'Get a quote',
     heroEyebrow:'THE MOST VIBRANT SIDE OF THE CARIBBEAN',heroLine1:'The Caribbean',heroLine2:'is not told.',heroLine3:'It is lived.',heroDescription:'Dreamlike beaches, adrenaline-filled adventures and Dominican moments that stay with you.',heroExplore:'Explore experiences',heroQuote:'Plan my adventure',heroLocation:'Punta Cana · Bávaro · Dominican Republic',scrollText:'SCROLL TO DISCOVER',soundOff:'Sound: off',soundOn:'Sound: on',
     introStrip:'THE SUN SETS THE STAGE. <strong>YOU MAKE THE STORY.</strong>',toursEyebrow:'CHOOSE YOUR NEXT MEMORY',toursTitle:'Adventures to<br /><em>break the routine.</em>',toursCopy:'From the crystal-clear blue of our islands to the thrill of tropical trails. There is an experience waiting for you.',filterAll:'All',filterSea:'Sea',filterAdventure:'Adventure',filterNature:'Nature',filterNight:'Night',searchPlaceholder:'Search experiences...',catalogueNote:'Prices and availability are confirmed when you request a quote. Experiences and inclusions may vary by operator and date.',
     transportEyebrow:'THE JOURNEY MATTERS TOO',transportTitle:'Move around<br /><em>paradise.</em>',transportCopy:'Let the journey be part of the experience. Tell us where you are leaving from and where you want to go.',transferAirport:'Private transfers',transferAirportCopy:'Ask about transfers to and from the airport.',transferHotels:'Hotels and excursions',transferHotelsCopy:'Coordinate your pickup and enjoy the day without hassle.',transferGroups:'Groups and families',transferGroupsCopy:'Tell us how many people are travelling and we will prepare a quote.',transportCta:'Get a transport quote',
@@ -124,6 +126,7 @@ const translations = {
 let currentLang = 'es';
 let activeFilter = 'all';
 let activeModalTour = null;
+let tripPlanner = null;
 const $ = (s,root=document)=>root.querySelector(s);
 const $$ = (s,root=document)=>[...root.querySelectorAll(s)];
 const t = key => translations[currentLang][key] || key;
@@ -181,6 +184,7 @@ function renderTours(){
     grid.appendChild(card);
   });
   bindCardTilt();
+  tripPlanner?.decorateCards();
 }
 function openTour(id){
   const tour = tours.find(item=>item.id===id); if(!tour)return;
@@ -195,6 +199,7 @@ function openTour(id){
   $('#modalInclusions').innerHTML = (currentLang==='es'?tour.inclusions:tour.inclusionsEn).map(x=>`<li>${x}</li>`).join('');
   $('#modalNote').textContent = currentLang==='es'?tour.note:tour.noteEn;
   $('#modalQuote').onclick = () => { $('#experienceSelect').value = tour.name; closeTour(); setTimeout(()=>$('#cotizar').scrollIntoView({behavior:'smooth'}),80); };
+  tripPlanner?.decorateModal();
   $('#tourModal').classList.add('show'); $('#tourModal').setAttribute('aria-hidden','false'); document.body.classList.add('modal-open'); $('#modalClose').focus();
   startTourDiorama(tour);
 }
@@ -296,6 +301,7 @@ function setLang(lang){
   populateExperienceSelect();
   $('#experienceSelect').value=currentValue;
   renderTours(); renderFaq();
+  tripPlanner?.refresh();
   if(activeModalTour) openTour(activeModalTour.id);
   $('#soundToggle span:last-child').textContent=t(soundIsOn?'soundOn':'soundOff');
 }
@@ -342,6 +348,13 @@ function getQuoteMessage(form){
     `Notes: ${data.get('notes') || 'No notes'}`,
     'I understand this is an enquiry and a booking requires operator confirmation.'
   ];
+  const savedPlan = tripPlanner?.getItems() || [];
+  if (savedPlan.length) {
+    lines.splice(2, 0, currentLang === 'es'
+      ? 'Mi viaje: experiencias y días sugeridos (a confirmar con el operador):'
+      : 'My trip: selected experiences and suggested days (to be confirmed by the operator):',
+      ...tripPlanner.quoteLines());
+  }
   return lines.join('\n');
 }
 
@@ -613,6 +626,8 @@ async function initThreeHero(){
 }
 
 function init(){
-  populateExperienceSelect();renderTours();renderFaq();initNavigation();initQuoteForm();initReveal();initThreeHero();initTransportDiorama();
+  populateExperienceSelect();renderTours();renderFaq();initNavigation();
+  tripPlanner = initTripPlanner({ tours, getLanguage: () => currentLang, getModalTour: () => activeModalTour });
+  initQuoteForm();initReveal();initThreeHero();initTransportDiorama();
 }
 init();
