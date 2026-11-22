@@ -425,7 +425,11 @@ async function browserChecks() {
 }
 
 staticChecks();
-await browserChecks();
+if (process.env.JARVIS_STATIC_QA_ONLY === '1') {
+  console.log('Pruebas estáticas solamente (Playwright pendiente).');
+} else {
+  await browserChecks();
+}
 console.log(`\n${passed} comprobaciones correctas, ${failures.length} fallidas`);
 if (failures.length) {
   console.log(failures.map((f) => ` - ${f}`).join('\n'));
