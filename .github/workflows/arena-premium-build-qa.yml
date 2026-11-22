@@ -1,0 +1,33 @@
+name: arena-premium-build-qa-no-deploy
+on:
+  push:
+    branches:
+      - qa/arena-premium-build-proof-20261122
+permissions:
+  contents: read
+concurrency:
+  group: arena-build-qa-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SITE_URL: https://indesifrable8090.github.io
+      BASE_PATH: /Punta-Cana-Arena-Palmera
+      NODE_OPTIONS: --max-old-space-size=4096
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Astro typecheck and production build (no deploy)
+        run: npm run build
+      - name: Legal/publication gate — report blockers, do not publish
+        continue-on-error: true
+        run: npm run prelaunch
