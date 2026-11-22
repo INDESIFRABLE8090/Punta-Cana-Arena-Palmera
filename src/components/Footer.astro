@@ -1,0 +1,113 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import Palms from './Palms.astro';
+import { homePath, tourPath, legalPath, type Lang } from '@/i18n/config';
+import { legalDocs, legalSlugs, legalUi } from '@/i18n/legal';
+import { t } from '@/i18n/ui';
+import { site } from '@/config/site';
+import { tours } from '@/data/tours';
+import { waLink } from '@/scripts/whatsapp';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = t(lang);
+const social: { label: string; url: string }[] = [
+  { label: 'Instagram', url: site.instagram as string },
+  { label: 'Facebook', url: site.facebook as string },
+].filter((x) => x.url);
+---
+
+<section class="finale" aria-labelledby="finale-title">
+  <div class="sun" aria-hidden="true"></div>
+  <div class="fp fp-l" aria-hidden="true"><Palms side="left" /></div>
+  <div class="fp fp-r" aria-hidden="true"><Palms side="right" /></div>
+  <div class="fin shell">
+    <p class="kick">Beyond Paradise</p>
+    <h2 id="finale-title" class="word" translate="no">Arena <em>y</em> Palma</h2>
+    <p class="fline">{d.footer.line}</p>
+    <a class="go" href={`${homePath(lang)}#cotizar`}>{d.quick.cta}<Icon name="arrow" size={18} /></a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="shell">
+    <div class="cols">
+      <div class="col brand">
+        <Logo size={52} />
+        <p><strong translate="no">{site.name}</strong><br />{site.region}</p>
+      </div>
+      <nav class="col" aria-label={d.nav.experiences}>
+        <h2>{d.nav.experiences}</h2>
+        <ul class="tours">
+          {tours.map((x) => <li><a href={tourPath(lang, x.slug)}>{x.name[lang]}</a></li>)}
+        </ul>
+      </nav>
+      <div class="col">
+        <h2>{d.footer.contact}</h2>
+        <ul>
+          <li>
+            <a class="wa" href={waLink(d.client.waGeneral)} target="_blank" rel="noopener noreferrer" data-wa>
+              <Icon name="whatsapp" /> {site.whatsappDisplay}
+            </a>
+          </li>
+          {(site.email as string) && <li><a href={`mailto:${site.email}`}>{site.email}</a></li>}
+          {social.map((s) => <li><a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></li>)}
+          <li><a href={homePath(lang, '#itinerario')}>{d.nav.planner}</a></li>
+          <li><a href={homePath(lang, '#transporte')}>{d.nav.transport}</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="base">
+      <p>© {new Date().getFullYear()} {site.name}. {d.footer.rights}</p>
+      <p>{d.footer.legal} {legalUi[lang].trademarks}</p>
+      <nav class="legal" aria-label={legalUi[lang].legal}>
+        {legalDocs.map((doc) => <a href={legalPath(lang, legalSlugs[lang][doc])}>{legalUi[lang][doc]}</a>)}
+      </nav>
+      <a class="top" href="#contenido">{d.footer.top} ↑</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .finale { position: relative; overflow: clip; isolation: isolate; min-height: min(100svh, 52rem); display: grid; align-items: end; padding-block: 8rem 5rem; color: #2a1233;
+    background: linear-gradient(180deg, #3b1846 0%, #b04f7c 24%, #e9a3b8 48%, #f6c49c 72%, #fbe1c4 100%); }
+  .sun { position: absolute; left: 50%; bottom: 12%; z-index: -1; width: min(70vw, 34rem); aspect-ratio: 1; translate: -50% 0; border-radius: 50%;
+    background: radial-gradient(circle, #fff8ec 0 38%, rgb(255 236 214 / 0.55) 52%, transparent 70%); }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .sun { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% cover 60%; }
+      @keyframes rise { from { transform: translateY(45%) scale(0.85); opacity: 0.4; } }
+    }
+  }
+  .fp { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+  .fp :global(.palms) { width: min(60vw, 38rem); top: -8%; left: -12%; }
+  .fp-r :global(.palms) { left: auto; right: -10%; width: min(42vw, 26rem); }
+  .fin { display: grid; justify-items: center; text-align: center; gap: 1rem; }
+  .kick { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; color: #6b2a52; }
+  .word { font-family: var(--font-display); font-weight: 340; font-variation-settings: 'opsz' 144, 'SOFT' 50; font-size: clamp(3.6rem, 16vw, 13rem); line-height: 0.88; letter-spacing: -0.04em; }
+  .word em { font-style: italic; font-weight: 280; color: #a3365c; }
+  .fline { font-family: var(--font-display); font-style: italic; font-size: clamp(1.1rem, 2.6vw, 1.6rem); }
+  .go { display: inline-flex; align-items: center; gap: 0.6rem; min-height: 3.3rem; margin-top: 0.6rem; padding: 0 1.6rem; border-radius: 999px; background: #2a1233; color: #fff3ea; font-weight: 700; text-decoration: none; transition: transform 0.5s var(--ease); }
+  .go:hover { transform: translateY(-2px); }
+
+  .footer { background: var(--ocean-950); color: var(--sand-100); padding-block: clamp(4rem, 9vw, 7rem) calc(2rem + env(safe-area-inset-bottom)); }
+  .line { font-size: clamp(2.2rem, 7vw, 5rem); color: var(--sand-50); max-width: 16ch; margin-bottom: clamp(3rem, 7vw, 5rem); }
+  .cols { display: grid; gap: 2.5rem; }
+  .col h2 { font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-300); margin-bottom: 1rem; font-weight: 700; }
+  .col a { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; text-decoration: none; color: var(--sand-100); opacity: 0.85; }
+  .col a:hover { opacity: 1; color: var(--turq-300); }
+  .tours { columns: 2; column-gap: 1.5rem; }
+  .brand { display: flex; gap: 1rem; align-items: center; color: var(--sand-50); }
+  .brand p { font-size: 0.95rem; opacity: 0.85; }
+  .brand strong { font-family: var(--font-display); font-weight: 650; font-size: 1.15rem; opacity: 1; }
+  .base { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid rgb(255 255 255 / 0.12); display: grid; gap: 0.6rem; font-size: 0.8rem; color: rgb(244 236 220 / 0.7); }
+  .legal { display: flex; flex-wrap: wrap; gap: 0 1.25rem; grid-column: 1 / -1; }
+  .legal a { color: inherit; min-height: 2.75rem; display: inline-flex; align-items: center; }
+  .top { color: inherit; text-decoration: none; min-height: 2.75rem; display: inline-flex; align-items: center; }
+  @media (min-width: 56rem) {
+    .cols { grid-template-columns: 1.2fr 1.6fr 1fr; }
+    .brand { align-items: flex-start; }
+    .base { grid-template-columns: auto 1fr auto; align-items: center; gap: 2rem; }
+  }
+</style>

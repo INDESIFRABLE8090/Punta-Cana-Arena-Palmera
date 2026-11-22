@@ -1,0 +1,63 @@
+---
+import Base from '@/layouts/Base.astro';
+import Hero from '@/components/Hero.astro';
+import Dive from '@/components/Dive.astro';
+import Marquee from '@/components/Marquee.astro';
+import Experiences from '@/components/Experiences.astro';
+import Transport from '@/components/Transport.astro';
+import Gallery from '@/components/Gallery.astro';
+import Planner from '@/components/Planner.astro';
+import Faq from '@/components/Faq.astro';
+import Quote from '@/components/Quote.astro';
+import { languages, homePath, tourPath, type Lang } from '@/i18n/config';
+import { t } from '@/i18n/ui';
+import { site } from '@/config/site';
+import { tours } from '@/data/tours';
+
+export const getStaticPaths = () => languages.map((lang) => ({ params: { lang } }));
+
+const lang = Astro.params.lang as Lang;
+const d = t(lang);
+const abs = (p: string) => new URL(p, Astro.site).href;
+const alternates = Object.fromEntries(languages.map((l) => [l, homePath(l)])) as Record<Lang, string>;
+
+// Datos estructurados: solo hechos confirmados (sin precios, reseñas ni valoraciones).
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TravelAgency',
+    '@id': abs(homePath('es')) + '#negocio',
+    name: site.name,
+    url: abs(homePath(lang)),
+    image: abs(import.meta.env.BASE_URL.replace(/\/$/, '') + '/og.jpg'),
+    telephone: `+${site.whatsapp}`,
+    areaServed: { '@type': 'Place', name: 'Punta Cana, La Altagracia, República Dominicana' },
+    address: { '@type': 'PostalAddress', addressLocality: 'Punta Cana', addressCountry: 'DO' },
+    availableLanguage: ['es', 'en', 'pt'],
+    contactPoint: { '@type': 'ContactPoint', telephone: `+${site.whatsapp}`, contactType: 'reservations', availableLanguage: ['es', 'en', 'pt'] },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: d.experiences.eyebrow,
+    itemListElement: tours.map((x, i) => ({ '@type': 'ListItem', position: i + 1, name: x.name[lang], url: abs(tourPath(lang, x.slug)) })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: d.faq.items.map((it) => ({ '@type': 'Question', name: it.q, acceptedAnswer: { '@type': 'Answer', text: it.a } })),
+  },
+];
+---
+
+<Base lang={lang} title={d.meta.homeTitle} description={d.meta.homeDescription} alternates={alternates} jsonLd={jsonLd} overlayHeader>
+  <Hero lang={lang} />
+  <Experiences lang={lang} />
+  <Quote lang={lang} />
+  <Marquee lang={lang} />
+  <Dive lang={lang} />
+  <Transport lang={lang} />
+  <Gallery lang={lang} />
+  <Planner lang={lang} />
+  <Faq lang={lang} />
+</Base>

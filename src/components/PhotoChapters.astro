@@ -1,0 +1,98 @@
+---
+/**
+ * Capítulos fotográficos (momento «photo-chapters» de Taste Skill, portado a este proyecto).
+ * En reposo (sin JS, movimiento reducido, pantallas de menos de 600 px de alto) los capítulos
+ * se ven uno junto a otro. En vivo (motion.ts añade .is-live) la sección se queda fija y cada
+ * foto se descubre desde abajo sobre la anterior mientras el panel cambia al capítulo en curso.
+ */
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import lancha from '@/assets/images/lancha-rapida.jpg';
+import scuba from '@/assets/images/scuba-doo.jpg';
+import buggies from '@/assets/images/buggies.jpg';
+import noche from '@/assets/images/coco-bongo.jpg';
+import { homePath, type Lang } from '@/i18n/config';
+import { t } from '@/i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = t(lang).chapters;
+const media = {
+  sea: { src: lancha, filter: 'sea', pos: '50% 60%' },
+  under: { src: scuba, filter: 'sea', pos: '62% 50%' },
+  land: { src: buggies, filter: 'adventure', pos: '50% 55%' },
+  night: { src: noche, filter: 'night', pos: '50% 40%' },
+} as const;
+const alts = {
+  es: { sea: 'Dos lanchas rápidas sobre agua turquesa frente a una playa de palmeras', under: 'Persona explorando un arrecife con peces tropicales', land: 'Buggy levantando polvo en un camino de tierra roja entre palmeras', night: 'Espectáculo nocturno con acróbatas, luces de colores y confeti' },
+  en: { sea: 'Two speedboats on turquoise water off a palm-lined beach', under: 'Person exploring a reef with tropical fish', land: 'Buggy kicking up dust on a red dirt road between palms', night: 'Night show with acrobats, coloured lights and confetti' },
+  pt: { sea: 'Duas lanchas rápidas sobre água turquesa em frente a uma praia de palmeiras', under: 'Pessoa explorando um recife com peixes tropicais', land: 'Buggy levantando poeira em uma estrada de terra vermelha entre palmeiras', night: 'Show noturno com acrobatas, luzes coloridas e confete' },
+}[lang];
+---
+
+<section class="pc-section" id="capitulos" data-photo-chapters aria-labelledby="pc-title">
+  <div class="pc shell">
+    <div class="pc__head">
+      <h2 class="display h-lg" id="pc-title">{d.title}</h2>
+      <p class="lead">{d.lead}</p>
+    </div>
+    <ol class="pc__list">
+      {d.items.map((it) => {
+        const m = media[it.id as keyof typeof media];
+        return (
+          <li class="pc__ch">
+            <figure class="pc__pic">
+              <Picture src={m.src} alt={alts[it.id as keyof typeof alts]} formats={['avif', 'webp']} widths={[480, 768, 1080, 1600]} sizes="(min-width: 64rem) 90vw, 100vw" loading="lazy" decoding="async" quality={70} style={`object-position:${m.pos}`} />
+            </figure>
+            <div class="pc__words">
+              <h3 class="display">{it.title}</h3>
+              <p>{it.text}</p>
+              <a class="text-link" href={homePath(lang, `?filtro=${m.filter}#experiencias`)}>{d.see} <Icon name="arrow" /></a>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .pc-section { background: var(--ocean-950); color: var(--sand-50); padding-block: clamp(4.5rem, 10vw, 8rem); }
+  .pc { display: grid; gap: clamp(2rem, 5vw, 3.5rem); }
+  .pc__head { display: grid; gap: 1rem; max-width: 46rem; }
+  .pc__head .lead { color: rgb(244 236 220 / 0.82); }
+  .pc__list { display: grid; gap: 2.5rem 1.5rem; }
+  .pc__ch { display: grid; gap: 1rem; align-content: start; }
+  .pc__pic { margin: 0; border-radius: var(--radius); overflow: hidden; background: var(--ocean-800); }
+  .pc__pic :global(picture), .pc__pic :global(img) { display: block; width: 100%; height: 100%; }
+  .pc__pic :global(img) { aspect-ratio: 16 / 10; object-fit: cover; }
+  .pc__words { display: grid; gap: 0.6rem; }
+  .pc__words h3 { font-size: clamp(1.8rem, 4vw, 2.6rem); }
+  .pc__words p { color: rgb(244 236 220 / 0.85); max-width: 44ch; }
+  .pc__words .text-link { color: var(--turq-300); justify-self: start; }
+  @media (min-width: 40rem) { .pc__list { grid-template-columns: 1fr 1fr; } }
+
+  /* En vivo: sección fija, fotos apiladas que se descubren desde abajo, panel con el capítulo en curso. */
+  .pc-section.is-live { height: calc(4 * 100svh); padding: 0; }
+  .pc-section.is-live .pc { position: sticky; top: 0; height: 100svh; box-sizing: border-box; overflow: clip;
+    padding-top: calc(var(--header-h) + 1.5rem); padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
+    grid-template-rows: auto minmax(0, 1fr); gap: clamp(1rem, 3vh, 2rem); }
+  .pc-section.is-live .pc__head .lead { display: none; }
+  .pc-section.is-live :global(.pc__stage) { position: relative; min-height: 0; border-radius: var(--radius); overflow: clip; background: var(--ocean-800); }
+  .pc-section.is-live :global(.pc__stage > .pc__pic) { position: absolute; inset: 0; border-radius: 0; clip-path: inset(var(--c, 0%) 0 0 0); will-change: clip-path; }
+  .pc-section.is-live :global(.pc__stage > .pc__pic img) { aspect-ratio: auto; transform: scale(var(--z, 1)); transform-origin: 50% 100%; will-change: transform; }
+  .pc-section.is-live :global(.pc__panel) { position: absolute; z-index: 1; left: clamp(0.75rem, 2vw, 1.5rem); bottom: clamp(0.75rem, 2vw, 1.5rem);
+    width: min(28rem, calc(100% - 1.5rem)); padding: clamp(1.25rem, 3vw, 2rem); display: grid; gap: 0.75rem;
+    background: var(--sand-50); color: var(--ink); border-radius: var(--radius-sm); box-shadow: 0 30px 60px -30px rgb(3 26 36 / 0.6); }
+  .pc-section.is-live :global(.pc__count) { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.18em; color: var(--turq-700); font-variant-numeric: tabular-nums; }
+  .pc-section.is-live .pc__list { display: grid; grid-template-columns: 1fr; gap: 0; }
+  .pc-section.is-live .pc__ch { grid-area: 1 / 1; }
+  .pc-section.is-live .pc__words { opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity 0.22s ease, transform 0.22s ease; }
+  .pc-section.is-live .pc__ch.is-on .pc__words { opacity: 1; transform: none; pointer-events: auto; transition: opacity 0.42s var(--ease) 0.06s, transform 0.52s var(--ease) 0.06s; }
+  .pc-section.is-live .pc__words p { color: var(--ink-soft); }
+  .pc-section.is-live .pc__words .text-link { color: var(--turq-700); }
+  @media (max-width: 39.99rem) {
+    .pc-section.is-live :global(.pc__panel) { left: 0.75rem; right: 0.75rem; width: auto; }
+    .pc-section.is-live .pc__words h3 { font-size: 1.8rem; }
+  }
+</style>

@@ -1,0 +1,61 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import AddButton from './AddButton.astro';
+import { tourPath, type Lang } from '@/i18n/config';
+import { t } from '@/i18n/ui';
+import type { Tour } from '@/data/tours';
+
+interface Props { lang: Lang; tour: Tour }
+const { lang, tour } = Astro.props;
+const d = t(lang);
+const url = tourPath(lang, tour.slug);
+const highlights = (tour.options ? tour.options.map((o) => o.name[lang]) : tour.inclusions[lang].slice(1)).slice(0, 3);
+---
+
+<li class="card" data-category={tour.category} style={`--accent:${tour.accent};--deep:${tour.deep}`}>
+  <article>
+    <a class="media" href={url}>
+      {tour.image ? (
+        <Picture src={tour.image.src} alt={tour.image.alt[lang]} formats={['avif', 'webp']} widths={[400, 640, 900]} sizes="(min-width: 64rem) 30vw, (min-width: 48rem) 45vw, 82vw" loading="lazy" decoding="async" quality={70} style={`object-position:${tour.image.position ?? '50% 50%'}`} />
+      ) : (
+        <span class="poster" aria-hidden="true"><span class="glow"></span></span>
+      )}
+      <span class="cat">{d.categories[tour.category]}</span>
+      <span class="over">
+        <span class="name">{tour.name[lang]}</span>
+        <span class="tag">{tour.tagline[lang]}</span>
+      </span>
+    </a>
+    <div class="body">
+      <ul class="incl">{highlights.map((h) => <li>{h}</li>)}</ul>
+      <div class="actions">
+        <a class="btn btn-turq" href={url}>{d.experiences.view}<span class="arrow"><Icon name="arrow" /></span></a>
+        <AddButton lang={lang} slug={tour.slug} class="btn btn-ghost add" />
+      </div>
+    </div>
+  </article>
+</li>
+
+<style>
+  .card { flex: none; width: min(82vw, 22rem); scroll-snap-align: start; }
+  .card[hidden] { display: none; }
+  article { display: grid; gap: 1rem; height: 100%; }
+  .media { position: relative; display: block; aspect-ratio: 4 / 5; border-radius: 1.5rem; overflow: hidden; color: var(--white); text-decoration: none; background: var(--deep); isolation: isolate; }
+  .media :global(picture), .media :global(img) { display: block; width: 100%; height: 100%; }
+  .media :global(img) { object-fit: cover; transition: transform 1.2s var(--ease); }
+  .media:hover :global(img) { transform: scale(1.03); }
+  .media::after { content: ''; position: absolute; inset: 40% 0 0; background: linear-gradient(transparent, rgb(3 26 36 / 0.88)); z-index: 0; }
+  .poster { position: absolute; inset: 0; background: linear-gradient(160deg, var(--deep) 15%, color-mix(in srgb, var(--accent) 38%, var(--deep)) 100%); overflow: hidden; }
+  .glow { position: absolute; inset: -30%; background: radial-gradient(40% 35% at 30% 30%, color-mix(in srgb, var(--accent) 70%, white) 0, transparent 70%), radial-gradient(35% 40% at 75% 65%, color-mix(in srgb, var(--accent) 55%, transparent) 0, transparent 70%); filter: blur(30px); opacity: 0.6; }
+  .cat { position: absolute; z-index: 1; top: 1rem; left: 1rem; padding: 0.35rem 0.8rem; border-radius: 999px; background: rgb(255 255 255 / 0.92); color: var(--ink); font-size: 0.75rem; font-weight: 700; }
+  .over { position: absolute; z-index: 1; left: 1.25rem; right: 1.25rem; bottom: 1.25rem; display: grid; gap: 0.35rem; }
+  .name { font-family: var(--font-display); font-weight: 620; font-size: clamp(1.7rem, 6vw, 2.1rem); line-height: 1; letter-spacing: -0.035em; }
+  .tag { font-size: 0.95rem; line-height: 1.35; color: rgb(255 255 255 / 0.92); }
+  .body { display: grid; gap: 0.9rem; align-content: space-between; }
+  .incl { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .incl li { padding: 0.3rem 0.7rem; border-radius: 999px; background: var(--sand-75); font-size: 0.8rem; font-weight: 600; color: var(--ink-soft); }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .actions .btn { flex: 1 1 auto; min-height: 3rem; padding-inline: 1.1rem; font-size: 0.88rem; }
+  @media (min-width: 48rem) { .card { width: auto; } }
+</style>

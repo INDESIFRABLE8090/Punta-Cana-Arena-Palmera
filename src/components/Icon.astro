@@ -1,0 +1,25 @@
+---
+interface Props { name: 'arrow' | 'whatsapp' | 'plus' | 'check' | 'close' | 'chevron' | 'sound' | 'mute' | 'up' | 'down'; size?: number }
+const { name, size = 18 } = Astro.props;
+const paths: Record<Props['name'], string> = {
+  arrow: 'M7 17 17 7M9 7h8v8',
+  plus: 'M12 5v14M5 12h14',
+  check: 'm5 12.500 4.500 4.500L19 7.500',
+  close: 'M6 6l12 12M18 6 6 18',
+  chevron: 'm9 6 6 6-6 6',
+  up: 'm6 14 6-6 6 6',
+  down: 'm6 10 6 6 6-6',
+  sound: 'M4 10v4h3l5 4V6L7 10H4Zm12-1.500a5 5 0 0 1 0 7M18.500 6a8.500 8.500 0 0 1 0 12',
+  mute: 'M4 10v4h3l5 4V6L7 10H4Zm12 0 5 5m0-5-5 5',
+  whatsapp: '',
+};
+---
+{name === 'whatsapp' ? (
+  <svg class={`icon ${Astro.props.name}`} width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+    <path d="M12.040 2a9.900 9.900 0 0 0-8.480 15.020L2 22l5.120-1.520A9.900 9.900 0 1 0 12.040 2Zm0 1.800a8.100 8.100 0 1 1-4.300 14.970l-.300-.190-3.030.900.920-2.950-.200-.310A8.100 8.100 0 0 1 12.040 3.800Zm-3.420 4.100c-.180 0-.470.070-.720.340-.250.270-.950.930-.950 2.260s.970 2.620 1.110 2.800c.140.180 1.880 3 4.640 4.090 2.290.900 2.760.720 3.260.680.500-.050 1.600-.650 1.830-1.290.230-.630.230-1.170.160-1.290-.070-.110-.250-.180-.520-.320-.270-.140-1.600-.790-1.850-.880-.250-.090-.430-.140-.610.140-.180.270-.700.880-.860 1.060-.160.180-.320.200-.590.070-.270-.140-1.150-.420-2.180-1.350-.810-.720-1.350-1.610-1.510-1.880-.160-.270-.020-.420.120-.550.120-.120.270-.320.410-.480.140-.160.180-.270.270-.450.090-.180.050-.340-.020-.480-.070-.140-.600-1.490-.840-2.040-.220-.520-.440-.450-.610-.460l-.540-.010Z" />
+  </svg>
+) : (
+  <svg class="icon" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    <path d={paths[name]} />
+  </svg>
+)}

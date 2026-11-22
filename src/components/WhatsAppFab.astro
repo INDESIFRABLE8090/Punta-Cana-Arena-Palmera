@@ -1,0 +1,20 @@
+---
+import Icon from './Icon.astro';
+import { t } from '@/i18n/ui';
+import { waLink } from '@/scripts/whatsapp';
+import type { Lang } from '@/i18n/config';
+interface Props { lang: Lang; message: string }
+const { lang, message } = Astro.props;
+---
+<a class="fab" href={waLink(message)} target="_blank" rel="noopener noreferrer" data-fab data-wa aria-label={t(lang).fab}>
+  <Icon name="whatsapp" size={26} /><span>{t(lang).fab}</span>
+</a>
+<style>
+  .fab { position: fixed; z-index: 90; right: max(1rem, env(safe-area-inset-right)); bottom: max(1rem, env(safe-area-inset-bottom)); display: inline-flex; align-items: center; gap: 0.6rem; height: 3.5rem; min-width: 3.5rem; padding: 0 0.95rem; border-radius: 999px; background: var(--wa); color: #fff; text-decoration: none; font-weight: 650; font-size: 0.9rem; box-shadow: 0 14px 34px -10px rgb(3 26 36 / 0.6); transition: transform 0.5s var(--ease), opacity 0.4s; }
+  .fab span { display: none; }
+  .fab.is-away { transform: translateY(160%); opacity: 0; pointer-events: none; }
+  /* Con JS y portada, nace oculto hasta que app.ts decide (evita un destello sobre el hero). Sin JS, visible. */
+  :global(.js body:has([data-hero])) .fab:not(.is-shown) { transform: translateY(160%); opacity: 0; pointer-events: none; }
+  .fab:hover { transform: translateY(-3px); }
+  @media (min-width: 48rem) { .fab { padding: 0 1.3rem 0 1.1rem; } .fab span { display: inline; } }
+</style>

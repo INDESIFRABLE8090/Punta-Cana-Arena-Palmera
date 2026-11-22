@@ -1,0 +1,66 @@
+---
+/**
+ * Palmeras en silueta generadas en código (SVG original, sin fotografías): cada fronda es una espina
+ * curva con foliolos que cuelgan por gravedad. Enmarcan la primera escena y se retiran al sumergirse.
+ */
+interface Props { side: 'left' | 'right' }
+const { side } = Astro.props;
+
+type Frond = { a: number; len: number; droop: number; leaf: number };
+const fronds: Frond[] = [
+  { a: 4, len: 330, droop: 40, leaf: 52 },
+  { a: 20, len: 400, droop: 100, leaf: 72 },
+  { a: 40, len: 350, droop: 140, leaf: 64 },
+  { a: 60, len: 300, droop: 160, leaf: 56 },
+  { a: 80, len: 235, droop: 150, leaf: 48 },
+];
+const f = (n: number) => n.toFixed(1);
+
+/** Espina como Bézier cuadrática + foliolos a ambos lados con caída. */
+function frond({ a, len, droop, leaf }: Frond, ox: number, oy: number, k = 1) {
+  const r = (a * Math.PI) / 180;
+  const p0 = [ox, oy];
+  const p2 = [ox + Math.cos(r) * len * k, oy + Math.sin(r) * len * k + droop * k];
+  const p1 = [ox + Math.cos(r) * len * 0.62 * k, oy + Math.sin(r) * len * 0.62 * k - 28 * k];
+  let d = `M${f(p0[0]!)} ${f(p0[1]!)}Q${f(p1[0]!)} ${f(p1[1]!)} ${f(p2[0]!)} ${f(p2[1]!)}`;
+  for (let t = 0.1; t < 1; t += 0.034) {
+    const u = 1 - t;
+    const x = u * u * p0[0]! + 2 * u * t * p1[0]! + t * t * p2[0]!;
+    const y = u * u * p0[1]! + 2 * u * t * p1[1]! + t * t * p2[1]!;
+    const tx = 2 * u * (p1[0]! - p0[0]!) + 2 * t * (p2[0]! - p1[0]!);
+    const ty = 2 * u * (p1[1]! - p0[1]!) + 2 * t * (p2[1]! - p1[1]!);
+    const prof = (Math.sin(Math.PI * Math.min(1, t * 1.04)) ** 0.75 * 0.92 + 0.08) * leaf * k;
+    for (const s of [1, -1]) {
+      const ang = Math.atan2(ty, tx) + s * 1.0;
+      let dx = Math.cos(ang);
+      let dy = Math.sin(ang) + 0.55;
+      const dm = Math.hypot(dx, dy) || 1;
+      dx /= dm; dy /= dm;
+      d += `M${f(x)} ${f(y)}l${f(dx * prof)} ${f(dy * prof)}`;
+    }
+  }
+  return d;
+}
+const back = fronds.map((fr, i) => frond({ ...fr, a: fr.a + (i % 2 ? 8 : -6) }, -10, -10, 0.82));
+const front = fronds.map((fr) => frond(fr, -10, -10, 1));
+---
+
+<svg class:list={['palms', side]} viewBox="0 0 440 560" preserveAspectRatio="xMinYMin meet" aria-hidden="true" focusable="false">
+  <g class="sway slow"><path class="back" d={back.join('')} /></g>
+  <g class="sway"><path class="front" d={front.join('')} /></g>
+</svg>
+
+<style>
+  /* Posición y tamaño los decide el componente que las usa. */
+  .palms { position: absolute; height: auto; pointer-events: none; overflow: visible; }
+  .palms.right { transform: scaleX(-1); }
+  .palms path { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .back { stroke: #6b3a6e; stroke-width: 1.6px; opacity: 0.34; }
+  .front { stroke: #3b1a40; stroke-width: 2.2px; opacity: 0.5; }
+  .sway { transform-origin: 0 0; transform-box: view-box; }
+  @media (prefers-reduced-motion: no-preference) {
+    .sway { animation: sway 7s ease-in-out infinite; }
+    .sway.slow { animation-duration: 9.5s; animation-delay: -3s; }
+    @keyframes sway { 0%, 100% { transform: rotate(-1.1deg); } 50% { transform: rotate(1.5deg); } }
+  }
+</style>

@@ -1,0 +1,54 @@
+---
+import Base from '@/layouts/Base.astro';
+import { languages, legalPath, type Lang } from '@/i18n/config';
+import { legalDocs, legalSlugs, legalText, legalUi, type LegalDoc } from '@/i18n/legal';
+import { site } from '@/config/site';
+import { credits } from '@/data/credits';
+
+export const getStaticPaths = () =>
+  languages.flatMap((lang) => legalDocs.map((doc) => ({ params: { lang, doc: legalSlugs[lang][doc] }, props: { docId: doc } })));
+
+const lang = Astro.params.lang as Lang;
+const { docId } = Astro.props as { docId: LegalDoc };
+const text = legalText(lang, docId, { name: site.name, legalName: site.legalName, taxId: site.taxId, address: site.address, email: site.email, whatsapp: site.whatsappDisplay }, site.legalUpdated);
+const abs = (path: string) => new URL(path, Astro.site).href;
+const jsonLd = [{ '@context': 'https://schema.org', '@type': 'WebPage', name: text.title, inLanguage: lang === 'pt' ? 'pt-BR' : lang, url: abs(legalPath(lang, legalSlugs[lang][docId])), isPartOf: { '@type': 'WebSite', name: site.name } }];
+const alternates = Object.fromEntries(languages.map((l) => [l, legalPath(l, legalSlugs[l][docId])])) as Record<Lang, string>;
+---
+
+<Base lang={lang} title={`${text.title} | ${site.name}`} description={`${text.title} — ${site.name}. ${text.intro}`.slice(0, 158)} alternates={alternates} jsonLd={jsonLd}>
+  <article class="legal shell">
+    <h1 class="display h-lg">{text.title}</h1>
+    <p class="intro">{text.intro}</p>
+    {text.sections.map((s) => (
+      <section>
+        <h2>{s.h}</h2>
+        {s.p.map((p) => <p>{p}</p>)}
+      </section>
+    ))}
+    {docId === 'credits' && (
+      <ul class="credits">
+        {credits.map((c) => (
+          <li>
+            <a href={c.source} rel="noopener noreferrer" target="_blank">{c.title}</a> — {c.author} ·{' '}
+            <a href={c.licenseUrl} rel="noopener noreferrer license" target="_blank">{c.license}</a>
+          </li>
+        ))}
+      </ul>
+    )}
+    <nav class="others" aria-label={legalUi[lang].legal}>
+      {legalDocs.filter((d) => d !== docId).map((d) => <a href={legalPath(lang, legalSlugs[lang][d])}>{legalUi[lang][d]}</a>)}
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .legal { padding-block: calc(var(--header-h) + 3rem) 5rem; max-width: 48rem; display: grid; gap: 1.5rem; }
+  .intro { color: var(--ink-soft); }
+  section { display: grid; gap: 0.6rem; }
+  h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; margin-top: 1rem; }
+  p, li { max-width: 68ch; overflow-wrap: anywhere; }
+  .credits { display: grid; gap: 0.75rem; }
+  .credits a, .others a { min-height: 2.75rem; display: inline-flex; align-items: center; }
+  .others { display: flex; flex-wrap: wrap; gap: 0 1.5rem; padding-top: 2rem; border-top: 1px solid rgb(10 30 38 / 0.15); }
+</style>
