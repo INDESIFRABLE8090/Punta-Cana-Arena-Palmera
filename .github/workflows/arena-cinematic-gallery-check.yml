@@ -1,0 +1,50 @@
+name: arena-cinematic-gallery-preview-check
+on:
+  push:
+    branches:
+      - design/cinematic-gallery-20261122
+    paths:
+      - src/components/Gallery.astro
+      - scripts/capture-gallery.mjs
+      - .github/workflows/arena-cinematic-gallery-check.yml
+  pull_request:
+    paths:
+      - src/components/Gallery.astro
+      - scripts/capture-gallery.mjs
+      - .github/workflows/arena-cinematic-gallery-check.yml
+
+permissions:
+  contents: read
+
+jobs:
+  astro-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Check types and production build for ES, EN, PT
+        run: npm run build
+      - name: Install Chromium for real website interaction tests
+        run: |
+          npm install --global playwright
+          npx playwright install --with-deps chromium
+      - name: Save real responsive gallery previews and reject undersized images
+        run: node scripts/capture-gallery.mjs
+      - name: Upload screenshots from Chromium for visual QA
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: arena-gallery-chromium-preview
+          path: .preview-captures/*.png
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Run responsive, browser, accessibility and gallery regression tests
+        run: npm test

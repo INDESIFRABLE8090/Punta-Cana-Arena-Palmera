@@ -1,7 +1,6 @@
 ---
 import { Picture, getImage } from 'astro:assets';
 import SplitHeading from './SplitHeading.astro';
-import coast from '@/assets/images/costa-punta-cana.jpg';
 import { t } from '@/i18n/ui';
 import type { Lang } from '@/i18n/config';
 import { tours } from '@/data/tours';
@@ -11,32 +10,65 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const d = t(lang);
 
-const shots = [
-  { src: coast, alt: d.hero.imageAlt, caption: d.gallery.coastCaption, shape: 'wide', credit: undefined },
-  ...tours.filter((x) => x.image).map((x, i) => ({
-    src: x.image!.src,
-    alt: x.image!.alt[lang],
-    caption: x.name[lang],
-    credit: x.image!.credit ? creditFor(x.image!.credit) : undefined,
-    shape: x.slug === 'coco-bongo' ? 'tall' : i % 2 ? 'std' : 'wide',
-  })),
-];
-const items = await Promise.all(
-  shots.map(async (s) => ({ ...s, full: (await getImage({ src: s.src, width: Math.min(1600, s.src.width), format: 'webp', quality: 78 })).src })),
-);
+// Curate an editorial sequence: no blurry catalogue thumbnails enlarged to
+// full-screen. Poor source photography stays in the small catalogue card,
+// rather than in the immersive gallery. Every selected photo needs credits.
+const shots = tours.filter((x) =>
+  !!x.image?.credit
+  && x.image.src.width >= 1600
+  && x.image.src.height >= 900
+  && !['commons-piscina-natural.jpg', 'commons-mono-ardilla.jpg'].includes(x.image.credit)
+).slice(0, 6).map((x, i) => ({
+  src: x.image!.src,
+  alt: x.image!.alt[lang],
+  caption: x.name[lang],
+  credit: creditFor(x.image!.credit!),
+  number: String(i + 1).padStart(2, '0'),
+}));
+const items = await Promise.all(shots.map(async (s) => ({
+  ...s,
+  full: (await getImage({ src: s.src, width: Math.min(2400, s.src.width), format: 'webp', quality: 84 })).src,
+  widths: [480, 768, 1080, 1600, 2200, 3000].filter(w => w <= s.src.width),
+})));
+
 ---
 
-<section class="section gallery" id="galeria" aria-labelledby="gal-title">
-  <div class="shell section-head">
+<section class="section gallery gallery-editorial" id="galeria" aria-labelledby="gal-title">
+  <div class="shell gallery-head">
+    <div class="gallery-kicker"><span>{d.gallery.eyebrow}</span><span class="gallery-line"></span><span>{String(items.length).padStart(2, "0")}</span></div>
     <SplitHeading class="h-lg" id="gal-title" text={d.gallery.title} em={d.gallery.titleEm} />
+    <div class="gallery-decoration" aria-hidden="true">✳</div>
   </div>
   <ul class="rail" data-gallery>
     {items.map((it, i) => (
-      <li class={`shot is-${it.shape}`}>
-        <button type="button" data-shot={i} data-full={it.full} data-alt={it.alt} data-caption={it.credit ? `${it.caption} · ${legalUi[lang].photo}: ${it.credit.author} (${it.credit.license})` : it.caption} aria-label={`${d.gallery.open}: ${it.caption}`}>
-          <Picture src={it.src} alt={it.alt} formats={['webp']} widths={[400, 720, 1080]} sizes="(min-width: 64rem) 45vw, 82vw" loading="lazy" decoding="async" quality={66} />
+      <li class:list={['shot', { 'shot-offset': i % 2 === 1 }]}>
+        <button
+          class="shot-screen"
+          type="button"
+          data-shot={i}
+          data-full={it.full}
+          data-alt={it.alt}
+          data-caption={it.credit ? it.caption + ' · ' + legalUi[lang].photo + ': ' + it.credit.author + ' (' + it.credit.license + ')' : it.caption}
+          aria-label={d.gallery.open + ': ' + it.caption}
+        >
+          <Picture
+            src={it.src}
+            alt={it.alt}
+            formats={['avif', 'webp']}
+            widths={it.widths}
+            sizes="(min-width: 72rem) 76vw, (min-width: 48rem) 88vw, 100vw"
+            loading="lazy"
+            decoding="async"
+            quality={84}
+          />
+          <span class="shot-shade" aria-hidden="true"></span>
+          <span class="shot-content" aria-hidden="true">
+            <span class="shot-index">{it.number} / {String(items.length).padStart(2, '0')}</span>
+            <strong class="shot-name">{it.caption}</strong>
+            <span class="shot-action">{d.gallery.open}<span>↗</span></span>
+          </span>
         </button>
-        <p>{it.caption}{it.credit && <small class="credit">{legalUi[lang].photo}: {it.credit.author} · {it.credit.license}</small>}</p>
+        {it.credit && <p class="credit">{legalUi[lang].photo}: {it.credit.author} · {it.credit.license}</p>}
       </li>
     ))}
   </ul>
@@ -52,48 +84,71 @@ const items = await Promise.all(
   </dialog>
 </section>
 
+
 <style>
-  .gallery { background: var(--sand-100); overflow: clip; }
-  .rail { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 var(--gutter) 1rem; scrollbar-width: none; align-items: flex-start; }
-  .rail::-webkit-scrollbar { display: none; }
-  .shot { flex: none; width: 80vw; scroll-snap-align: center; }
-  .shot.is-tall { width: 45vw; }
-  .shot button { display: block; width: 100%; overflow: hidden; border-radius: var(--radius); aspect-ratio: 4 / 3; background: var(--ocean-800); cursor: zoom-in; }
-  .shot.is-tall button { aspect-ratio: 3 / 4; }
-  @media (max-width: 63.99rem) { .shot button, .shot.is-tall button { aspect-ratio: auto; height: 60vw; max-height: 70svh; } }
-  .shot :global(picture), .shot :global(img) { display: block; width: 100%; height: 100%; }
-  .shot :global(img) { object-fit: cover; transition: transform 1.2s var(--ease); }
-  .shot button:hover :global(img) { transform: scale(1.05); }
-  .shot p { display: flex; gap: 0.75rem; align-items: baseline; margin-top: 0.75rem; font-size: 0.9rem; font-weight: 600; }
-  .shot .credit { display: block; font-weight: 500; font-size: 0.72rem; color: var(--ink-soft); }
-  .shot p { flex-wrap: wrap; }
-  .shot p span { font-family: var(--font-display); color: var(--turq-700); }
-
-  @media (min-width: 64rem) {
-    .rail { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2rem; overflow: visible; max-width: var(--max); margin-inline: auto; align-items: start; }
-    .shot, .shot.is-tall { width: auto; }
-    .shot:nth-child(1) { grid-column: 1 / 9; }
-    .shot:nth-child(1) button { aspect-ratio: 16 / 9; }
-    .shot:nth-child(2) { grid-column: 9 / 13; margin-top: 6rem; }
-    .shot:nth-child(2) button { aspect-ratio: 4 / 5; }
-    .shot:nth-child(3) { grid-column: 2 / 7; }
-    .shot:nth-child(4) { grid-column: 7 / 13; }
-    .shot:nth-child(4) button { aspect-ratio: 16 / 10; }
-    .shot:nth-child(5) { grid-column: 1 / 8; }
-    .shot:nth-child(5) button { aspect-ratio: 16 / 10; }
-    .shot:nth-child(6) { grid-column: 8 / 12; }
+  .gallery-editorial {
+    position: relative;
+    padding-block: clamp(5rem, 12vw, 11rem);
+    color: #f7f1e4;
+    background: radial-gradient(ellipse 58% 23% at 0% 0%, rgb(20 101 111 / .2), transparent), linear-gradient(180deg, #031722 0%, #051e2c 55%, #020e16 100%);
+    overflow: clip; isolation: isolate;
   }
-
-  .lightbox { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: rgb(3 26 36 / 0.96); color: var(--white); overscroll-behavior: contain; }
-  .lightbox[open] { display: grid; place-items: center; animation: lb 0.4s var(--ease); }
-  .lightbox::backdrop { background: rgb(3 26 36 / 0.9); }
+  .gallery-editorial::before {
+    content: ''; pointer-events: none; position: absolute;
+    top: 10%; right: -40%; width: min(100vw, 70rem); aspect-ratio: 1;
+    border: 1px solid rgb(142 232 220 / .14); border-radius: 50%;
+    box-shadow: 0 0 0 6rem rgb(142 232 220 / .02), 0 0 0 12rem rgb(142 232 220 / .014);
+  }
+  .gallery-head { position: relative; z-index: 1; padding-bottom: clamp(3rem, 8vw, 7rem); }
+  .gallery-kicker { display: flex; align-items: center; gap: 1rem; font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: #b2dacf; font-weight: 700; }
+  .gallery-line { display: block; height: 1px; width: 3rem; background: currentColor; opacity: .5; }
+  .gallery-head :global(.h-lg) { display: block; max-width: 13ch; margin-top: clamp(1.5rem, 3vw, 3rem); font-size: clamp(3.2rem, 9.5vw, 9rem); line-height: .91; letter-spacing: -.055em; font-weight: 560; text-wrap: balance; }
+  .gallery-head :global(em), .gallery-head :global(span.em) { color: #ace6d9; }
+  .gallery-decoration { margin-top: clamp(1rem, 3vw, 3rem); font-size: 2rem; text-align: right; color: #aadad2; border-top: 1px solid rgb(161 215 210 / .22); padding-top: 1rem; }
+  .rail { position: relative; display: grid; gap: clamp(3.5rem, 9vw, 9rem); }
+  .shot { position: relative; width: 100%; min-width: 0; }
+  .shot-screen { position: relative; isolation: isolate; display: block; width: 100%; height: clamp(27rem, 75svh, 56rem); overflow: hidden; background: #0a3543; color: #fff; text-align: left; border-radius: 0; cursor: zoom-in; outline-offset: -5px; }
+  .shot-screen :global(picture), .shot-screen :global(img) { display: block; position: absolute; inset: 0; width: 100%; height: 100%; }
+  .shot-screen :global(img) { object-fit: cover; transform: scale(1.01); transition: transform 1.3s cubic-bezier(.2,.7,.2,1); }
+  .shot-screen:hover :global(img), .shot-screen:focus-visible :global(img) { transform: scale(1.065); }
+  .shot-shade { position: absolute; z-index: 1; inset: 0; background: linear-gradient(180deg, rgb(1 16 25 / .07) 0%, rgb(1 16 25 / .08) 37%, rgb(1 16 25 / .82) 100%); }
+  .shot-content { position: absolute; z-index: 2; inset: 0; display: flex; flex-direction: column; justify-content: end; gap: .8rem; padding: 3rem var(--gutter); }
+  .shot-index { font-size: .75rem; font-weight: 700; letter-spacing: .19em; color: #e5f4ef; }
+  .shot-name { font-family: 'Fraunces Variable', Georgia, serif; font-weight: 470; font-size: clamp(3rem, 11vw, 9rem); line-height: .92; letter-spacing: -.055em; max-width: 11ch; text-wrap: balance; text-shadow: 0 4px 36px rgb(0 10 18 / .15); }
+  .shot-action { display: inline-flex; align-self: flex-start; align-items: center; gap: 1rem; padding-block: .4rem; border-bottom: 1px solid rgb(255 255 255 / .8); font-weight: 650; font-size: .75rem; letter-spacing: .07em; text-transform: uppercase; }
+  .shot-action span { font-size: 1.3rem; }
+  .credit { margin: .6rem var(--gutter) 0; color: #b5c9c8; font-size: .72rem; line-height: 1.45; }
+  @media (min-width: 64rem) {
+    .gallery-editorial::before { right: -15%; }
+    .rail { padding-inline: var(--gutter); }
+    .shot { width: min(84vw, 90rem); }
+    .shot-offset { margin-left: auto; width: min(77vw, 84rem); }
+    .shot-screen { height: min(80vh, 60rem); border-radius: .3rem; }
+    .shot-content { padding: clamp(3rem, 6vw, 7rem); }
+    .credit { margin-left: 0; }
+  }
+  @media (max-width: 39.99rem) {
+    .gallery-head :global(.h-lg) { font-size: clamp(3.15rem, 12.3vw, 5rem); }
+    .shot-screen { height: 72svh; min-height: 27rem; }
+    .shot-name { font-size: clamp(3.15rem, 13vw, 5rem); }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .shot-screen { animation: cinematic-reveal linear both; animation-timeline: view(); animation-range: entry 0% cover 38%; }
+      @keyframes cinematic-reveal { from { clip-path: inset(9% 4% round .5rem); filter: brightness(.82); } to { clip-path: inset(0% 0% round 0); filter: brightness(1); } }
+    }
+  }
+  @media (prefers-reduced-motion: reduce) { .shot-screen :global(img) { transition: none; transform: none; } }
+  .lightbox { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: rgb(3 26 36 / .96); color: #fff; overscroll-behavior: contain; }
+  .lightbox[open] { display: grid; place-items: center; animation: lb .4s var(--ease); }
+  .lightbox::backdrop { background: rgb(3 26 36 / .9); }
   @keyframes lb { from { opacity: 0; } }
-  .lightbox figure { display: grid; gap: 0.75rem; justify-items: center; padding: 4rem 1rem; max-width: 100%; }
-  .lightbox img { max-width: 100%; max-height: calc(100dvh - 9rem); width: auto; object-fit: contain; border-radius: var(--radius-sm); }
-  .lightbox figcaption { display: flex; gap: 1rem; font-size: 0.9rem; }
-  .lightbox figcaption span:first-child { opacity: 0.6; }
-  .lb-btn { position: absolute; width: 3rem; height: 3rem; display: grid; place-items: center; border-radius: 999px; border: 1px solid rgb(255 255 255 / 0.35); background: rgb(3 26 36 / 0.6); color: var(--white); font-size: 1.1rem; }
-  .lb-btn:hover { background: var(--white); color: var(--ocean-950); }
+  .lightbox figure { display: grid; gap: .75rem; justify-items: center; padding: 4rem 1rem; max-width: 100%; }
+  .lightbox img { max-width: 100%; max-height: calc(100dvh - 9rem); width: auto; object-fit: contain; border-radius: .35rem; }
+  .lightbox figcaption { display: flex; gap: 1rem; font-size: .9rem; }
+  .lightbox figcaption span:first-child { opacity: .6; }
+  .lb-btn { position: absolute; z-index: 2; width: 3rem; height: 3rem; display: grid; place-items: center; border-radius: 999px; border: 1px solid rgb(255 255 255 / .35); background: rgb(3 26 36 / .6); color: #fff; font-size: 1.1rem; }
+  .lb-btn:hover { background: #fff; color: #031a24; }
   .lb-close { top: max(1rem, env(safe-area-inset-top)); right: 1rem; }
   .lb-prev { left: 1rem; bottom: 1rem; }
   .lb-next { right: 1rem; bottom: 1rem; }
