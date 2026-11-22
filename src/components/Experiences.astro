@@ -1,45 +1,141 @@
 ---
-import TourCard from './TourCard.astro';
+/**
+ * Experiencias como índice editorial (no una cuadrícula de tarjetas).
+ * - Escritorio: lista de nombres enormes y un marco fijo a la derecha cuya foto cambia con una máscara
+ *   al pasar el cursor, enfocar o desplazarse (app.ts → initIndex).
+ * - Móvil: cada experiencia es un capítulo con su foto, que se revela al entrar en pantalla.
+ * Contrato funcional conservado: [data-chapters] > li[data-category], [data-filter], [data-add].
+ */
+import { Picture } from 'astro:assets';
 import SplitHeading from './SplitHeading.astro';
+import AddButton from './AddButton.astro';
+import Icon from './Icon.astro';
 import { t } from '@/i18n/ui';
-import type { Lang } from '@/i18n/config';
+import { tourPath, type Lang } from '@/i18n/config';
 import { tours, type Category } from '@/data/tours';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const d = t(lang);
 const cats: Category[] = ['sea', 'adventure', 'nature', 'night'];
+const pad = (n: number) => String(n).padStart(2, '0');
+const highlights = (i: number) => {
+  const tour = tours[i]!;
+  return (tour.options ? tour.options.map((o) => o.name[lang]) : tour.inclusions[lang].slice(1)).slice(0, 3);
+};
 ---
 
-<section class="section experiences" id="experiencias" aria-labelledby="exp-title">
-  <div class="shell">
-    <div class="head">
-      <SplitHeading class="h-lg" id="exp-title" text={d.experiences.title} em={d.experiences.titleEm} />
-      <p class="lead">{d.experiences.lead}</p>
-    </div>
+<section class="experiences" id="experiencias" aria-labelledby="exp-title" data-index>
+  <div class="shell top">
+    <p class="eyebrow">{d.experiences.eyebrow}</p>
+    <SplitHeading class="h-xl" id="exp-title" text={d.experiences.title} em={d.experiences.titleEm} />
+    <p class="intro">{d.experiences.lead}</p>
     <div class="filters" role="group" aria-label={d.experiences.filterLabel}>
       <button type="button" class="chip" data-filter="all" aria-pressed="true">{d.experiences.all}</button>
       {cats.map((c) => <button type="button" class="chip" data-filter={c} aria-pressed="false">{d.categories[c]}</button>)}
     </div>
   </div>
-  <ol class="cards" data-chapters>
-    {tours.map((tour) => <TourCard lang={lang} tour={tour} />)}
-  </ol>
+
+  <div class="shell grid">
+    <ol class="list" data-chapters>
+      {tours.map((tour, i) => (
+        <li class="row" data-category={tour.category} data-slug={tour.slug} style={`--accent:${tour.accent};--deep:${tour.deep}`}>
+          <a class="hit" href={tourPath(lang, tour.slug)} data-index-link>
+            <span class="meta"><span class="num">{pad(i + 1)}</span><span class="cat">{d.categories[tour.category]}</span></span>
+            <span class="name">{tour.name[lang]}</span>
+            <span class="tag">{tour.tagline[lang]}</span>
+          </a>
+          <figure class="shot" aria-hidden="true">
+            {tour.image ? (
+              <Picture src={tour.image.src} alt="" formats={['avif', 'webp']} widths={[480, 768, 1080]} sizes="(min-width: 64rem) 1px, 92vw" loading="lazy" decoding="async" quality={72} style={`object-position:${tour.image.position ?? '50% 50%'}`} />
+            ) : <span class="poster"></span>}
+          </figure>
+          <p class="incl">{highlights(i).join(' · ')}</p>
+          <div class="actions">
+            <a class="view" href={tourPath(lang, tour.slug)}>{d.experiences.view}<Icon name="arrow" size={16} /></a>
+            <AddButton lang={lang} slug={tour.slug} class="add" />
+          </div>
+        </li>
+      ))}
+    </ol>
+
+    <div class="stage" aria-hidden="true">
+      <div class="frame">
+        {tours.map((tour, i) => (
+          <figure class:list={['pv', { 'is-on': i === 0 }]} data-preview={tour.slug} style={`--deep:${tour.deep};--accent:${tour.accent}`}>
+            {tour.image ? (
+              <Picture src={tour.image.src} alt="" formats={['avif', 'webp']} widths={[640, 960, 1400]} sizes="(min-width: 64rem) 40vw, 1px" loading="lazy" decoding="async" quality={74} style={`object-position:${tour.image.position ?? '50% 50%'}`} />
+            ) : <span class="poster"></span>}
+            <figcaption><span>{pad(i + 1)}</span>{tour.name[lang]}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </div>
   <p class="shell price-note">{d.experiences.priceNote}</p>
 </section>
 
 <style>
-  .experiences { background: var(--sand-50); }
-  .head { display: grid; gap: 1rem; margin-bottom: 1.75rem; max-width: 52rem; }
-  .filters { display: flex; gap: 0.5rem; overflow-x: auto; margin: 0 calc(var(--gutter) * -1) 1.75rem; padding: 0.25rem var(--gutter); scrollbar-width: none; }
+  .experiences { --bg: #1b0c22; position: relative; padding-block: clamp(5rem, 12vw, 9rem) 4rem; background:
+    radial-gradient(80% 50% at 85% 0%, rgb(163 54 92 / 0.32), transparent 70%),
+    linear-gradient(180deg, #2a1233 0%, var(--bg) 30%, #0d1a2b 100%); color: #f6e9e2; }
+  .top { display: grid; gap: 1.1rem; margin-bottom: clamp(2.5rem, 6vw, 4.5rem); }
+  .top .eyebrow { color: #f2a7bf; }
+  .top :global(.display) { color: #fff3ea; }
+  .top :global(.display em) { color: #f2a7bf; }
+  .intro { max-width: 34rem; font-size: 1.05rem; line-height: 1.6; color: rgb(246 233 226 / 0.78); }
+  .filters { display: flex; gap: 0.35rem; overflow-x: auto; margin: 0.5rem calc(var(--gutter) * -1) 0; padding: 0 var(--gutter); scrollbar-width: none; }
   .filters::-webkit-scrollbar { display: none; }
-  .chip { flex: none; min-height: 2.9rem; padding: 0 1.2rem; border-radius: 999px; border: 1px solid rgb(10 30 38 / 0.18); font-weight: 650; font-size: 0.9rem; background: var(--white); transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
-  .chip:hover { border-color: var(--ink); }
-  .chip[aria-pressed='true'] { background: var(--ink); color: var(--white); border-color: var(--ink); }
-  .cards { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); padding: 0 var(--gutter) 1.5rem; scrollbar-width: none; }
-  .cards::-webkit-scrollbar { display: none; }
-  .price-note { margin-top: 1.5rem; font-size: 0.88rem; color: var(--ink-soft); }
-  @media (min-width: 48rem) {
-    .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.5rem 1.5rem; overflow: visible; max-width: var(--max); margin-inline: auto; }
+  .chip { flex: none; min-height: 2.75rem; padding: 0 1.05rem; border: 1px solid rgb(246 233 226 / 0.22); border-radius: 999px; background: transparent; color: #f6e9e2; font-weight: 650; font-size: 0.88rem; transition: background-color 0.35s, color 0.35s, border-color 0.35s; }
+  .chip:hover { border-color: #f6e9e2; }
+  .chip[aria-pressed='true'] { background: #f6e9e2; color: #2a1233; border-color: #f6e9e2; }
+
+  .list { counter-reset: none; border-top: 1px solid rgb(246 233 226 / 0.16); }
+  .row { position: relative; display: grid; gap: 0.9rem; padding-block: 1.6rem 1.9rem; border-bottom: 1px solid rgb(246 233 226 / 0.16); }
+  .row[hidden] { display: none; }
+  .hit { display: grid; gap: 0.35rem; color: inherit; text-decoration: none; }
+  .meta { display: flex; gap: 0.9rem; align-items: baseline; font-size: 0.7rem; font-weight: 750; letter-spacing: 0.2em; text-transform: uppercase; color: rgb(246 233 226 / 0.6); }
+  .num { font-variant-numeric: tabular-nums; color: var(--accent); filter: brightness(1.35); }
+  .name { font-family: var(--font-display); font-weight: 380; font-variation-settings: 'opsz' 144, 'SOFT' 50; font-size: clamp(2.6rem, 12vw, 5.6rem); line-height: 0.95; letter-spacing: -0.035em; transition: color 0.5s var(--ease), transform 0.7s var(--ease); }
+  .tag { font-family: var(--font-display); font-style: italic; font-size: 1.1rem; color: rgb(246 233 226 / 0.72); }
+  .shot { position: relative; margin: 0.4rem 0 0; aspect-ratio: 16 / 11; border-radius: 1.1rem; overflow: hidden; background: var(--deep); }
+  .shot :global(picture), .shot :global(img) { display: block; width: 100%; height: 100%; }
+  .shot :global(img) { object-fit: cover; }
+  .poster, .pv .poster { position: absolute; inset: 0; background: radial-gradient(60% 60% at 30% 25%, color-mix(in srgb, var(--accent) 65%, white), transparent 70%), linear-gradient(160deg, var(--deep), color-mix(in srgb, var(--accent) 40%, var(--deep))); }
+  .incl { font-size: 0.86rem; color: rgb(246 233 226 / 0.62); }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.4rem; }
+  .view { display: inline-flex; align-items: center; gap: 0.4rem; min-height: 2.75rem; font-weight: 700; color: #fff3ea; text-decoration: underline; text-underline-offset: 0.35em; text-decoration-color: rgb(242 167 191 / 0.6); }
+  .actions :global(.add) { display: inline-flex; align-items: center; gap: 0.45rem; min-height: 2.75rem; padding: 0 1rem; border: 1px solid rgb(246 233 226 / 0.3); border-radius: 999px; background: transparent; color: #f6e9e2; font-weight: 650; font-size: 0.86rem; }
+  .actions :global(.add[aria-pressed='true']) { background: #f2a7bf; color: #2a1233; border-color: #f2a7bf; }
+  .stage { display: none; }
+  .price-note { margin-top: 2rem; font-size: 0.86rem; color: rgb(246 233 226 / 0.6); }
+
+  /* Revelado de las fotos al entrar (solo con JS y movimiento permitido: initIndex añade .is-in). */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .row .shot { clip-path: inset(14% 8% 14% 8% round 1.6rem); transition: clip-path 1.2s var(--ease); }
+    :global(.js) .row .shot :global(img) { scale: 1.18; transition: scale 1.6s var(--ease); }
+    :global(.js) .row.is-in .shot { clip-path: inset(0 0 0 0 round 1.1rem); }
+    :global(.js) .row.is-in .shot :global(img) { scale: 1; }
   }
-  @media (min-width: 64rem) { .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+  /* ---------- Escritorio: índice + marco fijo ---------- */
+  @media (min-width: 64rem) {
+    .grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 4vw; align-items: start; }
+    .row { grid-template-columns: 1fr auto; align-items: end; padding-block: 1.4rem 1.5rem; }
+    .row .shot, .row .incl { display: none; }
+    .hit { grid-column: 1; }
+    .actions { grid-column: 2; grid-row: 1; flex-direction: column; align-items: flex-end; gap: 0.2rem; opacity: 0; transform: translateX(-0.6rem); transition: opacity 0.4s, transform 0.6s var(--ease); }
+    .row:hover .actions, .row:focus-within .actions, .row.is-active .actions { opacity: 1; transform: none; }
+    .name { font-size: clamp(3rem, 5.6vw, 6rem); color: rgb(246 233 226 / 0.42); }
+    .row.is-active .name, .row:hover .name, .row:focus-within .name { color: #fff3ea; transform: translateX(0.8rem); }
+    .row.is-active .tag { color: #f2a7bf; }
+    .stage { display: block; position: sticky; top: calc(var(--header-h) + 6vh); height: calc(100vh - var(--header-h) - 12vh); }
+    .frame { position: relative; height: 100%; border-radius: 1.6rem; overflow: hidden; background: #2a1233; box-shadow: 0 50px 120px -50px rgb(0 0 0 / 0.8); }
+    .pv { position: absolute; inset: 0; margin: 0; clip-path: inset(100% 0 0 0); transition: clip-path 1s var(--ease); }
+    .pv :global(picture), .pv :global(img) { display: block; width: 100%; height: 100%; }
+    .pv :global(img) { object-fit: cover; scale: 1.12; transition: scale 1.6s var(--ease); }
+    .pv.is-on { clip-path: inset(0 0 0 0); z-index: 1; }
+    .pv.is-on :global(img) { scale: 1; }
+    .pv figcaption { position: absolute; left: 1.4rem; bottom: 1.2rem; z-index: 2; display: flex; gap: 0.8rem; align-items: baseline; font-family: var(--font-display); font-size: 1.5rem; color: #fff; text-shadow: 0 2px 20px rgb(0 0 0 / 0.5); }
+    .pv figcaption span { font-family: var(--font-body); font-size: 0.72rem; font-weight: 750; letter-spacing: 0.2em; }
+  }
 </style>

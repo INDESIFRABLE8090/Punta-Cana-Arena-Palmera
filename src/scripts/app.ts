@@ -1,3 +1,4 @@
+import { waLink } from './whatsapp';
 import { initItinerary } from './itinerary';
 import { initPlanner } from './planner';
 import { initAudio } from './audio';
@@ -111,10 +112,60 @@ function initChrome() {
   onScroll();
 }
 
+/** Billete de transporte: rellena el billete en vivo y prepara el mensaje de WhatsApp con los datos. */
+function initTicket() {
+  const form = document.querySelector<HTMLFormElement>('[data-ticket]');
+  if (!form) return;
+  const send = form.querySelector<HTMLAnchorElement>('[data-ticket-send]')!;
+  const code = (v: string) => (v.trim() ? v.trim().replace(/[^\p{L}\p{N} ]/gu, '').slice(0, 3).toUpperCase() : '—');
+  const f = form.dataset;
+  const update = () => {
+    const v = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).value.trim();
+    form.querySelector('[data-code="from"]')!.textContent = code(v('from'));
+    form.querySelector('[data-code="to"]')!.textContent = code(v('to'));
+    const lines = [f.msg!, v('from') && `${f.lFrom}: ${v('from')}`, v('to') && `${f.lTo}: ${v('to')}`, v('date') && `${f.lDate}: ${v('date')}`, v('people') && `${f.lPeople}: ${v('people')}`].filter(Boolean);
+    send.href = waLink(lines.join('\n'));
+  };
+  form.addEventListener('input', update);
+  form.addEventListener('submit', (e) => e.preventDefault());
+  if (prefersReducedMotion()) form.querySelectorAll('animateMotion').forEach((a) => a.remove());
+  update();
+}
+
+/** Índice de experiencias: activa la fila bajo el cursor, el foco o el centro de la pantalla y su foto. */
+function initIndex() {
+  const root = document.querySelector<HTMLElement>('[data-index]');
+  if (!root) return;
+  const rows = [...root.querySelectorAll<HTMLElement>('[data-chapters] > li')];
+  const previews = new Map([...root.querySelectorAll<HTMLElement>('[data-preview]')].map((p) => [p.dataset.preview!, p]));
+  let current = '';
+  const activate = (row: HTMLElement) => {
+    const slug = row.dataset.slug!;
+    if (slug === current) return;
+    current = slug;
+    rows.forEach((r) => r.classList.toggle('is-active', r === row));
+    previews.forEach((p, k) => p.classList.toggle('is-on', k === slug));
+    // Carga la foto activa y la siguiente sin esperar al «lazy» del navegador.
+    const i = rows.indexOf(row);
+    [rows[i], rows[i + 1]].forEach((r) => previews.get(r?.dataset.slug ?? '')?.querySelector('img')?.setAttribute('loading', 'eager'));
+  };
+  rows.forEach((row) => {
+    row.addEventListener('pointerenter', () => activate(row));
+    row.addEventListener('focusin', () => activate(row));
+  });
+  if (!('IntersectionObserver' in window)) return rows.forEach((r) => r.classList.add('is-in'));
+  // Revelado de fotos en móvil y fila activa al pasar por el centro de la pantalla.
+  const reveal = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && (e.target.classList.add('is-in'), reveal.unobserve(e.target))), { threshold: 0.2 });
+  const center = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && activate(e.target as HTMLElement)), { rootMargin: '-45% 0px -45% 0px' });
+  rows.forEach((r) => { reveal.observe(r); center.observe(r); });
+}
+
 initMenu();
 initItinerary();
 initPlanner();
 initFilters();
+initIndex();
+initTicket();
 initReveal();
 initChrome();
 initAudio();
