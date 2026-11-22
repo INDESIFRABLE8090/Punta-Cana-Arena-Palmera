@@ -4,9 +4,10 @@ export const SKY_GLSL = /* glsl */ `
 uniform vec3 uSun;
 vec3 skyColor(vec3 d) {
   float h = clamp(d.y, 0.0, 1.0);
-  vec3 horizon = vec3(1.0, 0.80, 0.66);
-  vec3 mid = vec3(0.62, 0.82, 0.92);
-  vec3 top = vec3(0.17, 0.47, 0.74);
+  // Misma paleta que el atardecer renderizado de la portada: oro en el horizonte, rosa y violeta arriba.
+  vec3 horizon = vec3(1.0, 0.78, 0.55);
+  vec3 mid = vec3(0.93, 0.62, 0.72);
+  vec3 top = vec3(0.42, 0.30, 0.58);
   vec3 c = mix(horizon, mid, smoothstep(0.0, 0.2, h));
   c = mix(c, top, smoothstep(0.12, 0.85, h));
   float s = max(dot(normalize(d), uSun), 0.0);

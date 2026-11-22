@@ -75,21 +75,26 @@ function initChrome() {
   const fab = document.querySelector<HTMLElement>('[data-fab]');
   const hero = document.querySelector<HTMLElement>('[data-hero]');
   const planner = document.querySelector<HTMLElement>('[data-planner]');
+  const quote = document.querySelector<HTMLElement>('[data-quick]');
   let last = 0;
   let heroVisible = Boolean(hero);
   let plannerVisible = false;
+  let quoteVisible = false;
 
-  const paintFab = () => fab?.classList.toggle('is-away', heroVisible || plannerVisible);
+  // El botón flotante se retira donde ya hay una acción de WhatsApp a la vista (portada, cotizador, planificador).
+  const paintFab = () => fab?.classList.toggle('is-away', heroVisible || plannerVisible || quoteVisible);
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
         if (e.target === hero) heroVisible = e.isIntersecting;
         if (e.target === planner) plannerVisible = e.isIntersecting;
+        if (e.target === quote) quoteVisible = e.isIntersecting;
       });
       paintFab();
     }, { threshold: 0.15 });
     if (hero) io.observe(hero);
     if (planner) io.observe(planner);
+    if (quote) io.observe(quote);
   }
   paintFab();
 

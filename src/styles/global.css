@@ -22,8 +22,12 @@
   --ink-soft: #3d535c;
   --white: #fff;
   --wa: #0f7a41;
+  /* Atardecer de la portada */
+  --plum: #2a1233;
+  --rose-600: #a3365c;
+  --rose-200: #f2c6d4;
 
-  --font-display: 'Outfit Variable', 'Manrope Variable', system-ui, sans-serif;
+  --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
   --font-body: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
   --gutter: clamp(1.25rem, 5vw, 4rem);
@@ -158,15 +162,16 @@ button {
 /* Tipografía editorial */
 .display {
   font-family: var(--font-display);
-  font-weight: 620;
-  line-height: 0.98;
-  letter-spacing: -0.04em;
+  font-weight: 420;
+  font-variation-settings: 'opsz' 144, 'SOFT' 50;
+  line-height: 1;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 .display em {
-  font-style: normal;
-  font-weight: inherit;
-  color: var(--turq-700);
+  font-style: italic;
+  font-weight: 340;
+  color: var(--rose-600);
 }
 .h-xl {
   font-size: clamp(2.6rem, 9vw, 6.5rem);
