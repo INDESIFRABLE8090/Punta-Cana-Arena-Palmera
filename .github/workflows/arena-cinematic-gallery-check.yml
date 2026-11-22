@@ -5,10 +5,12 @@ on:
       - design/cinematic-gallery-20261122
     paths:
       - src/components/Gallery.astro
+      - scripts/capture-gallery.mjs
       - .github/workflows/arena-cinematic-gallery-check.yml
   pull_request:
     paths:
       - src/components/Gallery.astro
+      - scripts/capture-gallery.mjs
       - .github/workflows/arena-cinematic-gallery-check.yml
 
 permissions:
@@ -34,5 +36,15 @@ jobs:
         run: |
           npm install --global playwright
           npx playwright install --with-deps chromium
+      - name: Save real responsive gallery previews and reject undersized images
+        run: node scripts/capture-gallery.mjs
+      - name: Upload screenshots from Chromium for visual QA
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: arena-gallery-chromium-preview
+          path: .preview-captures/*.png
+          if-no-files-found: warn
+          retention-days: 7
       - name: Run responsive, browser, accessibility and gallery regression tests
         run: npm test
