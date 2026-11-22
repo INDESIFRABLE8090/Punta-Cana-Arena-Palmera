@@ -36,6 +36,10 @@ jobs:
         run: node --check tests/site.test.mjs
       - name: Astro typecheck and production build (no deploy)
         run: npm run build
+      - name: Offline static SEO, links, language and catalog QA
+        env:
+          JARVIS_STATIC_QA_ONLY: '1'
+        run: npm test
       - name: Legal/publication gate — report blockers, do not publish
         continue-on-error: true
         run: npm run prelaunch
