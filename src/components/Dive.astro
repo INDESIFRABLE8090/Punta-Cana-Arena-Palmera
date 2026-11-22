@@ -53,7 +53,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
   /* La primera frase va sobre el cielo claro del atardecer: tinta ciruela (contraste ~9:1). */
   .dive.is-live .lines p:first-child { color: #2a1233; text-shadow: 0 0 28px rgb(255 240 230 / 0.55); }
   canvas { opacity: 0; transition: opacity 1.2s; }
-  .veil { pointer-events: none; opacity: 0; background: var(--sand-50); }
+  .veil { pointer-events: none; opacity: 0; background: var(--ocean-950); }
   .lines { position: relative; align-self: center; display: grid; gap: 1.5rem; padding-block: 6rem; }
   .lines p { font-size: clamp(2.2rem, 8.5vw, 6rem); max-width: 14ch; text-shadow: 0 2px 28px rgb(3 26 36 / 0.55), 0 0 3px rgb(3 26 36 / 0.25); }
   .lines em { color: var(--turq-300); }
@@ -68,8 +68,8 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
   .dive.is-live .lines p { position: absolute; left: var(--gutter); right: var(--gutter); top: 50%; opacity: 0; transform: translateY(-50%); will-change: opacity, transform; }
   .dive.is-live .stage::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(90deg, rgb(3 26 36 / 0.3), transparent 75%); }
   .dive.is-live .lines, .dive.is-live .veil, .dive.is-live .depth { z-index: 2; }
-  .dive.is-live .lines p:last-child { color: var(--ocean-950); text-shadow: 0 0 24px rgb(255 255 255 / 0.5); }
-  .dive.is-live .lines p:last-child em { color: var(--ocean-800); }
+  .dive.is-live .lines p:last-child { color: #fff3ea; text-shadow: 0 2px 24px rgb(5 36 47 / 0.6); }
+  .dive.is-live .lines p:last-child em { color: #f2a7bf; }
   .dive.is-live .depth { position: absolute; left: var(--gutter); bottom: calc(1.5rem + env(safe-area-inset-bottom)); justify-items: start; display: grid; gap: 0.5rem; font-size: 0.7rem; letter-spacing: 0.18em; font-weight: 700; font-variant-numeric: tabular-nums; }
   .depth i { display: block; width: 1px; height: 4.5rem; background: rgb(255 255 255 / 0.3); position: relative; }
   .depth b { position: absolute; inset: 0; background: var(--white); transform-origin: top; transform: scaleY(0); }

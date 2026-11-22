@@ -119,7 +119,8 @@ function initDive() {
     // Destello al cruzar la superficie y fundido a arena al llegar al fondo.
     const splash = smooth(0.36, 0.4, p) * (1 - smooth(0.4, 0.47, p));
     const sand = smooth(0.9, 1, p);
-    veil.style.background = sand > 0 ? 'var(--sand-50)' : '#c9f3ee';
+    // Al final la escena funde al océano profundo, que continúa en la sección de transporte.
+    veil.style.background = sand > 0 ? 'var(--ocean-950)' : '#c9f3ee';
     veil.style.opacity = Math.max(sand, splash * 0.55).toFixed(3);
     const under = smooth(0.38, 0.46, p);
     depth.textContent = `${Math.round(under * smooth(0.4, 0.95, p) * 12)} m`;

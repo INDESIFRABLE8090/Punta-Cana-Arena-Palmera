@@ -56,3 +56,8 @@ Material **presente** en el Codespace (búsqueda completa de `/workspaces`): 11 
 | costa-punta-cana | 1376×768 | generada (issue #2) | Retirada de portada y galería |
 
 **Falta (bloqueo humano):** los originales del propietario citados en issue #2 y PR #6 — clips reales `1001285018/5019/5021/5026.mp4`, clips `1001284176/4144/4146.mp4` y vídeos de referencia `1001284464/4468/4500.mp4` — no están en el Codespace ni adjuntos en GitHub. Para usarlos: subirlos (arrastrar al Explorador de VS Code) a `/workspaces/arena-palmera-work/originales/` (fuera del repo público) y confirmar derechos de uso. Con ellos: reel real de excursiones en capítulos de experiencias y escenas de galería con vídeo propio.
+
+## Estado al 22 nov 2026 (tarde)
+- Portada, experiencias (índice), cotizador, banda cinética, inmersión (con y sin WebGL), transporte (billete), galería (3 escenas reales), planificador (cuaderno) y cierre: rediseñados y verificados en navegador.
+- Recorridos reales: `/workspaces/arena-palmera-work/recorrido/recorrido-final-movil.mp4` y `recorrido-final-escritorio.mp4` (grabados en Codespace sin GPU: no miden fluidez real en Android).
+- Tests: 104/104 en la última ejecución. Pendiente: originales del propietario (bloqueo), fichas de excursión y páginas legales al mismo nivel visual, rendimiento medido en Android real, issue #5.
