@@ -28,12 +28,11 @@ Documento para retomar el trabajo desde el último commit de la rama `claude/pun
 
 ## Pruebas
 - Comandos: `npm run build`, `npm test` (Playwright usa el Chromium 1255 en caché; si falta el módulo: `npm i --no-save playwright@latest`), `npm run prelaunch`.
-- Última batería completa antes de rediseñar experiencias/transporte: 93–95 ok; un timeout intermitente en «.quote [data-add]» (ficha, `pt`) que pasa aislado: apareció mientras Blender saturaba la CPU. **Repetir con la CPU libre.**
-- Tras los rediseños de experiencias y transporte la batería completa **aún no se ha vuelto a ejecutar**.
+- Última batería completa (commit 301e087, tras rediseñar experiencias y transporte, CPU libre): **104 ok, 0 fallos**, `npm run build` 0 errores. El timeout intermitente de «.quote [data-add]» solo apareció con Blender saturando la CPU.
 - Vista previa privada: `npx astro dev --host 0.0.0.0 --port 4321` → puerto 4321 de Codespaces (privado).
 
 ## Pendiente
-1. Ejecutar `npm run build && npm test` completos y corregir lo que falle (los rediseños tocan selectores de experiencias y transporte).
+1. Hacer push (el token del Codespace devuelve 403 en este repo; hay copia en `../arena-palma-<sha>.bundle`).
 2. Comprobar en producción que el marco fijo de experiencias (escritorio) carga cada foto al cambiar (en dev salía vacío por la generación de AVIF al vuelo).
 3. Grabar recorrido real en vídeo (portada → scroll → experiencias → transporte → interacciones) para comparar con las referencias del propietario (`recordVideo` de Playwright).
 4. Sustituir o rediseñar la inmersión Three.js (propuesta: secuencia renderizada en Blender ligada al scroll).
