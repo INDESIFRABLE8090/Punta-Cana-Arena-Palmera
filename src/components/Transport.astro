@@ -105,6 +105,10 @@ const d = t(lang);
   .add .i-check, .add[aria-pressed='true'] .i-plus { display: none; }
   .add[aria-pressed='true'] .i-check { display: inline-flex; }
   .add[aria-pressed='true'] { background: var(--ink2); color: var(--paper); }
+  @media (max-width: 59.99rem) {
+    .route { position: relative; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    .arc { position: absolute; left: 32%; right: 32%; top: 1.1rem; width: auto; height: 2.4rem; margin: 0; }
+  }
   @media (min-width: 60rem) {
     .ticket { padding: 2rem 2.2rem 1.8rem; transform: rotate(-1.5deg); transition: transform 0.8s var(--ease); }
     .ticket:hover, .ticket:focus-within { transform: rotate(0deg); }
