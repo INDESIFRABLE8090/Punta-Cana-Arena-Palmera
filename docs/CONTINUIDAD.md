@@ -61,3 +61,18 @@ Material **presente** en el Codespace (búsqueda completa de `/workspaces`): 11 
 - Portada, experiencias (índice), cotizador, banda cinética, inmersión (con y sin WebGL), transporte (billete), galería (3 escenas reales), planificador (cuaderno) y cierre: rediseñados y verificados en navegador.
 - Recorridos reales: `/workspaces/arena-palmera-work/recorrido/recorrido-final-movil.mp4` y `recorrido-final-escritorio.mp4` (grabados en Codespace sin GPU: no miden fluidez real en Android).
 - Tests: 104/104 en la última ejecución. Pendiente: originales del propietario (bloqueo), fichas de excursión y páginas legales al mismo nivel visual, rendimiento medido en Android real, issue #5.
+
+## Material Google Veo (integrado 22 nov 2026)
+Fuente: carpeta privada de Drive del propietario, descargada con `gdown` a `/workspaces/arena-palmera-work/originales/` (fuera de git; vídeos originales 1920×1080, 24 fps, 7,85 s). `1001283530.mp4` y `ARENA-Y-PALMA-PRIVADO-1001283396.mp4` son el mismo archivo (MD5 idéntico).
+
+| Original | Contenido | Uso en la web | Derivados (`public/media/veo/`) |
+|---|---|---|---|
+| 1001283529.mp4 (+ póster 1001283511.png) | Atardecer rosa, palmeras, arena blanca | Portada | `sunset-720/1080.mp4`, `sunset-720.webm`, `sunset-900/1536.webp` (bucle 4 s, tramo 0,2–5,2 s: a los 5,6 s cambia de plano) |
+| 1001283530.mp4 (+ 1001283391.png) | Vuelo sobre costa turquesa | Sección de vuelo (sustituye a Three.js) | `coast-*` (bucle 6,4 s) |
+| 1001283531.mp4 | Furgoneta en carretera costera | Fondo de transporte | `road-*` (bucle 3,2 s, tramo 0,2–4,4 s: fundido interno a los 4,8 s) |
+| 1001283532.mp4, 1001283506.png | Furgoneta en aeropuerto, interior | Sin usar (derivados en `originales/derivados/`) | — |
+| 1001283512.mp4 | Variante del atardecer | Sin usar (529 tiene más detalle) | — |
+
+Todas se rotulan «Escena ilustrativa creada con IA» (transporte: «vehículos por confirmar»). Bucles con fundido cruzado de 1 s; H.264 para Android (decodificación por hardware) y VP9 solo si el navegador no reproduce MP4. Sin descarga con movimiento reducido o ahorro de datos (`initLazyVideos` en `app.ts`; test dedicado).
+
+Material real del cliente en el ZIP (no usado): fotos de buggies 1536 px con HDR excesivo, rostros reconocibles y marcas de terceros (requiere consentimiento y derechos); clips 400×226–1280×720, uno con marca de Dolphin Explorer. Resolución insuficiente para pantalla completa.

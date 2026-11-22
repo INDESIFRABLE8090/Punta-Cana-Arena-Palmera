@@ -1,7 +1,6 @@
 ---
 import Icon from './Icon.astro';
 import SplitHeading from './SplitHeading.astro';
-import Waves from './reactbits/Waves';
 import ShinyText from './reactbits/ShinyText';
 import { t } from '@/i18n/ui';
 import type { Lang } from '@/i18n/config';
@@ -10,12 +9,16 @@ import { fleet } from '@/data/fleet';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const d = t(lang);
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const ai = { es: 'Escenas ilustrativas creadas con IA · vehículos por confirmar', en: 'Illustrative scenes created with AI · vehicles to be confirmed', pt: 'Cenas ilustrativas criadas com IA · veículos a confirmar' }[lang];
 ---
 
 <section class="section transport" id="transporte" aria-labelledby="tr-title">
-  <div class="waves" aria-hidden="true">
-    <Waves client:visible lineColor="rgba(227, 200, 143, 0.2)" backgroundColor="transparent" spacing={16} amplitude={20} speed={0.55} mouseRadius={220} clickRipple={false} />
+  <div class="bgv" aria-hidden="true">
+    <img src={`${base}media/veo/road-1536.webp`} alt="" width="1536" height="864" loading="lazy" decoding="async" />
+    <video data-lazy-video data-src-sm={`${base}media/veo/road-720.mp4`} data-src-lg={`${base}media/veo/road-1080.mp4`} muted loop playsinline preload="none"></video>
   </div>
+  <p class="ai">{ai}</p>
   <div class="shell grid">
     <div class="copy">
       <p class="eyebrow"><ShinyText client:visible text={d.transport.eyebrow} color="#e3c88f" shineColor="#ffffff" speed={3} /></p>
@@ -64,8 +67,15 @@ const d = t(lang);
 </section>
 
 <style>
-  .transport { background: radial-gradient(120% 90% at 85% 0%, #0d3140 0%, var(--ocean-950) 60%); color: var(--sand-50); overflow: clip; isolation: isolate; }
-  .waves { position: absolute; inset: 0; z-index: -1; -webkit-mask-image: linear-gradient(90deg, transparent, #000 55%); mask-image: linear-gradient(90deg, transparent, #000 55%); }
+  .transport { position: relative; background: var(--ocean-950); color: var(--sand-50); overflow: clip; isolation: isolate; }
+  .bgv { position: absolute; inset: 0; z-index: -1; }
+  .bgv img, .bgv video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 30% 50%; }
+  .bgv video { opacity: 0; transition: opacity 1.2s ease; }
+  .bgv :global(video.is-on) { opacity: 1; }
+  /* Velo: oscuro donde va el texto, deja ver la carretera junto al billete. */
+  .bgv::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, var(--ocean-950) 0%, rgb(3 26 36 / 0.82) 18%, rgb(3 26 36 / 0.7) 60%, var(--ocean-950) 100%); }
+  .ai { position: absolute; left: var(--gutter); bottom: 1rem; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgb(255 243 234 / 0.7); }
+  @media (min-width: 60rem) { .bgv::after { background: linear-gradient(90deg, rgb(3 26 36 / 0.92) 0%, rgb(3 26 36 / 0.75) 45%, rgb(3 26 36 / 0.25) 100%), linear-gradient(180deg, var(--ocean-950) 0%, transparent 15%, transparent 85%, var(--ocean-950) 100%); } }
   .eyebrow { color: var(--gold-300); }
   .transport :global(.display em) { color: var(--gold-300); }
   .lead { color: rgb(244 236 220 / 0.8); }

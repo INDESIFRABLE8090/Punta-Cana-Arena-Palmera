@@ -2,7 +2,6 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { prefersReducedMotion } from './client';
-import { setUnderwater } from './audio';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -116,18 +115,12 @@ function initDive() {
       line.style.opacity = o.toFixed(3);
       line.style.transform = `translateY(calc(-50% + ${((0.5 - (p - a) / span) * 60).toFixed(1)}px))`;
     });
-    // Destello al cruzar la superficie y fundido a arena al llegar al fondo.
-    const splash = smooth(0.36, 0.4, p) * (1 - smooth(0.4, 0.47, p));
-    const sand = smooth(0.9, 1, p);
-    // Al final la escena funde al océano profundo, que continúa en la sección de transporte.
-    veil.style.background = sand > 0 ? 'var(--ocean-950)' : '#c9f3ee';
-    veil.style.opacity = Math.max(sand, splash * 0.55).toFixed(3);
-    const under = smooth(0.38, 0.46, p);
-    depth.textContent = `${Math.round(under * smooth(0.4, 0.95, p) * 12)} m`;
+    // Vuelo sobre la costa: al final la escena funde al océano profundo que continúa en el transporte.
+    const end = smooth(0.9, 1, p);
+    veil.style.opacity = end.toFixed(3);
+    depth.textContent = '';
     bar.style.transform = `scaleY(${p.toFixed(3)})`;
-    // Sin WebGL: el póster del atardecer se cubre de océano a medida que se baja.
-    if (!scene) dive.style.setProperty('--deep', smooth(0.2, 0.55, p).toFixed(3));
-    setUnderwater(under);
+    dive.style.setProperty('--deep', smooth(0.2, 0.9, p).toFixed(3));
     scene?.setProgress(p);
   };
 
@@ -138,7 +131,6 @@ function initDive() {
     scrub: true,
     onUpdate: (self) => render(self.progress),
     onToggle: (self) => {
-      if (!self.isActive) setUnderwater(0);
     },
   });
   render(trigger.progress);

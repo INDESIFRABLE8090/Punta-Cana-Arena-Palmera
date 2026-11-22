@@ -1,21 +1,25 @@
 ---
+/**
+ * Vuelo sobre la costa: escena publicitaria creada con IA (Google Veo) fijada mientras el texto avanza con
+ * el scroll (motion.ts → initDive). Sustituye a la escena Three.js: más ligera en Android.
+ * El vídeo solo se descarga con movimiento permitido, sin ahorro de datos y cuando la sección se acerca.
+ */
 import { t } from '@/i18n/ui';
 import type { Lang } from '@/i18n/config';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const d = t(lang).dive;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const ai = { es: 'Escena ilustrativa creada con IA', en: 'Illustrative scene created with AI', pt: 'Cena ilustrativa criada com IA' }[lang];
 ---
 
-<!-- Inmersión: la cámara baja del horizonte al fondo de arena. WebGL se carga en diferido;
-     sin WebGL o con movimiento reducido queda la versión estática. -->
 <section class="dive" data-dive aria-label={d.label}>
   <div class="stage">
     <div class="fallback" aria-hidden="true">
-      <img src={`${base}media/sunset-poster.webp`} alt="" width="1024" height="576" loading="lazy" decoding="async" />
+      <img src={`${base}media/veo/coast-1536.webp`} srcset={`${base}media/veo/coast-900.webp 900w, ${base}media/veo/coast-1536.webp 1536w`} sizes="100vw" alt="" width="1536" height="864" loading="lazy" decoding="async" />
+      <video data-lazy-video data-src-sm={`${base}media/veo/coast-720.mp4`} data-src-lg={`${base}media/veo/coast-1080.mp4`} muted loop playsinline preload="none"></video>
       <div class="deep" data-dive-deep></div>
     </div>
-    <canvas data-dive-canvas aria-hidden="true"></canvas>
     <div class="veil" data-dive-veil aria-hidden="true"></div>
     <div class="lines shell">
       <p class="display" data-dive-line>{d.line1}</p>
@@ -23,54 +27,36 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
       <p class="display" data-dive-line>{d.line3}</p>
       <p class="display" data-dive-line><em>{d.line4}</em></p>
     </div>
-    <div class="depth" aria-hidden="true"><span data-dive-depth>0 m</span><i><b data-dive-bar></b></i></div>
+    <div class="depth" aria-hidden="true"><span data-dive-depth></span><i><b data-dive-bar></b></i></div>
+    <p class="ai">{ai}</p>
   </div>
 </section>
 <script is:inline>
-  // Decide el modo antes del primer pintado para que la altura de la página no cambie después.
+  // Modo con scroll solo si el movimiento está permitido (sin 3D: la escena es vídeo).
   (function () {
     var el = document.currentScript.previousElementSibling;
-    var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var saver = navigator.connection && navigator.connection.saveData;
-    var gl = false;
-    try {
-      var c = document.createElement('canvas');
-      gl = !!(c.getContext('webgl2') || c.getContext('webgl'));
-    } catch (e) {}
-    if (!reduced) el.classList.add('is-live');
-    if (!reduced && gl && !saver) el.dataset.gl = '1';
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) el.classList.add('is-live');
   })();
 </script>
 
 <style>
-  .dive { position: relative; background: var(--ocean-900); color: var(--white); }
+  .dive { position: relative; background: var(--ocean-900); color: #fff3ea; }
   .stage { position: relative; min-height: 100svh; overflow: clip; display: grid; }
-  .fallback, canvas, .veil { position: absolute; inset: 0; width: 100%; height: 100%; }
-  /* Sin WebGL: el atardecer renderizado se hunde hacia el océano profundo con el scroll (motion.ts → --deep). */
-  .fallback img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 57% 50%; }
-  .deep { position: absolute; inset: 0; opacity: var(--deep, 0.55); background: linear-gradient(180deg, #0e6f86 0%, #0a4f66 45%, #05242f 100%); }
-  .dive:not(.has-gl) .lines p { color: #fff3ea; text-shadow: 0 2px 24px rgb(5 36 47 / 0.6); }
-  /* La primera frase va sobre el cielo claro del atardecer: tinta ciruela (contraste ~9:1). */
-  .dive.is-live .lines p:first-child { color: #2a1233; text-shadow: 0 0 28px rgb(255 240 230 / 0.55); }
-  canvas { opacity: 0; transition: opacity 1.2s; }
+  .fallback, .veil { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .fallback img, .fallback video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 64% 50%; }
+  .fallback video { opacity: 0; transition: opacity 1.2s ease; }
+  .fallback video.is-on { opacity: 1; }
+  /* Velo que asienta el texto y, al final, funde al océano profundo del transporte. */
+  .deep { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(5 36 47 / 0.15) 0%, rgb(5 36 47 / 0.35) 55%, rgb(5 36 47 / 0.75) 100%); opacity: calc(0.6 + var(--deep, 0) * 0.4); }
   .veil { pointer-events: none; opacity: 0; background: var(--ocean-950); }
   .lines { position: relative; align-self: center; display: grid; gap: 1.5rem; padding-block: 6rem; }
-  .lines p { font-size: clamp(2.2rem, 8.5vw, 6rem); max-width: 14ch; text-shadow: 0 2px 28px rgb(3 26 36 / 0.55), 0 0 3px rgb(3 26 36 / 0.25); }
-  .lines em { color: var(--turq-300); }
+  .lines p { font-size: clamp(2.2rem, 8.5vw, 6rem); max-width: 15ch; color: #fff3ea; text-shadow: 0 2px 30px rgb(5 36 47 / 0.55); }
+  .lines em { color: #f2a7bf; }
   .depth { display: none; }
-
-  /* Modo inmersivo: lo activa el script cuando WebGL está listo. */
-  .dive.is-live { height: 320vh; }
+  .ai { position: absolute; left: var(--gutter); bottom: calc(1rem + env(safe-area-inset-bottom)); z-index: 3; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgb(255 243 234 / 0.75); }
+  .dive.is-live { height: 300vh; }
   .dive.is-live .stage { position: sticky; top: 0; height: 100svh; min-height: 0; }
-  .dive.has-gl .fallback { display: none; }
-  .dive.has-gl canvas { opacity: 1; }
-  .dive.is-live .lines { position: absolute; inset: 0; padding-block: 0; display: block; }
+  .dive.is-live .lines { position: absolute; inset: 0; padding-block: 0; display: block; z-index: 2; }
   .dive.is-live .lines p { position: absolute; left: var(--gutter); right: var(--gutter); top: 50%; opacity: 0; transform: translateY(-50%); will-change: opacity, transform; }
-  .dive.is-live .stage::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(90deg, rgb(3 26 36 / 0.3), transparent 75%); }
-  .dive.is-live .lines, .dive.is-live .veil, .dive.is-live .depth { z-index: 2; }
-  .dive.is-live .lines p:last-child { color: #fff3ea; text-shadow: 0 2px 24px rgb(5 36 47 / 0.6); }
-  .dive.is-live .lines p:last-child em { color: #f2a7bf; }
-  .dive.is-live .depth { position: absolute; left: var(--gutter); bottom: calc(1.5rem + env(safe-area-inset-bottom)); justify-items: start; display: grid; gap: 0.5rem; font-size: 0.7rem; letter-spacing: 0.18em; font-weight: 700; font-variant-numeric: tabular-nums; }
-  .depth i { display: block; width: 1px; height: 4.5rem; background: rgb(255 255 255 / 0.3); position: relative; }
-  .depth b { position: absolute; inset: 0; background: var(--white); transform-origin: top; transform: scaleY(0); }
+  .dive.is-live .veil { z-index: 2; }
 </style>

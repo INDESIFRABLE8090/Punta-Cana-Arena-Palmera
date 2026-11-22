@@ -379,6 +379,27 @@ async function browserChecks() {
       await ctx.close();
     }
     {
+      // Fichas: con movimiento reducido no puede quedar ninguna animación en marcha (auditoría PR #4).
+      const { ctx, page } = await open({ ...pixel, reducedMotion: 'reduce' }, '/es/excursiones/isla-saona/');
+      await page.waitForTimeout(600);
+      const running = await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running' && (a.effect?.getComputedTiming().duration ?? 0) > 50).length);
+      check('movimiento reducido: la ficha no anima nada', running === 0, `${running} animaciones`);
+      await ctx.close();
+    }
+    {
+      // Ahorro de datos: los vídeos de escena no se descargan (ni antes ni después del script).
+      const ctx = await browser.newContext({ ...pixel });
+      await ctx.addInitScript(() => Object.defineProperty(navigator, 'connection', { value: { saveData: true }, configurable: true }));
+      const page = await ctx.newPage();
+      const media = [];
+      page.on('request', (r) => /\.(mp4|webm)(\?|$)/.test(r.url()) && media.push(r.url()));
+      await page.goto(url('/es/'), { waitUntil: 'networkidle' });
+      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight / 2));
+      await page.waitForTimeout(1200);
+      check('ahorro de datos: no se descarga ningún vídeo', media.length === 0, media[0]);
+      await ctx.close();
+    }
+    {
       const ctx = await browser.newContext({ ...pixel, javaScriptEnabled: false });
       const page = await ctx.newPage();
       await page.goto(url('/es/'));

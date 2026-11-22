@@ -36,10 +36,10 @@ const es = {
   },
   sound: { on: 'Sonido del mar: activado', off: 'Sonido del mar: desactivado', label: 'Sonido ambiental' },
   dive: {
-    label: 'Transición: del cielo al fondo del mar',
+    label: 'Transición: vuelo sobre la costa',
     line1: 'Primero, el horizonte.',
     line2: 'Después, el agua.',
-    line3: 'Y debajo, otro mundo.',
+    line3: 'Y entre las palmas, tu camino.',
     line4: 'Bienvenido a República Dominicana.',
   },
   quick: {
@@ -299,10 +299,10 @@ const en: Dictionary = {
   },
   sound: { on: 'Ocean sound: on', off: 'Ocean sound: off', label: 'Ambient sound' },
   dive: {
-    label: 'Transition: from the sky to the seabed',
+    label: 'Transition: flight over the coast',
     line1: 'First, the horizon.',
     line2: 'Then, the water.',
-    line3: 'And beneath it, another world.',
+    line3: 'And between the palms, your way.',
     line4: 'Welcome to the Dominican Republic.',
   },
   quick: {
@@ -559,10 +559,10 @@ const pt: Dictionary = {
   },
   sound: { on: 'Som do mar: ativado', off: 'Som do mar: desativado', label: 'Som ambiente' },
   dive: {
-    label: 'Transição: do céu ao fundo do mar',
+    label: 'Transição: voo sobre a costa',
     line1: 'Primeiro, o horizonte.',
     line2: 'Depois, a água.',
-    line3: 'E, lá embaixo, outro mundo.',
+    line3: 'E entre as palmeiras, o seu caminho.',
     line4: 'Bem-vindo à República Dominicana.',
   },
   quick: {
