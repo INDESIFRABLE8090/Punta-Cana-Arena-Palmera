@@ -15,10 +15,10 @@ const rep = (t: string) => Array.from({ length: 4 }, () => t);
   <p class="ln two" data-mq="-1">{rep(`${a} — ${b}`).map((t) => <span>{t}<i>✦</i></span>)}</p>
 </div>
 <style>
-  .marquee { position: relative; overflow: clip; padding-block: clamp(3rem, 8vw, 6rem); background: linear-gradient(180deg, var(--ocean-900) 0%, #3b1846 45%, #e9b4c8 100%); }
+  .marquee { position: relative; overflow: clip; padding-block: clamp(3rem, 8vw, 6rem); background: linear-gradient(180deg, var(--ocean-900) 0%, #3b1846 50%, #5a3270 100%); }
   .ln { display: flex; width: max-content; white-space: nowrap; will-change: transform; }
   .ln span { display: inline-flex; align-items: center; gap: 0.35em; padding-right: 0.35em; }
   .ln i { font-style: normal; font-size: 0.4em; color: #f2a7bf; }
   .one { font-family: var(--font-display); font-style: italic; font-weight: 300; font-size: clamp(4rem, 17vw, 13rem); line-height: 1; letter-spacing: -0.03em; color: #fff3ea; transform: translateX(-10%); }
-  .two { margin-top: 0.4rem; font-size: clamp(0.9rem, 3vw, 1.5rem); font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgb(42 18 51 / 0.85); transform: translateX(-30%); }
+  .two { margin-top: 0.4rem; font-size: clamp(0.9rem, 3vw, 1.5rem); font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgb(255 243 234 / 0.9); transform: translateX(-30%); }
 </style>
