@@ -187,4 +187,18 @@ const p = d.planner;
     .options { grid-template-columns: 1fr; }
   }
   @media (min-width: 40rem) and (max-width: 61.99rem) { .options { grid-template-columns: 1fr 1fr; } }
+
+  /* ---------- Cuaderno de viaje (identidad Arena y Palma) ---------- */
+  .planner { --paper: #fbf3ea; background: radial-gradient(70% 40% at 90% 0%, rgb(242 167 191 / 0.35), transparent 70%), var(--paper); color: #2a1233; }
+  .planner .lead { color: rgb(42 18 51 / 0.72); }
+  legend span { color: #a3365c; font-family: var(--font-body); font-weight: 750; letter-spacing: 0.1em; }
+  .opt { background: rgb(255 255 255 / 0.55); border-color: rgb(42 18 51 / 0.14); border-radius: 0.9rem; transition: background-color 0.35s, color 0.35s, border-color 0.35s, transform 0.5s var(--ease); }
+  .opt:hover { border-color: #2a1233; }
+  .opt .txt strong { font-family: var(--font-display); font-weight: 480; font-size: 1.08rem; }
+  .opt[aria-pressed='true'] { background: #2a1233; color: #fff3ea; border-color: #2a1233; }
+  .plan { background-color: #fffaf4; background-image: repeating-linear-gradient(180deg, transparent 0 2.4rem, rgb(42 18 51 / 0.045) 2.4rem calc(2.4rem + 1px)); border-radius: 1.2rem; box-shadow: 0 50px 100px -55px rgb(42 18 51 / 0.55), inset 0 0 0 1px rgb(42 18 51 / 0.07); }
+  .days :global(.day) { color: #a3365c; }
+  .days :global(.name) { font-family: var(--font-display); font-weight: 480; }
+  input:focus-visible, textarea:focus-visible { border-color: #a3365c; box-shadow: 0 0 0 3px rgb(163 54 92 / 0.22); }
+  .consent input { accent-color: #a3365c; }
 </style>

@@ -138,7 +138,7 @@ const es = {
   planner: {
     eyebrow: 'Constructor de itinerario',
     title: 'Arma tu',
-    titleEm: 'Punta Cana.',
+    titleEm: 'viaje.',
     lead: 'Selecciona experiencias, ordénalas por día y envíanos la solicitud. Te respondemos con precio y disponibilidad.',
     step1: 'Elige tus experiencias',
     step2: 'Ordena tu itinerario',
@@ -401,7 +401,7 @@ const en: Dictionary = {
   planner: {
     eyebrow: 'Itinerary builder',
     title: 'Build your',
-    titleEm: 'Punta Cana.',
+    titleEm: 'journey.',
     lead: 'Select experiences, arrange them by day and send us the request. We reply with price and availability.',
     step1: 'Choose your experiences',
     step2: 'Arrange your itinerary',
@@ -661,7 +661,7 @@ const pt: Dictionary = {
   planner: {
     eyebrow: 'Montador de roteiro',
     title: 'Monte a sua',
-    titleEm: 'Punta Cana.',
+    titleEm: 'viagem.',
     lead: 'Selecione experiências, organize por dia e envie o pedido. Respondemos com preço e disponibilidade.',
     step1: 'Escolha suas experiências',
     step2: 'Organize seu roteiro',
