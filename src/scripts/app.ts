@@ -83,7 +83,11 @@ function initChrome() {
   let quoteVisible = false;
 
   // El botón flotante se retira donde ya hay una acción de WhatsApp a la vista (portada, cotizador, planificador).
-  const paintFab = () => fab?.classList.toggle('is-away', heroVisible || plannerVisible || quoteVisible);
+  const paintFab = () => {
+    const away = heroVisible || plannerVisible || quoteVisible;
+    fab?.classList.toggle('is-away', away);
+    fab?.classList.toggle('is-shown', !away);
+  };
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
