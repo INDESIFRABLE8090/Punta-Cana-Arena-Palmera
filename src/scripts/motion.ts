@@ -124,6 +124,8 @@ function initDive() {
     const under = smooth(0.38, 0.46, p);
     depth.textContent = `${Math.round(under * smooth(0.4, 0.95, p) * 12)} m`;
     bar.style.transform = `scaleY(${p.toFixed(3)})`;
+    // Sin WebGL: el póster del atardecer se cubre de océano a medida que se baja.
+    if (!scene) dive.style.setProperty('--deep', smooth(0.2, 0.55, p).toFixed(3));
     setUnderwater(under);
     scene?.setProgress(p);
   };
