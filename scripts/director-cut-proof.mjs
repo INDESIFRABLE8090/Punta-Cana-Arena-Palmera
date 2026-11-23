@@ -9,11 +9,11 @@ import { mkdir } from 'node:fs/promises';
 import { chromium } from 'playwright';
 
 const port = 4322;
-const base = `http://127.0.0.1:${port}/Punta-Cana-Arena-Palmera`;
+let base = `http://127.0.0.1:${port}/Punta-Cana-Arena-Palmera`;
 const output = 'artifacts/beyond-paradise-director-cut';
 await mkdir(output, { recursive: true });
 
-const server = spawn('npm', ['run', 'preview', '--', '--port', String(port), '--host', '127.0.0.1'], {
+const server = spawn('npm', ['run', 'preview', '--', '--port', String(port)], {
   cwd: process.cwd(),
   env: { ...process.env, CI: 'true' },
   stdio: ['ignore', 'pipe', 'pipe'],
@@ -23,15 +23,33 @@ server.stdout.on('data', (chunk) => { serverLog += chunk.toString().slice(0, 160
 server.stderr.on('data', (chunk) => { serverLog += chunk.toString().slice(0, 1600); });
 
 const ready = async () => {
+  const candidates = [
+    `http://127.0.0.1:${port}/Punta-Cana-Arena-Palmera`,
+    `http://localhost:${port}/Punta-Cana-Arena-Palmera`,
+    `http://127.0.0.1:${port}`,
+    `http://localhost:${port}`,
+  ];
+  let last = 'No HTTP responses yet';
   for (let i = 0; i < 45; i++) {
     if (server.exitCode !== null) throw new Error(`Astro preview exited: ${server.exitCode}. ${serverLog.slice(-1500)}`);
-    try {
-      const response = await fetch(`${base}/es/`, { signal: AbortSignal.timeout(2000) });
-      if (response.ok) return;
-    } catch { /* preview is starting */ }
+    for (const candidate of candidates) {
+      try {
+        const response = await fetch(`${candidate}/es/`, { signal: AbortSignal.timeout(1200) });
+        last = `${candidate}/es/ -> HTTP ${response.status}, final ${response.url}`;
+        if (response.ok) {
+          const document = await response.text();
+          if (document.includes('director-hero')) {
+            base = candidate;
+            console.log(`PREVIEW READY: ${last}`);
+            return;
+          }
+          last += ' (not Director Cut HTML)';
+        }
+      } catch (e) { last = `${candidate}/es/: ${e.message}`; }
+    }
     await delay(800);
   }
-  throw new Error(`Astro preview did not start: ${serverLog.slice(-1500)}`);
+  throw new Error(`Astro preview did not serve Director Cut: ${last}\\n${serverLog.slice(-1500)}`);
 };
 
 let browser;
