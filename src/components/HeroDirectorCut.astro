@@ -1,0 +1,208 @@
+---
+/**
+ * BEYOND PARADISE / Director Cut A
+ * Alternative hero on an isolated branch; the original Hero.astro remains intact.
+ * Only original commissioned Veo media already present in this repository.
+ * Video delivery is delegated to the existing data-lazy-video controller.
+ */
+import Icon from './Icon.astro';
+import { type Lang } from '@/i18n/config';
+import { t } from '@/i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = t(lang);
+const q = d.quick;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const strings = {
+  es: { scene: '01 / El Caribe, reinventado', scroll: 'Explora el otro lado', mark: 'Un viaje que se siente', ai: 'Escena ilustrativa creada con IA', aria: 'Vista ilustrativa de una costa caribeña y mar turquesa' },
+  en: { scene: '01 / The Caribbean, reimagined', scroll: 'Explore the other side', mark: 'A journey you can feel', ai: 'Illustrative scene created with AI', aria: 'Illustrative view of the Caribbean coastline and turquoise sea' },
+  pt: { scene: '01 / O Caribe, reinventado', scroll: 'Explore o outro lado', mark: 'Uma viagem para sentir', ai: 'Cena ilustrativa criada com IA', aria: 'Vista ilustrativa do litoral caribenho e do mar turquesa' },
+}[lang];
+---
+
+<section class="director-hero" data-hero aria-labelledby="hero-title">
+  <div class="scene" aria-hidden="true">
+    <img
+      class="poster"
+      src={`${base}media/veo/coast-1536.webp`}
+      srcset={`${base}media/veo/coast-900.webp 900w, ${base}media/veo/coast-1536.webp 1536w`}
+      sizes="(min-width: 60rem) 100vw, 155vw"
+      alt=""
+      width="1536"
+      height="864"
+      fetchpriority="high"
+      decoding="async"
+    />
+    <video
+      class="film"
+      data-lazy-video
+      data-src-sm={`${base}media/veo/coast-720.mp4`}
+      data-src-lg={`${base}media/veo/coast-1080.mp4`}
+      muted
+      loop
+      playsinline
+      preload="none"
+      aria-hidden="true"
+    ></video>
+    <div class="grade"></div>
+    <div class="light"></div>
+    <div class="grain"></div>
+  </div>
+
+  <div class="orb" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <div class="topline">
+    <span class="dash"></span>
+    <p>{strings.scene}</p>
+    <span class="number">18°34′N / 68°22′W</span>
+  </div>
+
+  <div class="copy">
+    <p class="overline">{q.kicker}</p>
+    <h1 id="hero-title">
+      <span class="sr-only">{q.lines.join(' ')} — Arena y Palma. {q.h1a} {q.h1b}</span>
+      <span class="line line-one" aria-hidden="true">{q.lines[0]}</span>
+      <span class="line line-two" aria-hidden="true"><em>{q.lines[1]}</em><span class="period">.</span></span>
+    </h1>
+    <div class="caption-row">
+      <span class="caption-line"></span>
+      <p class="subtitle">{q.sub}</p>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="intro">
+      <span class="eyeline">{strings.mark}</span>
+      <p>{q.lead}</p>
+    </div>
+    <div class="buttons">
+      <a class="primary" href="#experiencias">
+        <span>{q.ctaAlt}</span><Icon name="arrow" size={17} />
+      </a>
+      <a class="secondary" href="#cotizar">{q.cta}<span aria-hidden="true">↗</span></a>
+    </div>
+  </div>
+
+  <div class="footrail">
+    <span class="rail-left"><span class="rail-dot"></span>{strings.scroll}</span>
+    <span class="rail-center" aria-hidden="true"><i></i></span>
+    <button class="sound" type="button" data-sound aria-pressed="false" aria-label={d.sound.label}>
+      <span class="on"><Icon name="sound" /></span>
+      <span class="off"><Icon name="mute" /></span>
+      <span data-sound-label class="sr-only">{d.sound.off}</span>
+    </button>
+  </div>
+  <span class="disclosure">{strings.ai}</span>
+</section>
+
+<style>
+  .director-hero {
+    --p: 0; --mx: 0; --my: 0;
+    position: relative; min-height: 100svh; min-height: max(100svh, 48rem);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    overflow: clip; isolation: isolate; color: #f8f8f1; background: #061a25;
+    padding: calc(var(--header-h) + 3.5rem) var(--gutter) calc(5.9rem + env(safe-area-inset-bottom));
+  }
+  .scene { position: absolute; inset: 0; z-index: -3; overflow: hidden;
+    transform: translate3d(calc(var(--mx) * 5px), calc(var(--p) * 12svh), 0) scale(calc(1.045 + var(--p) * 0.12));
+    transform-origin: 60% 50%; will-change: transform; }
+  .poster, .film { position: absolute; inset: 0; height: 100%; width: 100%; object-fit: cover; object-position: 62% 50%; }
+  .film { opacity: 0; transition: opacity 1.3s ease; }
+  .film.is-on { opacity: 1; }
+  .grade { position: absolute; inset: 0; background:
+    linear-gradient(90deg, rgb(2 22 34 / .72) 0%, rgb(2 22 34 / .34) 56%, rgb(2 22 34 / .20) 100%),
+    linear-gradient(0deg, rgb(2 18 29 / .88) 0%, rgb(2 18 29 / .35) 37%, transparent 65%, rgb(2 22 34 / .27) 100%);
+  }
+  .light { position: absolute; inset: 0; mix-blend-mode: screen; opacity: .37;
+    background: radial-gradient(ellipse 35% 55% at 82% 31%, rgba(138,249,227,.34), transparent 85%); }
+  .grain { position: absolute; inset: 0; pointer-events: none; opacity: .08;
+    background-image: radial-gradient(circle, white .7px, transparent .7px);
+    background-size: 5px 5px; }
+  .topline { position: absolute; z-index: 2; top: calc(var(--header-h) + 2.3rem); left: var(--gutter); right: var(--gutter);
+    display: flex; align-items: center; gap: 1rem; color: rgba(255,255,255,.84);
+    font-size: .66rem; font-weight: 700; letter-spacing: .19em; text-transform: uppercase; }
+  .topline p { margin: 0; }
+  .topline .dash { width: 2rem; height: 1px; background: #b8ecd7; flex: 0 0 auto; }
+  .number { display: none; font-size: .6rem; font-variant-numeric: tabular-nums; }
+  .orb { position: absolute; z-index: -1; width: min(50vw, 36rem); aspect-ratio: 1; border: 1px solid rgba(234,255,250,.23);
+    border-radius: 50%; right: -15vw; top: 22svh; opacity: .7; pointer-events: none;
+    transform: translate3d(calc(var(--mx) * -11px), calc(var(--p) * -8svh), 0); }
+  .orb span { position: absolute; display: block; inset: 15%; border-radius: 50%; border: 1px solid rgba(234,255,250,.13); }
+  .orb span:nth-child(2) { inset: 31%; }
+  .orb span:nth-child(3) { inset: 47%; background: rgba(234,255,250,.33); filter: blur(1px); }
+  .copy { position: relative; z-index: 1; transform: translate3d(calc(var(--mx) * 7px), calc(var(--p) * -12svh), 0); }
+  .overline { font-size: .67rem; font-weight: 800; letter-spacing: .28em; text-transform: uppercase;
+    color: #cff9ef; margin: 0 0 1.1rem; }
+  h1 { margin: 0; width: 100%; max-width: 100%; line-height: .76; letter-spacing: -.073em;
+    font-size: clamp(4.4rem, 19vw, 13.7rem);
+    font-family: 'Fraunces Variable', Georgia, serif; font-weight: 340; font-variation-settings: 'opsz' 144, 'SOFT' 48; }
+  .line { display: block; white-space: nowrap; padding-top: .1em; padding-bottom: .16em; margin-block: -.1em; }
+  .line-one { transform-origin: left; }
+  .line-two { margin-left: min(5vw, 4rem); font-weight: 270; }
+  .line-two em { font-weight: 290; }
+  .period { font-family: 'Manrope Variable', sans-serif; font-weight: 300; font-size: .48em; color: #a6f4de; vertical-align: .19em; }
+  .caption-row { display: flex; align-items: center; gap: .9rem; margin-top: 1.4rem; }
+  .caption-line { width: 2.1rem; height: 1px; background: #c5f0de; flex: 0 0 auto; }
+  .subtitle { font-family: 'Fraunces Variable', Georgia, serif; font-style: italic; font-size: clamp(1.05rem, 3.7vw, 1.65rem);
+    letter-spacing: -.02em; color: rgba(244,254,250,.9); }
+  .bottom { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 1.35rem; margin-top: clamp(2rem, 5svh, 4rem); }
+  .intro { display: grid; gap: .45rem; }
+  .eyeline { font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: #b2ecdb; font-size: .62rem; }
+  .intro p { max-width: 28rem; margin: 0; font-size: .94rem; line-height: 1.55; color: rgba(255,255,255,.85); }
+  .buttons { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem 1.15rem; }
+  .primary, .secondary { display: inline-flex; align-items: center; justify-content: center; gap: 1rem; min-height: 3.2rem;
+    text-decoration: none; font-size: .82rem; font-weight: 750; transition: transform .3s ease, background .3s ease; }
+  .primary { background: #e9fff7; color: #05333b; border-radius: 100px; padding: .75rem 1.2rem; }
+  .primary:hover { background: #b6f2dc; transform: translateY(-2px); }
+  .secondary { color: #f4fffb; padding: .5rem; border-bottom: 1px solid rgba(255,255,255,.65); border-radius: 0; }
+  .secondary span { font-size: 1.12rem; }
+  .footrail { position: absolute; bottom: calc(2.7rem + env(safe-area-inset-bottom)); left: var(--gutter); right: var(--gutter);
+    display: flex; align-items: center; justify-content: space-between; z-index: 2;
+    color: rgba(255,255,255,.75); }
+  .rail-left { display: inline-flex; align-items: center; gap: .7rem; font-size: .65rem; letter-spacing: .17em; text-transform: uppercase; font-weight: 700; }
+  .rail-dot { display: inline-block; width: .42rem; aspect-ratio: 1; background: #a9f8db; border-radius: 50%; box-shadow: 0 0 12px #a9f8db; }
+  .rail-center { display: none; }
+  .sound { display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; min-width: 2.75rem;
+    border-radius: 50%; border: 1px solid rgba(255,255,255,.55); color: white; background: rgba(5,34,44,.18);
+    backdrop-filter: blur(5px); }
+  .sound .on, .sound[aria-pressed='true'] .off { display: none; }
+  .sound[aria-pressed='true'] .on { display: inline; }
+  .disclosure { position: absolute; right: var(--gutter); bottom: .7rem; font-size: .55rem; color: rgba(255,255,255,.63);
+    letter-spacing: .04em; }
+  @media (min-width: 48rem) {
+    .director-hero { min-height: max(100svh, 45rem); padding-bottom: 6.2rem; }
+    .number { display: block; margin-left: auto; }
+    h1 { font-size: clamp(7rem, 14.9vw, 14.5rem); }
+    .line-two { margin-left: 8vw; }
+    .bottom { flex-direction: row; align-items: flex-end; justify-content: space-between; }
+    .buttons { justify-content: flex-end; }
+    .rail-center { display: block; width: 1px; height: 2.5rem; overflow: hidden; }
+    .rail-center i { display: block; width: 1px; height: 100%; background: linear-gradient(#bafbe7, transparent); }
+  }
+  @media (min-width: 72rem) {
+    .director-hero { padding-inline: 7vw; }
+    .topline, .footrail { left: 7vw; right: 7vw; }
+    .disclosure { right: 7vw; }
+    .copy { margin-bottom: 1svh; }
+    .bottom { margin-top: 3svh; }
+    .orb { right: 3vw; width: min(37vw, 38rem); }
+  }
+  @media (max-width: 24rem) {
+    h1 { font-size: 17.7vw; }
+    .overline { letter-spacing: .15em; }
+    .secondary { font-size: .76rem; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .copy { animation: dc-in 1.3s .12s both cubic-bezier(.2,.8,.2,1); }
+    .bottom { animation: dc-in 1.3s .55s both cubic-bezier(.2,.8,.2,1); }
+    .topline { animation: dc-in 1s .8s both ease-out; }
+    .orb { animation: dc-pulse 9s ease-in-out infinite alternate; }
+    @keyframes dc-in { from { opacity: 0; filter: blur(8px); translate: 0 1.2rem; } }
+    @keyframes dc-pulse { to { opacity: .42; } }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .director-hero { --p: 0 !important; --mx: 0 !important; --my: 0 !important; }
+    .copy, .bottom { transform: none; }
+  }
+</style>
