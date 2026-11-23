@@ -1,6 +1,7 @@
 ---
 import Base from '@/layouts/Base.astro';
-import Hero from '@/components/Hero.astro';
+import HeroDirectorCut from '@/components/HeroDirectorCut.astro';
+import CinematicThreshold from '@/components/CinematicThreshold.astro';
 import Dive from '@/components/Dive.astro';
 import Marquee from '@/components/Marquee.astro';
 import Experiences from '@/components/Experiences.astro';
@@ -51,7 +52,8 @@ const jsonLd = [
 ---
 
 <Base lang={lang} title={d.meta.homeTitle} description={d.meta.homeDescription} alternates={alternates} jsonLd={jsonLd} overlayHeader>
-  <Hero lang={lang} />
+  <HeroDirectorCut lang={lang} />
+  <CinematicThreshold lang={lang} />
   <Experiences lang={lang} />
   <Quote lang={lang} />
   <Marquee lang={lang} />
