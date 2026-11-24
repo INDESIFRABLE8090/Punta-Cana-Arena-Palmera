@@ -1,0 +1,106 @@
+---
+/**
+ * Storytelling bridge between the ocean-first hero and the excursion index.
+ * Entirely responsive, no new dependencies, no network calls; original AI scenes are labeled.
+ */
+import type { Lang } from '@/i18n/config';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const copy = {
+  es: { index: 'Capítulo 01 / La sensación', eyebrow: 'No es un destino. Es una sensación.', first: 'El mundo', second: 'puede esperar.', body: 'Un camino hacia el mar. El instante en que cambias de ritmo. Y una isla que se queda contigo mucho después de volver.', action: 'Descubrir experiencias', over: 'Siente el Caribe de otra forma', foot: 'Escenas ilustrativas creadas con IA', alt: 'Paisaje ilustrativo del Caribe visto desde un camino costero' },
+  en: { index: 'Chapter 01 / The feeling', eyebrow: 'Not a destination. A feeling.', first: 'Let the world', second: 'wait.', body: 'A road toward the sea. The moment you slow down. And an island that stays with you long after the journey ends.', action: 'Discover the experiences', over: 'Feel the Caribbean differently', foot: 'Illustrative scenes created with AI', alt: 'Illustrative Caribbean landscape seen from a coastal road' },
+  pt: { index: 'Capítulo 01 / A sensação', eyebrow: 'Não é um destino. É uma sensação.', first: 'O mundo', second: 'pode esperar.', body: 'Um caminho até o mar. O instante em que você desacelera. E uma ilha que permanece com você muito depois da viagem.', action: 'Descobrir experiências', over: 'Sinta o Caribe de outro jeito', foot: 'Cenas ilustrativas criadas com IA', alt: 'Paisagem caribenha ilustrativa vista de uma estrada costeira' }
+}[lang];
+---
+
+<section class="threshold" data-immersion aria-labelledby="threshold-title">
+  <div class="stage">
+    <div class="frame" aria-hidden="true">
+      <img src={`${base}media/veo/road-1536.webp`} alt="" width="1536" height="864" loading="lazy" decoding="async" />
+    </div>
+    <div class="shade" aria-hidden="true"></div>
+    <div class="chapter"><span>01</span><span>{copy.index.split('/')[1]?.trim()}</span></div>
+    <div class="narrative">
+      <h2 id="threshold-title"><span>{copy.first}</span><em>{copy.second}</em></h2>
+      <p>{copy.body}</p>
+      <a href="#experiencias">{copy.action}<span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="progress" aria-hidden="true"><i></i></div>
+    <p class="disclosure">{copy.foot}</p>
+  </div>
+</section>
+
+<script>
+  function setupImmersion() {
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduced.matches) return;
+    document.querySelectorAll<HTMLElement>('[data-immersion]').forEach((section) => {
+      if (section.dataset.ready) return;
+      section.dataset.ready = 'true';
+      let active = false;
+      let raf = 0;
+      const draw = () => {
+        raf = 0;
+        if (!active) return;
+        const rect = section.getBoundingClientRect();
+        const range = Math.max(1, rect.height - innerHeight);
+        const p = Math.max(0, Math.min(1, -rect.top / range));
+        section.style.setProperty('--journey', p.toFixed(4));
+      };
+      const schedule = () => { if (active && !raf) raf = requestAnimationFrame(draw); };
+      const observer = new IntersectionObserver(([entry]) => {
+        active = entry.isIntersecting;
+        if (active) schedule();
+      }, { rootMargin: '100px' });
+      observer.observe(section);
+      addEventListener('scroll', schedule, { passive: true });
+      addEventListener('resize', schedule, { passive: true });
+      section.classList.add('is-immersive');
+      addEventListener('pagehide', () => {
+        observer.disconnect();
+        removeEventListener('scroll', schedule);
+        removeEventListener('resize', schedule);
+        if (raf) cancelAnimationFrame(raf);
+      }, { once: true });
+    });
+  }
+  setupImmersion();
+</script>
+
+<style>
+  .threshold { --journey: 0; background: #082a30; color: #fffaf0; position: relative; }
+  .stage { position: relative; min-height: 100svh; isolation: isolate; overflow: clip; display: flex; align-items: flex-end; padding: clamp(1.4rem, 5vw, 5rem); }
+  .frame { position: absolute; inset: 0; z-index: -3; }
+  .frame img { width: 100%; height: 100%; object-fit: cover; object-position: 52% 60%; display: block; }
+  .shade { position: absolute; inset: 0; z-index: -2; background: linear-gradient(0deg, rgb(0 23 27 / .92), rgb(0 23 27 / .52) 35%, transparent 76%); }
+  .chapter { position: absolute; top: 3rem; left: clamp(1.4rem, 5vw, 5rem); display: flex; align-items: center; gap: .8rem; font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; text-shadow: 0 1px 9px #001a20; }
+  .chapter span:first-child { font-size: 2rem; font-weight: 400; border-right: 1px solid currentColor; padding-right: .8rem; }
+  .narrative { width: 100%; margin-bottom: 2.2rem; }
+  h2 { margin: 0; font-family: 'Fraunces Variable', Georgia, serif; font-size: clamp(3.4rem, 10vw, 10rem); font-weight: 340; line-height: .94; letter-spacing: -.06em; text-shadow: 0 2px 22px rgb(0 20 20 / .4); }
+  h2 span, h2 em { display: block; }
+  h2 em { color: #d8f5dc; font-weight: 300; }
+  .narrative p { max-width: 28rem; font-size: clamp(1rem, 1.5vw, 1.24rem); line-height: 1.6; margin: 1.4rem 0; }
+  .narrative a { display: inline-flex; min-height: 3rem; align-items: center; gap: 1.5rem; color: inherit; border-bottom: 1px solid currentColor; font-weight: 700; text-decoration: none; }
+  .narrative a:hover { color: #aef9d8; }
+  .progress { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgb(255 255 255 / .16); }
+  .progress i { display: block; width: 100%; height: 100%; background: #e1ffdd; transform-origin: left; transform: scaleX(var(--journey)); }
+  .disclosure { position: absolute; right: 1.4rem; bottom: .75rem; margin: 0; font-size: .64rem; color: #fff; text-shadow: 0 1px 4px black; }
+  @media (min-width: 64rem) {
+    .narrative { max-width: 85vw; }
+    .threshold.is-immersive { height: 190svh; }
+    .is-immersive .stage { position: sticky; top: 0; height: 100svh; }
+    .is-immersive .frame { transform: scale(calc(1 + var(--journey) * .20)); transform-origin: 58% 63%; will-change: transform; }
+    .is-immersive .narrative { transform: translateY(calc((1 - var(--journey)) * 35px)); }
+  }
+  @media (max-width: 63.99rem) {
+    .stage { min-height: max(44rem, 100svh); }
+    .frame img { object-position: 46% 65%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .threshold.is-immersive { height: auto; }
+    .is-immersive .stage { position: relative; height: auto; }
+    .is-immersive .frame, .is-immersive .narrative { transform: none; }
+    .progress { display: none; }
+  }
+</style>
