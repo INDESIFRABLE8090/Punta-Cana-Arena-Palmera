@@ -76,7 +76,7 @@ const links = [
     -webkit-backdrop-filter: none;
     border-color: transparent;
   }
-  :global(body:has([data-hero])) .site-header.is-overlay:not(.is-solid):not(.is-open) { color: var(--plum); }
+  :global(body:has(.hero[data-hero])) .site-header.is-overlay:not(.is-solid):not(.is-open) { color: var(--plum); }
   .site-header.is-hidden:not(.is-open) { transform: translateY(-100%); }
   .site-header.is-open { background: var(--sand-50); color: var(--ink); }
   .bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: var(--header-h); }

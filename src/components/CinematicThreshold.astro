@@ -1,0 +1,132 @@
+---
+/**
+ * Storytelling bridge between the ocean-first hero and the excursion index.
+ * Entirely responsive, no new dependencies, no network calls; original AI scenes are labeled.
+ */
+import type { Lang } from '@/i18n/config';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const copy = {
+  es: { index: 'Capítulo 01 / La sensación', eyebrow: 'No es un destino. Es una sensación.', first: 'El mundo', second: 'puede esperar.', body: 'Un camino hacia el mar. El instante en que cambias de ritmo. Y una isla que se queda contigo mucho después de volver.', action: 'Descubrir experiencias', over: 'Siente el Caribe de otra forma', foot: 'Escenas ilustrativas creadas con IA', alt: 'Paisaje ilustrativo del Caribe visto desde un camino costero' },
+  en: { index: 'Chapter 01 / The feeling', eyebrow: 'Not a destination. A feeling.', first: 'Let the world', second: 'wait.', body: 'A road toward the sea. The moment you slow down. And an island that stays with you long after the journey ends.', action: 'Discover the experiences', over: 'Feel the Caribbean differently', foot: 'Illustrative scenes created with AI', alt: 'Illustrative Caribbean landscape seen from a coastal road' },
+  pt: { index: 'Capítulo 01 / A sensação', eyebrow: 'Não é um destino. É uma sensação.', first: 'O mundo', second: 'pode esperar.', body: 'Um caminho até o mar. O instante em que você desacelera. E uma ilha que permanece com você muito depois da viagem.', action: 'Descobrir experiências', over: 'Sinta o Caribe de outro jeito', foot: 'Cenas ilustrativas criadas com IA', alt: 'Paisagem caribenha ilustrativa vista de uma estrada costeira' }
+}[lang];
+---
+
+<section class="threshold" aria-labelledby="threshold-title">
+  <div class="ambient" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="editorial">
+      <div class="index"><span class="index-line"></span>{copy.index}</div>
+      <p class="eyebrow">{copy.eyebrow}</p>
+      <h2 id="threshold-title">
+        <span>{copy.first}</span>
+        <em>{copy.second}</em>
+      </h2>
+      <div class="body-row">
+        <span class="stroke" aria-hidden="true"></span>
+        <p>{copy.body}</p>
+      </div>
+      <a class="explore" href="#experiencias"><span>{copy.action}</span><span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="art" aria-hidden="true">
+      <div class="art__layer" data-parallax>
+        <img
+          src={`${base}media/veo/road-1536.webp`}
+          alt=""
+          width="1536"
+          height="864"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <div class="art__mask"></div>
+      <div class="art__ring"></div>
+      <div class="art__caption">
+        <span>02 / 07</span>
+        <span>{copy.over}</span>
+      </div>
+      <span class="art__mark">A<span>·</span>P</span>
+    </div>
+  </div>
+  <p class="disclosure">{copy.foot}</p>
+</section>
+
+<style>
+  .threshold {
+    --paper: #f5f2e9;
+    position: relative;
+    background: #071d25;
+    color: var(--paper);
+    min-height: 41rem;
+    padding: clamp(5rem, 12vw, 9rem) var(--gutter) clamp(4.5rem, 9vw, 8rem);
+    overflow: clip;
+  }
+  .ambient { position: absolute; pointer-events: none; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 48% 55% at 68% 37%, rgba(27,104,108,.28), transparent),
+      radial-gradient(ellipse 43% 63% at 0% 94%, rgba(2,70,93,.35), transparent);
+  }
+  .wrap { position: relative; z-index: 1; width: min(100%, 93rem); margin-inline: auto;
+    display: grid; gap: clamp(3rem, 7vw, 9rem); align-items: center; }
+  .editorial { position: relative; z-index: 3; }
+  .index { display: inline-flex; align-items: center; gap: .8rem; font-size: .68rem;
+    font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+    color: rgba(240,255,249,.67); margin-bottom: clamp(3.7rem, 6vw, 6rem); }
+  .index-line { width: 2.5rem; height: 1px; background: #92d8c7; display: inline-block; }
+  .eyebrow { font-size: .75rem; font-weight: 700; letter-spacing: .17em; text-transform: uppercase;
+    color: #9be3cd; margin: 0 0 1.3rem; }
+  h2 { max-width: 14ch; font-family: 'Fraunces Variable', Georgia, serif;
+    font-variation-settings: 'opsz' 144, 'SOFT' 48; font-size: clamp(3.3rem, 10.5vw, 8.1rem);
+    line-height: .96; letter-spacing: -.05em; font-weight: 330; margin: 0; }
+  h2 span, h2 em { display: block; }
+  h2 em { font-weight: 290; color: #a9dfca; margin-left: min(4vw, 3.3rem); }
+  .body-row { margin-top: clamp(2rem, 4vw, 3rem); display: flex; gap: 1rem; align-items: flex-start; }
+  .stroke { display: block; width: 2rem; height: 1px; background: #a9dfca; margin-top: .78rem; flex: 0 0 auto; }
+  .body-row p { max-width: 28rem; font-size: clamp(.98rem, 1.6vw, 1.14rem); line-height: 1.75;
+    color: rgba(245,242,233,.8); }
+  .explore { display: inline-flex; gap: 1.5rem; align-items: center; justify-content: space-between;
+    margin-top: 2.2rem; min-height: 3rem; color: var(--paper); text-decoration: none; border-bottom: 1px solid #b4e7d2;
+    font-size: .79rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+  .explore span:last-child { font-size: 1.4rem; font-weight: 300; }
+  .explore:hover { color: #a4f2d9; }
+  .art { position: relative; width: 100%; min-height: 23rem; aspect-ratio: .93; background: #123c49;
+    overflow: hidden; clip-path: polygon(11% 0, 100% 0, 100% 87%, 89% 100%, 0 100%, 0 13%); }
+  .art__layer { position: absolute; inset: -10%; }
+  .art img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 55%; display: block; }
+  .art__mask { position: absolute; inset: 0; background:
+      linear-gradient(180deg, rgba(5,28,38,.2), transparent 50%, rgba(4,26,34,.83));
+    pointer-events: none; }
+  .art__ring { position: absolute; width: 65%; aspect-ratio: 1; top: 15%; left: 17%;
+    border-radius: 50%; border: 1px solid rgba(255,255,255,.47);
+    box-shadow: 0 0 0 3.2rem rgba(255,255,255,.04), 0 0 0 6.4rem rgba(255,255,255,.025); }
+  .art__caption { position: absolute; bottom: 2rem; left: 2rem; right: 2rem;
+    display: flex; justify-content: space-between; gap: 1rem; align-items: flex-end;
+    font-size: .6rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: #f4fff9; }
+  .art__caption span:last-child { max-width: 11rem; text-align: right; }
+  .art__mark { position: absolute; left: 1.9rem; top: 1.5rem; font-family: 'Fraunces Variable', Georgia, serif;
+    font-size: 1.45rem; font-weight: 600; letter-spacing: -.08em; }
+  .art__mark span { color: #bbf6db; padding-inline: .1em; }
+  .disclosure { position: absolute; bottom: 1rem; right: var(--gutter); font-size: .57rem;
+    color: rgba(245,242,233,.49); letter-spacing: .03em; }
+  @media (min-width: 65rem) {
+    .threshold { padding-inline: 7vw; min-height: 95svh; }
+    .wrap { grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); }
+    .art { min-height: min(69svh, 47rem); aspect-ratio: .79; }
+    .index { margin-bottom: clamp(4rem, 10svh, 7rem); }
+    .disclosure { right: 7vw; }
+  }
+  @media (min-width: 78rem) {
+    .art { margin-right: -4vw; }
+    .editorial { padding-left: 1vw; }
+    h2 { font-size: clamp(5rem, 7.5vw, 8.3rem); }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .art__ring { animation: circle-breathe 8s ease-in-out infinite alternate; }
+    @keyframes circle-breathe { to { transform: scale(1.075); opacity: .55; } }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .art__ring { animation: none; }
+  }
+</style>

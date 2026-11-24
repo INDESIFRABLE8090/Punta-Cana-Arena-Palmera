@@ -1,0 +1,64 @@
+name: Beyond Paradise — Director Cut QA (no deploy)
+
+on:
+  push:
+    branches:
+      - design/beyond-paradise-director-cut-20261123
+  pull_request:
+    branches:
+      - claude/punta-cana-premium-web-mbwugp
+
+permissions:
+  contents: read
+
+concurrency:
+  group: director-cut-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  render-proof:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      SITE_URL: https://indesifrable8090.github.io
+      BASE_PATH: /Punta-Cana-Arena-Palmera
+      NODE_OPTIONS: --max-old-space-size=4096
+      CI: 'true'
+    steps:
+      - name: Checkout proposed branch (no credentials persisted)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Node 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Astro typecheck and production build
+        run: npm run build
+      - name: Save compiled site for private review
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: beyond-paradise-built-site
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+      - name: Install Chromium for visual evidence
+        run: |
+          npm install --no-save --no-package-lock --ignore-scripts --no-audit --no-fund playwright@1.57.0
+          npx playwright install --with-deps chromium
+      - name: Verify ES EN PT and capture mobile/desktop evidence
+        timeout-minutes: 7
+        run: |
+          node --check scripts/director-cut-proof.mjs
+          node scripts/director-cut-proof.mjs
+      - name: Save previews for owner and QA reviewer
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: beyond-paradise-director-cut-captures
+          path: artifacts/beyond-paradise-director-cut/*.png
+          if-no-files-found: warn
+          retention-days: 7
