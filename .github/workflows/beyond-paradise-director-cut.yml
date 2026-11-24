@@ -13,7 +13,7 @@ permissions:
 
 concurrency:
   group: director-cut-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   render-proof:
@@ -38,11 +38,19 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Astro typecheck and production build
         run: npm run build
+      - name: Save compiled site for private review
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: beyond-paradise-built-site
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
       - name: Install Chromium for visual evidence
         run: |
           npm install --no-save --no-package-lock --ignore-scripts --no-audit --no-fund playwright@1.57.0
           npx playwright install --with-deps chromium
       - name: Verify ES EN PT and capture mobile/desktop evidence
+        timeout-minutes: 7
         run: |
           node --check scripts/director-cut-proof.mjs
           node scripts/director-cut-proof.mjs
