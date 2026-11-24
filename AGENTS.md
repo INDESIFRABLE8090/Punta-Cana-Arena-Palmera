@@ -1,0 +1,10 @@
+# AGENTS.md — instrucciones del propietario para cualquier agente
+Aplicable a OpenCode/DeepSeek, Claude Code, Codex, Hermes, Gemini y otros colaboradores. No depender de JARVIS activo. Leer antes de diseñar o programar.
+
+## Regla transversal
+El propietario aporta la visión; el agente dirige la producción. Convertir cada objetivo en etapas ejecutables: herramienta exacta, entorno de ejecución, insumos, método, artefacto, criterio de calidad y alternativa. Verificar disponibilidad, cuota, licencia y coste antes de instalar. Ejecutar, observar el resultado real, corregir y ensamblar; no limitarse a recomendar herramientas o escribir informes. Una compilación exitosa no demuestra calidad artística. Conservar trabajo ajeno, evitar cambios concurrentes y pedir revisión independiente antes de certificar entrega. No trasladar pasos manuales evitables al propietario. No generar cargos ni publicar sin autorización.
+
+## Prioridad actual: Arena & Palmera — Beyond Paradise
+El propietario rechazó las capturas del Director Cut A por parecer una landing genérica de IA. La meta es una experiencia interactiva cinematográfica, con profundidad, océano, palmeras, movimiento de cámara, tipografía editorial y transiciones entre escenas; no una sucesión de tarjetas, fotos rectangulares y eslóganes. Mantener Astro existente, catálogo confirmado, transporte, cotizador, WhatsApp y ES/EN/PT. No inventar datos comerciales. No exigir formalización legal para demo privada; conservar controles de publicación.
+
+Leer y ejecutar la receta detallada [docs/BEYOND-PARADISE-PRODUCTION.md](docs/BEYOND-PARADISE-PRODUCTION.md). Primero construir y comprobar una escena representativa en navegador, luego integrar las demás. Usar Three.js Water/Sky, GSAP ScrollTrigger, recursos audiovisuales existentes, Astro y Playwright según la receta; no instalar indiscriminadamente. Entregar URL privada navegable, grabación del recorrido, capturas móviles/escritorio, SHA y pruebas. Si 3D no alcanza calidad o rendimiento, usar fallback cinematográfico probado. No llamar terminado a un prototipo.
