@@ -27,6 +27,7 @@ const strings = {
       class="poster"
       src={`${base}media/veo/coast-1536.webp`}
       
+      srcset={`${base}media/veo/coast-900.webp 900w, ${base}media/veo/coast-1536.webp 1536w`}
       sizes="(min-width: 60rem) 100vw, 155vw"
       alt=""
       width="1536"
@@ -50,16 +51,9 @@ const strings = {
     <div class="grain"></div>
   </div>
 
-  <div class="orb" aria-hidden="true"><span></span><span></span><span></span></div>
 
-  <div class="topline">
-    <span class="dash"></span>
-    <p>{strings.scene}</p>
-    <span class="number">CARIBE / REPÚBLICA DOMINICANA</span>
-  </div>
 
   <div class="copy">
-    <p class="overline">{q.kicker}</p>
     <h1 id="hero-title">
       <span class="sr-only">{q.lines.join(' ')} — Arena y Palma. {q.h1a} {q.h1b}</span>
       <span class="line line-one" aria-hidden="true">{q.lines[0]}</span>
@@ -73,7 +67,6 @@ const strings = {
 
   <div class="bottom">
     <div class="intro">
-      <span class="eyeline">{strings.mark}</span>
       <p>{q.lead}</p>
     </div>
     <div class="buttons">
@@ -204,5 +197,38 @@ const strings = {
   @media (prefers-reduced-motion: reduce) {
     .director-hero { --p: 0 !important; --mx: 0 !important; --my: 0 !important; }
     .copy, .bottom { transform: none; }
+  }
+
+  /* Director Cut B: cinematic image first, restrained editorial typography and integrated controls. */
+  .director-hero { min-height: max(100svh, 42rem); padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
+  .grade { background: linear-gradient(0deg, rgb(0 20 26 / .90), rgb(0 20 26 / .38) 34%, transparent 70%), linear-gradient(180deg, rgb(0 20 26 / .40), transparent 30%); }
+  .grain, .light { display: none; }
+  .copy { margin-bottom: 0; }
+  h1 { font-weight: 370; font-size: clamp(4rem, 16.2vw, 13rem); line-height: .82; text-shadow: 0 3px 35px rgb(0 20 26 / .4); }
+  .line-two { margin-left: 0; }
+  .caption-row { margin-top: 1.1rem; }
+  .caption-line { display: none; }
+  .bottom { margin-top: 1.5rem; }
+  .intro p { color: #fff; text-shadow: 0 1px 6px #00232a; }
+  .primary { border-radius: 0; background: #f5fae9; padding-inline: 1.2rem; }
+  .secondary { border-bottom-color: rgb(255 255 255 / .8); }
+  .footrail { bottom: calc(1.7rem + env(safe-area-inset-bottom)); }
+  .disclosure { bottom: .35rem; color: #fff; }
+  @media (min-width: 64rem) {
+    .director-hero { padding-inline: 5vw; }
+    h1 { font-size: clamp(6rem, 13.2vw, 12rem); display: flex; flex-wrap: wrap; column-gap: .14em; align-items: baseline; }
+    .line { display: inline-block; }
+    .line-two { margin-left: 0; }
+    .footrail { left: 5vw; right: 5vw; }
+    .disclosure { right: 5vw; }
+    .bottom { margin-top: 1.3rem; }
+  }
+  @media (max-width: 47.99rem) {
+    .director-hero { min-height: max(100svh, 42rem); }
+    .poster, .film { object-position: 55% 50%; }
+    .bottom { gap: .8rem; }
+    .buttons { gap: .6rem; }
+    .primary, .secondary { min-height: 2.8rem; }
+    h1 { font-size: clamp(3.3rem, 16vw, 7rem); }
   }
 </style>
