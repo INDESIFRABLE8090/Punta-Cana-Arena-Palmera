@@ -1,11 +1,5 @@
 ---
-/**
- * Experiencias como índice editorial (no una cuadrícula de tarjetas).
- * - Escritorio: lista de nombres enormes y un marco fijo a la derecha cuya foto cambia con una máscara
- *   al pasar el cursor, enfocar o desplazarse (app.ts → initIndex).
- * - Móvil: cada experiencia es un capítulo con su foto, que se revela al entrar en pantalla.
- * Contrato funcional conservado: [data-chapters] > li[data-category], [data-filter], [data-add].
- */
+/** Final Cut: responsive editorial grid. Preserve filter, itinerary, link and reveal contracts. */
 import { Picture } from 'astro:assets';
 import SplitHeading from './SplitHeading.astro';
 import AddButton from './AddButton.astro';
@@ -48,7 +42,7 @@ const highlights = (i: number) => {
           </a>
           <figure class="shot" aria-hidden="true">
             {tour.image ? (
-              <Picture src={tour.image.src} alt="" formats={['avif', 'webp']} widths={[480, 768, 1080]} sizes="(min-width: 64rem) 64vw, 92vw" loading="lazy" decoding="async" quality={72} style={`object-position:${tour.image.position ?? '50% 50%'}`} />
+              <Picture src={tour.image.src} alt="" formats={['avif', 'webp']} widths={[480, 768, 1080]} sizes={([0, 3, 7, 10].includes(i) ? "(min-width: 64rem) 62vw, 92vw" : [6].includes(i) ? "(min-width: 64rem) 32vw, 92vw" : "(min-width: 64rem) 32vw, (min-width: 361px) 46vw, 92vw")} loading="lazy" decoding="async" quality={72} style={`object-position:${tour.image.position ?? '50% 50%'}`} />
             ) : <span class="poster"><span class="pname">{tour.name[lang]}</span><span class="soon">{soon}</span></span>}
           </figure>
           {tour.image && !tour.image.credit && <p class="il-m">{illus}</p>}
@@ -61,159 +55,77 @@ const highlights = (i: number) => {
       ))}
     </ol>
 
-    <div class="stage" aria-hidden="true">
-      <div class="frame">
-        {tours.map((tour, i) => (
-          <figure class:list={['pv', { 'is-on': i === 0 }]} data-preview={tour.slug} style={`--deep:${tour.deep};--accent:${tour.accent}`}>
-            {tour.image ? (
-              <Picture src={tour.image.src} alt="" formats={['avif', 'webp']} widths={[640, 960, 1400]} sizes="(min-width: 64rem) 40vw, 1px" loading="lazy" decoding="async" quality={74} style={`object-position:${tour.image.position ?? '50% 50%'}`} />
-            ) : <span class="poster"><span class="pname">{tour.name[lang]}</span><span class="soon">{soon}</span></span>}
-            <figcaption><span>{pad(i + 1)}</span>{tour.name[lang]}{tour.image && !tour.image.credit && <small class="il">{illus}</small>}</figcaption>
-          </figure>
-        ))}
-      </div>
-    </div>
   </div>
   <p class="shell price-note">{d.experiences.priceNote}</p>
 </section>
 
 <style>
-  .experiences { --bg: #1b0c22; position: relative; padding-block: clamp(5rem, 12vw, 9rem) 4rem; background:
-    radial-gradient(80% 50% at 85% 0%, rgb(163 54 92 / 0.32), transparent 70%),
-    linear-gradient(180deg, #2a1233 0%, var(--bg) 30%, #0d1a2b 100%); color: #f6e9e2; }
-  .top { display: grid; gap: 1.1rem; margin-bottom: clamp(2.5rem, 6vw, 4.5rem); }
-  .top .eyebrow { color: #f2a7bf; }
-  .top :global(.display) { color: #fff3ea; }
-  .top :global(.display em) { color: #f2a7bf; }
-  .intro { max-width: 34rem; font-size: 1.05rem; line-height: 1.6; color: rgb(246 233 226 / 0.78); }
-  .filters { display: flex; gap: 0.35rem; overflow-x: auto; margin: 0.5rem calc(var(--gutter) * -1) 0; padding: 0 var(--gutter); scrollbar-width: none; }
-  .filters::-webkit-scrollbar { display: none; }
-  .chip { flex: none; min-height: 2.75rem; padding: 0 1.05rem; border: 1px solid rgb(246 233 226 / 0.22); border-radius: 999px; background: transparent; color: #f6e9e2; font-weight: 650; font-size: 0.88rem; transition: background-color 0.35s, color 0.35s, border-color 0.35s; }
-  .chip:hover { border-color: #f6e9e2; }
-  .chip[aria-pressed='true'] { background: #f6e9e2; color: #2a1233; border-color: #f6e9e2; }
 
-  .list { counter-reset: none; border-top: 1px solid rgb(246 233 226 / 0.16); }
-  .row { position: relative; display: grid; gap: 0.9rem; padding-block: 1.6rem 1.9rem; border-bottom: 1px solid rgb(246 233 226 / 0.16); }
-  .row[hidden] { display: none; }
-  .hit { display: grid; gap: 0.35rem; color: inherit; text-decoration: none; }
-  .meta { display: flex; gap: 0.9rem; align-items: baseline; font-size: 0.7rem; font-weight: 750; letter-spacing: 0.2em; text-transform: uppercase; color: rgb(246 233 226 / 0.6); }
-  .num { font-variant-numeric: tabular-nums; color: var(--accent); filter: brightness(1.35); }
-  .name { font-family: var(--font-display); font-weight: 380; font-variation-settings: 'opsz' 144, 'SOFT' 50; font-size: clamp(2.6rem, 12vw, 5.6rem); line-height: 0.95; letter-spacing: -0.035em; transition: color 0.5s var(--ease), transform 0.7s var(--ease); }
-  .tag { font-family: var(--font-display); font-style: italic; font-size: 1.1rem; color: rgb(246 233 226 / 0.72); }
-  .shot { position: relative; margin: 0.4rem 0 0; aspect-ratio: 16 / 11; border-radius: 1.1rem; overflow: hidden; background: var(--deep); }
-  .shot :global(picture), .shot :global(img) { display: block; width: 100%; height: 100%; }
-  .shot :global(img) { object-fit: cover; }
-  .poster, .pv .poster { position: absolute; inset: 0; background: radial-gradient(60% 60% at 30% 25%, color-mix(in srgb, var(--accent) 65%, white), transparent 70%), linear-gradient(160deg, var(--deep), color-mix(in srgb, var(--accent) 40%, var(--deep))); }
-  .poster { display: grid; align-content: end; gap: 0.4rem; padding: 1.4rem; overflow: hidden; }
-  .pname { font-family: var(--font-display); font-style: italic; font-weight: 320; font-size: clamp(3rem, 16vw, 7rem); line-height: 0.9; letter-spacing: -0.03em; color: rgb(255 255 255 / 0.9); }
-  .soon { font-size: 0.68rem; font-weight: 750; letter-spacing: 0.2em; text-transform: uppercase; color: rgb(255 255 255 / 0.7); }
-  .il-m { margin-top: -0.4rem; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgb(246 233 226 / 0.55); }
-  .incl { font-size: 0.86rem; color: rgb(246 233 226 / 0.62); }
-  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.4rem; }
-  .view { display: inline-flex; align-items: center; gap: 0.4rem; min-height: 2.75rem; font-weight: 700; color: #fff3ea; text-decoration: underline; text-underline-offset: 0.35em; text-decoration-color: rgb(242 167 191 / 0.6); }
-  .actions :global(.add) { display: inline-flex; align-items: center; gap: 0.45rem; min-height: 2.75rem; padding: 0 1rem; border: 1px solid rgb(246 233 226 / 0.3); border-radius: 999px; background: transparent; color: #f6e9e2; font-weight: 650; font-size: 0.86rem; }
-  .actions :global(.add[aria-pressed='true']) { background: #f2a7bf; color: #2a1233; border-color: #f2a7bf; }
-  .stage { display: none; }
-  .price-note { margin-top: 2rem; font-size: 0.86rem; color: rgb(246 233 226 / 0.6); }
-
-  /* Revelado de las fotos al entrar (solo con JS y movimiento permitido: initIndex añade .is-in). */
-  @media (prefers-reduced-motion: no-preference) {
-    :global(.js) .row .shot { clip-path: inset(14% 8% 14% 8% round 1.6rem); transition: clip-path 1.2s var(--ease); }
-    :global(.js) .row .shot :global(img) { scale: 1.18; transition: scale 1.6s var(--ease); }
-    :global(.js) .row.is-in .shot { clip-path: inset(0 0 0 0 round 1.1rem); }
-    :global(.js) .row.is-in .shot :global(img) { scale: 1; }
+  .experiences {
+    position:relative; padding-block:clamp(5rem,12vw,9rem) 4rem;
+    background:radial-gradient(ellipse at 15% 12%,#42243e 0%,transparent 43%),radial-gradient(ellipse at 85% 70%,#123a43 0%,transparent 50%),#111929;
+    color:#f6e9e2;
   }
-
-  /* ---------- Escritorio: índice + marco fijo ---------- */
-  @media (min-width: 64rem) {
-    .grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 4vw; align-items: start; }
-    .row { grid-template-columns: 1fr auto; align-items: end; padding-block: 1.4rem 1.5rem; }
-    .row .shot, .row .incl, .row .il-m { display: none; }
-    .hit { grid-column: 1; }
-    .actions { grid-column: 2; grid-row: 1; flex-direction: column; align-items: flex-end; gap: 0.2rem; opacity: 0; transform: translateX(-0.6rem); transition: opacity 0.4s, transform 0.6s var(--ease); }
-    .row:hover .actions, .row:focus-within .actions, .row.is-active .actions { opacity: 1; transform: none; }
-    .name { font-size: clamp(3rem, 5.6vw, 6rem); color: rgb(246 233 226 / 0.42); }
-    .row.is-active .name, .row:hover .name, .row:focus-within .name { color: #fff3ea; transform: translateX(0.8rem); }
-    .row.is-active .tag { color: #f2a7bf; }
-    .stage { display: block; position: sticky; top: calc(var(--header-h) + 6vh); height: calc(100vh - var(--header-h) - 12vh); }
-    .frame { position: relative; height: 100%; border-radius: 1.6rem; overflow: hidden; background: #2a1233; box-shadow: 0 50px 120px -50px rgb(0 0 0 / 0.8); }
-    .pv { position: absolute; inset: 0; margin: 0; clip-path: inset(100% 0 0 0); transition: clip-path 1s var(--ease); }
-    .pv :global(picture), .pv :global(img) { display: block; width: 100%; height: 100%; }
-    .pv :global(img) { object-fit: cover; scale: 1.12; transition: scale 1.6s var(--ease); }
-    .pv.is-on { clip-path: inset(0 0 0 0); z-index: 1; }
-    .pv.is-on :global(img) { scale: 1; }
-    .pv figcaption { position: absolute; left: 1.4rem; bottom: 1.2rem; z-index: 2; display: flex; gap: 0.8rem; align-items: baseline; font-family: var(--font-display); font-size: 1.5rem; color: #fff; text-shadow: 0 2px 20px rgb(0 0 0 / 0.5); }
-    .pv figcaption span { font-family: var(--font-body); font-size: 0.72rem; font-weight: 750; letter-spacing: 0.2em; }
-    .pv figcaption .il { margin-left: 0.8rem; font-family: var(--font-body); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.85; }
+  .top {display:grid;gap:1.1rem;margin-bottom:clamp(2.5rem,6vw,4.5rem)}
+  .top .eyebrow,.top :global(.display em){color:#f2a7bf}
+  .top :global(.display){color:#fff3ea}
+  .intro{max-width:34rem;font-size:1.05rem;line-height:1.6;color:#e0d0d2}
+  .filters{display:flex;gap:.35rem;overflow-x:auto;margin:.5rem calc(var(--gutter)* -1) 0;padding:0 var(--gutter);scrollbar-width:none}
+  .filters::-webkit-scrollbar{display:none}
+  .chip{flex:none;min-height:44px;padding:0 1.05rem;border:1px solid #9b879a;border-radius:999px;background:transparent;color:#f6e9e2;font-weight:650;font-size:.88rem}
+  .chip:hover{border-color:#fff3ea}
+  .chip[aria-pressed=true]{background:#f6e9e2;color:#2a1233;border-color:#f6e9e2}
+  .list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(.7rem,2vw,1.4rem)}
+  .row{position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:flex-end;min-width:0;min-height:19rem;gap:.55rem;padding:clamp(.9rem,2vw,1.7rem);border-radius:1.5rem;overflow:hidden;border:1px solid rgb(255 255 255 / .16);background:var(--deep);box-shadow:0 18px 48px -26px #000}
+  .row[hidden]{display:none}
+  .row .shot{position:absolute;inset:0;margin:0;z-index:-2;overflow:hidden;background:var(--deep)}
+  .shot :global(picture),.shot :global(img){display:block;width:100%;height:100%}
+  .shot :global(img){object-fit:cover}
+  .row::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgb(0 0 0 / .04),rgb(7 13 22 / .30) 26%,rgb(7 13 22 / .91) 66%,#070d16 100%)}
+  .hit{display:grid;gap:.4rem;color:white;text-decoration:none}
+  .meta{display:flex;gap:.5rem;align-items:baseline;font-size:.66rem;font-weight:750;letter-spacing:.1em;text-transform:uppercase;color:#fff3ea}
+  .num{font-variant-numeric:tabular-nums;color:#fff3ea}
+  .name{font-family:var(--font-display);font-weight:380;font-variation-settings:'opsz' 144,'SOFT' 50;font-size:clamp(1.55rem,6vw,3.8rem);line-height:1.04;letter-spacing:-.035em;color:#fff3ea;overflow-wrap:anywhere}
+  .tag{font-family:var(--font-display);font-style:italic;font-size:clamp(.9rem,2.9vw,1.2rem);color:#fff3ea}
+  .poster{position:absolute;inset:0;display:grid;align-content:start;padding:1rem;background:radial-gradient(ellipse at 65% 15%,var(--accent),transparent 70%),linear-gradient(160deg,var(--deep),#111929)}
+  .pname{display:none}
+  .soon{font-size:.68rem;font-weight:750;letter-spacing:.12em;text-transform:uppercase;color:white;background:#111929;padding:.35rem .5rem;justify-self:start;border-radius:.25rem}
+  .il-m{margin:0;font-size:.63rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#f1e5df}
+  .incl{display:none;color:#f6e9e2;font-size:.85rem}
+  .actions{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem .6rem}
+  .view{display:inline-flex;align-items:center;gap:.3rem;min-height:44px;font-weight:700;font-size:.8rem;color:#fff3ea;text-decoration:underline;text-underline-offset:.3em}
+  .actions :global(.add){display:inline-flex;align-items:center;gap:.35rem;min-height:44px;padding:0 .65rem;border:1px solid #b0a1b0;border-radius:999px;background:#111929;color:#f6e9e2;font-weight:650;font-size:.75rem}
+  .actions :global(.add[aria-pressed=true]){background:#f2a7bf;color:#2a1233;border-color:#f2a7bf}
+  .price-note{margin-top:2rem;font-size:.86rem;color:#e0d0d2}
+  @media(min-width:361px){
+    .list{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .row:is(:nth-child(1),:nth-child(4),:nth-child(7)){grid-column:span 2;min-height:23rem}
+    .row:is(:nth-child(1),:nth-child(4),:nth-child(7)) .name{font-size:clamp(2.45rem,8vw,5.2rem)}
+    .list:has(>.row[hidden])>.row:not([hidden]){grid-column:span 1;min-height:19rem}
+    .list:has(>.row[hidden])>.row:not([hidden]) .name{font-size:clamp(1.55rem,5.6vw,3.6rem)}
+    .list:has(>.row[hidden])>.row:nth-child(odd of :not([hidden])):nth-last-child(1 of :not([hidden])){grid-column:1/-1}
   }
-
-/* Final Cut: an integrated spatial editorial grid, not an image list. */
-.experiences { background: radial-gradient(ellipse at 15% 12%,#42243e 0%,transparent 43%),radial-gradient(ellipse at 85% 70%,#123a43 0%,transparent 50%),#111929; }
-.grid { display:block; }
-.stage { display:none; }
-.list { list-style:none; margin:0; padding:0; border:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(.7rem,2vw,1.4rem); }
-.row { isolation:isolate; display:flex; flex-direction:column; justify-content:flex-end; align-items:stretch; min-width:0; min-height:18rem; border:1px solid rgb(255 255 255 / .16); padding:clamp(.85rem,2vw,1.7rem); gap:.5rem; border-radius:1.5rem; overflow:hidden; background:var(--deep); box-shadow:0 18px 48px -26px #000; }
-.row[hidden] {display:none}
-.row:is(:nth-child(1),:nth-child(4),:nth-child(8),:nth-child(11)) {grid-column:span 2; min-height:23rem}
-.row .shot {display:block;position:absolute; inset:0; margin:0; aspect-ratio:auto; border-radius:0; z-index:-2; background:var(--deep); }
-.row::after {content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgb(0 0 0 / .08) 0%,rgb(7 13 22 / .46) 37%,rgb(7 13 22 / .94) 78%,#070d16 100%);}
-.row .hit {display:grid;gap:.45rem; color:white; }
-.row .name {font-size:clamp(1.45rem,5.6vw,3.8rem); line-height:1.02; color:#fff3ea; transform:none; overflow-wrap:anywhere; }
-.row:is(:nth-child(1),:nth-child(4),:nth-child(8),:nth-child(11)) .name {font-size:clamp(2.45rem,8vw,5.2rem);}
-.row .tag {font-size:clamp(.85rem,2.9vw,1.2rem);color:#fff3ea;}
-.row .meta {font-size:.66rem;gap:.5rem;color:#fff3ea;letter-spacing:.1em;}
-.row .il-m {display:block;margin:0;color:#f1e5df;font-size:.58rem;}
-.row .incl {display:none}
-.row .actions {display:flex;flex-direction:row;align-items:center;gap:.25rem .6rem;opacity:1;transform:none; flex-wrap:wrap; }
-.row .view {font-size:.79rem;min-height:44px;}
-.row .actions :global(.add) {min-height:44px;padding:0 .65rem;font-size:.72rem;background:rgb(7 13 22 / .62);}
-.row .poster {padding:.8rem}
-.row .poster .pname {font-size:clamp(1.6rem,6vw,3rem);opacity:.35;}
-.row .poster .soon {align-self:start; margin-bottom:7rem}
-.row .shot :global(img) {scale:1.03;}
-@media(prefers-reduced-motion:no-preference) {
- :global(.js) .row .shot,:global(.js) .row.is-in .shot {clip-path:none}
- :global(.js) .row .shot :global(img) {scale:1.12;transition:scale 1s var(--ease)}
- :global(.js) .row.is-in .shot :global(img) {scale:1.03}
- .row:hover .shot :global(img),.row:focus-within .shot :global(img){scale:1.12}
-}
-@media(min-width:64rem){
- .list {grid-template-columns:repeat(3,minmax(0,1fr))}
- .row {min-height:25rem;}
- .row:is(:nth-child(1),:nth-child(4),:nth-child(8),:nth-child(11)) {min-height:28rem}
- .row .name {font-size:clamp(1.8rem,3vw,3.6rem)}
- .row:is(:nth-child(1),:nth-child(4),:nth-child(8),:nth-child(11)) .name {font-size:clamp(2.8rem,5vw,5rem)}
- .row .incl {display:block;color:#f6e9e2}
- .row .actions :global(.add),.row .view {font-size:.86rem}
- .row.is-active .name,.row:hover .name,.row:focus-within .name {transform:none}
-}
-@media(max-width:360px){.list{grid-template-columns:minmax(0,1fr)}.row:is(:nth-child(1),:nth-child(4),:nth-child(8),:nth-child(11)){grid-column:span 1}}
-
-
-/* Responsive rhythm: wide / pair / wide / pair / wide / pair / pair.
-   Maintain DOM and keyboard order rather than packing cards out of sequence. */
-@media (min-width:361px) and (max-width:1023px) {
-  .row:is(:nth-child(8),:nth-child(11)) {grid-column:span 1;min-height:18rem}
-  .row:is(:nth-child(8),:nth-child(11)) .name {font-size:clamp(1.45rem,5.6vw,3.8rem)}
-  .row:nth-child(7) {grid-column:span 2;min-height:23rem}
-  .row:nth-child(7) .name {font-size:clamp(2.45rem,8vw,5.2rem)}
-}
-@media (min-width:361px) {
-  .list:has(> .row[hidden]) > .row:not([hidden]) {grid-column:span 1;min-height:18rem}
-  .list:has(> .row[hidden]) > .row:not([hidden]) .name {font-size:clamp(1.45rem,3.5vw,3.6rem)}
-  .list:has(> .row[hidden]) > .row:nth-child(odd of :not([hidden])):nth-last-child(1 of :not([hidden])) {grid-column:1 / -1}
-}
-/* Native view timelines are a lightweight first experiment in depth.
-   No scroll interception, canvas, new dependency, or movement of controls. */
-@keyframes final-cut-depth {from {transform:translateY(-3%) scale(1.09)}to {transform:translateY(3%) scale(1.09)}}
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion:no-preference) {
-    .row .shot :global(picture) {
-      animation:final-cut-depth linear both;
-      animation-timeline:view();
-      animation-range:entry 0% exit 100%;
+  @media(min-width:64rem){
+    .list{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .row{min-height:25rem}
+    .row:nth-child(7){grid-column:span 1;min-height:25rem}
+    .row:is(:nth-child(1),:nth-child(4),:nth-child(8),:nth-child(11)){grid-column:span 2;min-height:28rem}
+    .row .name,.row:nth-child(7) .name{font-size:clamp(1.8rem,3vw,3.6rem)}
+    .row:is(:nth-child(1),:nth-child(4),:nth-child(8),:nth-child(11)) .name{font-size:clamp(2.8rem,5vw,5rem)}
+    .row .incl{display:block}
+    .row .actions :global(.add),.row .view{font-size:.86rem}
+    .list:has(>.row[hidden]){grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  /* Motion uses native scroll, not wheel/touch interception. Controls stay stationary. */
+  @keyframes final-cut-depth{from{transform:translateY(-3%) scale(1.1)}to{transform:translateY(3%) scale(1.1)}}
+  @media(prefers-reduced-motion:no-preference){
+    .shot :global(img){scale:1.08;transition:scale 1s var(--ease)}
+    .row.is-in .shot :global(img){scale:1.02}
+    @media(hover:hover) and (pointer:fine){
+      .row:hover .shot :global(img),.row:focus-within .shot :global(img){scale:1.09}
+    }
+    @supports(animation-timeline:view()){
+      .row .shot :global(picture){animation:final-cut-depth linear both;animation-timeline:view();animation-range:entry 0% exit 100%}
     }
   }
-}
-
 </style>
