@@ -51,10 +51,14 @@ const ai = { es: 'Escena ilustrativa creada con IA', en: 'Illustrative scene cre
   .veil { pointer-events: none; opacity: 0; background: var(--ocean-950); }
   .lines { position: relative; align-self: center; display: grid; gap: 1.5rem; padding-block: 6rem; }
   .lines p { font-size: clamp(2.2rem, 8.5vw, 6rem); max-width: 15ch; color: #fff3ea; text-shadow: 0 2px 30px rgb(5 36 47 / 0.55); }
-  .lines em { color: #f2a7bf; }
+  .lines em { color: #fff3ea; }
+  .lines p:last-child { font-size:clamp(2.6rem,9vw,6.7rem); max-width:16ch; text-wrap:balance; }
+  .fallback { transform:scale(calc(1.04 + var(--welcome-p,0) * .06)); transform-origin:64% 50%; }
   .depth { display: none; }
   .ai { position: absolute; left: var(--gutter); bottom: calc(1rem + env(safe-area-inset-bottom)); z-index: 3; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgb(255 243 234 / 0.75); }
-  .dive.is-live { height: 300vh; }
+  /* Shorter welcome chapter: retain the full message without a 3-screen hold. */
+  .dive.is-live { height: 230svh; }
+  @media (min-width: 64rem) { .dive.is-live { height: 260svh; } }
   .dive.is-live .stage { position: sticky; top: 0; height: 100svh; min-height: 0; }
   .dive.is-live .lines { position: absolute; inset: 0; padding-block: 0; display: block; z-index: 2; }
   .dive.is-live .lines p { position: absolute; left: var(--gutter); right: var(--gutter); top: 50%; opacity: 0; transform: translateY(-50%); will-change: opacity, transform; }

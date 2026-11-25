@@ -104,7 +104,7 @@ function initDive() {
   const veil = dive.querySelector<HTMLElement>('[data-dive-veil]')!;
   const depth = dive.querySelector<HTMLElement>('[data-dive-depth]')!;
   const bar = dive.querySelector<HTMLElement>('[data-dive-bar]')!;
-  const windows: [number, number][] = [[0.03, 0.24], [0.28, 0.46], [0.5, 0.7], [0.73, 0.91]];
+  const windows: [number, number][] = [[0.015, 0.21], [0.22, 0.40], [0.41, 0.59], [0.60, 0.99]];
   let scene: { setProgress(p: number): void } | null = null;
 
   const render = (p: number) => {
@@ -116,7 +116,8 @@ function initDive() {
       line.style.transform = `translateY(calc(-50% + ${((0.5 - (p - a) / span) * 60).toFixed(1)}px))`;
     });
     // Vuelo sobre la costa: al final la escena funde al océano profundo que continúa en el transporte.
-    const end = smooth(0.9, 1, p);
+    const end = smooth(0.95, 1, p);
+    dive.style.setProperty('--welcome-p', p.toFixed(3));
     veil.style.opacity = end.toFixed(3);
     depth.textContent = '';
     bar.style.transform = `scaleY(${p.toFixed(3)})`;
