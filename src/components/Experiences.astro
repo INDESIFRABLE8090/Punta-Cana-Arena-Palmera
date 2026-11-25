@@ -189,4 +189,31 @@ const highlights = (i: number) => {
 }
 @media(max-width:360px){.list{grid-template-columns:minmax(0,1fr)}.row:is(:nth-child(1),:nth-child(4),:nth-child(8),:nth-child(11)){grid-column:span 1}}
 
+
+/* Responsive rhythm: wide / pair / wide / pair / wide / pair / pair.
+   Maintain DOM and keyboard order rather than packing cards out of sequence. */
+@media (min-width:361px) and (max-width:1023px) {
+  .row:is(:nth-child(8),:nth-child(11)) {grid-column:span 1;min-height:18rem}
+  .row:is(:nth-child(8),:nth-child(11)) .name {font-size:clamp(1.45rem,5.6vw,3.8rem)}
+  .row:nth-child(7) {grid-column:span 2;min-height:23rem}
+  .row:nth-child(7) .name {font-size:clamp(2.45rem,8vw,5.2rem)}
+}
+@media (min-width:361px) {
+  .list:has(> .row[hidden]) > .row:not([hidden]) {grid-column:span 1;min-height:18rem}
+  .list:has(> .row[hidden]) > .row:not([hidden]) .name {font-size:clamp(1.45rem,3.5vw,3.6rem)}
+  .list:has(> .row[hidden]) > .row:nth-child(odd of :not([hidden])):nth-last-child(1 of :not([hidden])) {grid-column:1 / -1}
+}
+/* Native view timelines are a lightweight first experiment in depth.
+   No scroll interception, canvas, new dependency, or movement of controls. */
+@keyframes final-cut-depth {from {transform:translateY(-3%) scale(1.09)}to {transform:translateY(3%) scale(1.09)}}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion:no-preference) {
+    .row .shot :global(picture) {
+      animation:final-cut-depth linear both;
+      animation-timeline:view();
+      animation-range:entry 0% exit 100%;
+    }
+  }
+}
+
 </style>
