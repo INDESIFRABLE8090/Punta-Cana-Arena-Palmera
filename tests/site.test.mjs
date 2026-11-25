@@ -177,6 +177,45 @@ async function browserChecks() {
       await ctx.close();
     }
 
+    console.log('\nFinal Cut: distribución editorial y coste de medios');
+    for (const width of [360, 390, 820, 1440]) {
+      const { ctx, page, errors } = await open({ viewport: { width, height: 844 }, reducedMotion: 'reduce' }, '/es/');
+      const layout = () => page.locator('[data-chapters]').evaluate((grid) => {
+        const g = grid.getBoundingClientRect();
+        const cards = Array.from(grid.children).filter((el) => !el.hidden);
+        const bands = new Map();
+        for (const card of cards) {
+          const r = card.getBoundingClientRect();
+          const y = Math.round(r.top);
+          const band = bands.get(y) || [];
+          band.push({ left: r.left, right: r.right });
+          bands.set(y, band);
+        }
+        const gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+        const holes = [...bands.values()].filter((band) => {
+          band.sort((a, b) => a.left - b.left);
+          return Math.abs(band[0].left - g.left) > 2 ||
+            Math.abs(band[band.length - 1].right - g.right) > 2 ||
+            band.slice(1).some((r, i) => r.left - band[i].right > gap + 2);
+        }).length;
+        return { count: cards.length, holes, columns: getComputedStyle(grid).gridTemplateColumns.split(' ').length };
+      });
+      const all = await layout();
+      check(`Final Cut ${width}: 11 fichas, composición sin huecos`, all.count === 11 && all.holes === 0, JSON.stringify(all));
+      check(`Final Cut ${width}: columnas responsivas`, all.columns === (width <= 360 ? 1 : width < 1024 ? 2 : 3));
+      check(`Final Cut ${width}: sin galería oculta duplicada`, await page.locator('#experiencias [data-preview]').count() === 0);
+      await page.locator('[data-filter="night"]').click();
+      const night = await layout();
+      check(`Final Cut ${width}: filtro noche sin hueco lateral`, night.count === 1 && night.holes === 0);
+      await page.locator('[data-filter="adventure"]').click();
+      const adventure = await layout();
+      check(`Final Cut ${width}: filtro aventura sin huecos`, adventure.count === 2 && adventure.holes === 0);
+      await page.locator('[data-filter="all"]').click();
+      check(`Final Cut ${width}: restablecer catálogo`, (await layout()).count === 11);
+      check(`Final Cut ${width}: sin desborde ni errores`, await noOverflow(page) && errors.length === 0, errors.slice(0, 2).join(' | '));
+      await ctx.close();
+    }
+
     console.log('\nInteracción en móvil (Pixel 7, español)');
     {
       const { ctx, page } = await open(pixel, '/es/');
