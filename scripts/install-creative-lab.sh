@@ -3,7 +3,7 @@
 set -u
 umask 077
 ROOT="${JARVIS_CREATIVE_ROOT:-$HOME/jarvis-creative-lab}"
-mkdir -p "$ROOT/sources" "$ROOT/runtime" "$ROOT/.agents/skills" "$ROOT/.claude/skills" "$ROOT/.opencode/skills" || exit 1
+mkdir -p "$ROOT/sources" "$ROOT/runtime" "$ROOT/.agents/skills" "$ROOT/.claude/skills" "$ROOT/.opencode/skills" "$ROOT/bin" "$ROOT/flow-home" || exit 1
 REPORT="$ROOT/install-report-$(date +%Y%m%d-%H%M%S).txt"
 exec > >(tee "$REPORT") 2>&1
 echo "=== JARVIS CREATIVE LAB ==="
@@ -13,6 +13,11 @@ space_ok || { echo "BLOCKED: less than 10 GiB free"; exit 1; }
 for cmd in git node npm python3 timeout; do command -v "$cmd" >/dev/null || { echo "BLOCKED: missing $cmd"; exit 1; }; done
 node -v; npm -v
 export GIT_TERMINAL_PROMPT=0 DISABLE_TELEMETRY=1 DO_NOT_TRACK=1
+export PATH="$ROOT/bin:$ROOT/runtime/node_modules/.bin:$HOME/.local/bin:$PATH"
+export JARVIS_LAB="$ROOT"
+# Keep dependency versions recorded in the local package-lock. Install one component at a time.
+install_npm() { space_ok && timeout 420 npm install --prefix "$ROOT/runtime" --no-audit --no-fund --save-exact "$@"; }
+
 clone_repo() {
   local name="$1" upstream="$2" target="$ROOT/sources/$1"
   space_ok || { echo "BLOCKED $name: low storage"; return 1; }
@@ -60,6 +65,9 @@ if [ -n "$OC" ] && [ -x "$OC" ]; then
   timeout 20 "$OC" --version && echo "PASS OpenCode CLI" || echo "BLOCKED OpenCode CLI"
   printf '%s\n' "$OC" > "$ROOT/runtime/opencode-path"
 else echo "BLOCKED OpenCode executable"; fi
+if ! command -v bun >/dev/null; then
+  install_npm bun || echo "BLOCKED Bun package"
+fi
 if command -v bun >/dev/null; then
   bun --version
   if [ -d "$ROOT/sources/cinematic-site/CinematicSite/Tools" ]; then
@@ -113,6 +121,8 @@ with open(root/"runtime/mcp-smoke-stderr.log","w") as err:
         cfg={"$schema":"https://opencode.ai/config.json","mcp":{"awwwards":{"type":"local","command":[str(exe)],"enabled":True}}}
         dest=root/"opencode.json"
         if not dest.exists(): dest.write_text(json.dumps(cfg,indent=2)+"\n")
+        else:
+            print("Existing lab configuration preserved; verify MCP entry before use")
         print("MCP configuration:",dest)
     except Exception as e: print("BLOCKED MCP smoke:",e)
     finally:
@@ -121,19 +131,163 @@ with open(root/"runtime/mcp-smoke-stderr.log","w") as err:
         except subprocess.TimeoutExpired: p.kill();p.wait()
 PY
 
+# Optional browser runtime: same node_modules as the MCP, per upstream docs.
+if install_npm playwright ffmpeg-static; then
+  if timeout 240 "$ROOT/runtime/node_modules/.bin/playwright" install chromium; then
+    (cd "$ROOT/runtime" && timeout 45 node --input-type=module -e '
+      import {chromium} from "playwright";
+      const browser=await chromium.launch({headless:true});
+      try { const p=await browser.newPage(); await p.setContent("<h1>JARVIS</h1>");
+        if(await p.locator("h1").innerText()!=="JARVIS") throw Error("fixture");
+        await p.screenshot({path:"browser-smoke.png"}); console.log("PASS Chromium screenshot");
+      } finally {await browser.close();}
+    ') || echo "BLOCKED Chromium on this host; use remote browser QA"
+  else echo "BLOCKED Chromium download; use remote browser QA"; fi
+else echo "BLOCKED browser dependencies"; fi
+
+# uv in an isolated Python environment if not already installed.
+if ! command -v uv >/dev/null && space_ok; then
+  if python3 -m venv "$ROOT/runtime/uv-venv"; then
+    timeout 180 "$ROOT/runtime/uv-venv/bin/pip" install uv && {
+      ln -sfn "$ROOT/runtime/uv-venv/bin/uv" "$ROOT/bin/uv"
+      ln -sfn "$ROOT/runtime/uv-venv/bin/uvx" "$ROOT/bin/uvx"
+    } || echo "BLOCKED uv installation"
+  else echo "BLOCKED Python venv; uv unavailable"; fi
+fi
+command -v uv >/dev/null && uv --version || true
+
+# OpenFlow: its real CLI, in a separate HOME. No writes into existing agent configurations.
+# Install its agents and skills first, not global plugins/MCP or unrelated packages.
+FLOW="$ROOT/sources/openflow/openflow.mjs"
+if [ -f "$FLOW" ] && [ -s "$ROOT/runtime/opencode-path" ] && space_ok; then
+  OC="$(cat "$ROOT/runtime/opencode-path")"
+  mkdir -p "$ROOT/flow-home/.config/opencode" "$ROOT/flow-home/.local/share" "$ROOT/flow-home/.cache"
+  flow() {
+    env HOME="$ROOT/flow-home" XDG_CONFIG_HOME="$ROOT/flow-home/.config" XDG_DATA_HOME="$ROOT/flow-home/.local/share" XDG_CACHE_HOME="$ROOT/flow-home/.cache" PATH="$(dirname "$OC"):$PATH" node "$FLOW" "$@"
+  }
+  flow install --only opencode --skip tools,mcp,plugins --dry-run || echo "BLOCKED OpenFlow dry-run"
+  if timeout 900 env HOME="$ROOT/flow-home" XDG_CONFIG_HOME="$ROOT/flow-home/.config" XDG_DATA_HOME="$ROOT/flow-home/.local/share" XDG_CACHE_HOME="$ROOT/flow-home/.cache" PATH="$(dirname "$OC"):$PATH" node "$FLOW" install --only opencode --skip tools,mcp,plugins; then
+    echo "PASS OpenFlow installer (agents and skills)"
+  else echo "PARTIAL OpenFlow: see output"; fi
+  # Copy the upstream fleet as a fallback only into the isolated lab, never overwrite.
+  for kind in agents commands; do
+    dst="$ROOT/flow-home/.config/opencode/$kind"
+    mkdir -p "$dst"
+    if [ -d "$ROOT/sources/openflow/$kind/opencode" ]; then
+      cp -an "$ROOT/sources/openflow/$kind/opencode/." "$dst/"
+    fi
+    find "$dst" -maxdepth 1 -name '*.md' -print
+  done
+  for skill in "$ROOT/sources/openflow/skills/"*; do
+    if [ -f "$skill/SKILL.md" ]; then
+      dest="$ROOT/.agents/skills/$(basename "$skill")"
+      [ -e "$dest" ] || cp -R "$skill" "$dest"
+    fi
+  done
+  flow doctor || echo "PARTIAL OpenFlow doctor: optional tools not all installed"
+else echo "BLOCKED OpenFlow: missing source or OpenCode"; fi
+
+# Open Design: documented web/daemon mode, no Electron or Docker.
+# pnpm is installed in a private prefix; use the repository lockfile.
+if [ -f "$ROOT/sources/open-design/pnpm-lock.yaml" ] && space_ok; then
+  if install_npm pnpm@10.33.2; then
+    if (cd "$ROOT/sources/open-design" && timeout 900 "$ROOT/runtime/node_modules/.bin/pnpm" install --frozen-lockfile); then
+      echo "PASS Open Design dependencies"
+      (cd "$ROOT/sources/open-design" && timeout 60 "$ROOT/runtime/node_modules/.bin/pnpm" tools-dev --help) && echo "PASS Open Design launcher" || echo "BLOCKED Open Design launcher"
+    else echo "BLOCKED Open Design dependency install"; fi
+  else echo "BLOCKED pnpm"; fi
+else echo "BLOCKED Open Design source or storage"; fi
+
+# OpenHands maintained Agent Canvas package. No paid provider and no Docker.
+if command -v uv >/dev/null && space_ok; then
+  if install_npm @openhands/agent-canvas; then
+    timeout 30 "$ROOT/runtime/node_modules/.bin/agent-canvas" --version && echo "PASS Agent Canvas CLI" || echo "PARTIAL Agent Canvas CLI; inspect startup"
+  else echo "BLOCKED Agent Canvas package"; fi
+else echo "BLOCKED Agent Canvas: uv or storage"; fi
+
+# Project-scoped launchers. Do not launch all services in parallel.
+cat > "$ROOT/bin/studio" <<'LAUNCH'
+#!/usr/bin/env bash
+set -eu
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+export PATH="$ROOT/bin:$ROOT/runtime/node_modules/.bin:$HOME/.local/bin:$PATH"
+export DISABLE_TELEMETRY=1 DO_NOT_TRACK=1
+case "${1:-help}" in
+  code)
+    OC="$(cat "$ROOT/runtime/opencode-path")"
+    cd "$ROOT"; shift
+    exec "$OC" "$@"
+    ;;
+  flow)
+    OC="$(cat "$ROOT/runtime/opencode-path")"
+    cd "$ROOT"; shift
+    export HOME="$ROOT/flow-home" XDG_CONFIG_HOME="$ROOT/flow-home/.config" XDG_DATA_HOME="$ROOT/flow-home/.local/share" XDG_CACHE_HOME="$ROOT/flow-home/.cache"
+    exec "$OC" "$@"
+    ;;
+  design)
+    cd "$ROOT/sources/open-design"
+    exec "$ROOT/runtime/node_modules/.bin/pnpm" tools-dev run web
+    ;;
+  design-stop)
+    cd "$ROOT/sources/open-design"
+    exec "$ROOT/runtime/node_modules/.bin/pnpm" tools-dev stop
+    ;;
+  canvas)
+    cd "$ROOT"
+    exec "$ROOT/runtime/node_modules/.bin/agent-canvas"
+    ;;
+  cinematic)
+    shift
+    exec bun "$ROOT/sources/cinematic-site/CinematicSite/Tools/NewSite.ts" "$@"
+    ;;
+  doctor)
+    uname -m; df -h "$ROOT"
+    for x in node npm bun uv ffmpeg; do command -v "$x" && "$x" --version 2>/dev/null | head -1 || true; done
+    ls -lt "$ROOT"/install-report-*.txt
+    ;;
+  *) printf '%s\n' "studio code | flow | design | design-stop | canvas | cinematic | doctor"
+    ;;
+esac
+LAUNCH
+chmod 700 "$ROOT/bin/studio"
+bash -n "$ROOT/bin/studio" && echo "PASS launcher syntax"
+# Project brief in the lab; actual client changes must remain in isolated worktrees.
+if [ ! -e "$ROOT/AGENTS.md" ]; then
+  cat > "$ROOT/AGENTS.md" <<'BRIEF'
+# JARVIS Creative Studio
+Priority: Arena & Palmera / Beyond Paradise. Read the client repository's
+docs/FINAL-CUT-CREATIVE-DIRECTION.md and .claude/skills/beyond-paradise-studio/SKILL.md.
+Do not reuse the rejected layout. Make an original cinematic spatial welcome
+scene and verify it in a real browser. Use CinematicSite and awwwards for
+production, jury for independent review, and Awwwards MCP for references.
+Never copy proprietary assets or publish without owner approval. Work in
+a separate branch/worktree; no new costs. Select only a verified free model
+unless the owner authorizes an existing subscription. No automatic inference.
+BRIEF
+fi
 cat > "$ROOT/README-JARVIS.txt" <<'EOF'
-Run OpenCode from this lab only after reviewing the staged skills:
-  cd ~/jarvis-creative-lab
-  cat runtime/opencode-path
-  "$(cat runtime/opencode-path)" models
-  "$(cat runtime/opencode-path)"
-Select a model explicitly marked free; no automatic inference calls are made.
-The MCP core has no browser extras. Browser tools require Playwright/Chromium
-and FFmpeg, preferably in an authorized remote machine; test separately.
-OpenFlow, Open Design, Onlook and OpenHands are SOURCE ONLY: review requirements,
-licenses and installation scripts before activation. Onlook has no supported
-Linux release in the upstream README. No global config, client repository,
-billing or existing sessions were modified. Review install-report*.txt.
+JARVIS Creative Studio
+  ~/jarvis-creative-lab/bin/studio code     # existing OpenCode identity
+  ~/jarvis-creative-lab/bin/studio flow     # isolated OpenFlow frontend fleet
+  ~/jarvis-creative-lab/bin/studio design   # Open Design; open printed local URL
+  ~/jarvis-creative-lab/bin/studio design-stop
+  ~/jarvis-creative-lab/bin/studio canvas   # Agent Canvas; default localhost:8000
+  ~/jarvis-creative-lab/bin/studio cinematic --help
+  ~/jarvis-creative-lab/bin/studio doctor
+Choose a model explicitly marked free. OpenFlow isolation may require choosing
+a model again; existing credentials are not copied. Open Design may detect
+existing agents on PATH; select an authorized model. Do not enter paid API keys.
+Run only one heavy visual server at a time. No public tunnel.
+Awwwards MCP core is configured in the lab; browser availability is separately
+tested. Project skills are in .agents/skills and .claude/skills. OpenFlow installs
+agents/skills only; its optional MCP/plugins/tools are not all enabled.
+Onlook is source reference: no supported Android desktop runtime.
+A PASS of a CLI or dependency install is not a successful UI/model test.
+Agent Canvas and Open Design require first-launch verification. See report.
 EOF
-echo "=== COMPLETE WITH POSSIBLE BLOCKERS: $REPORT ==="
-echo "OpenCode start: cd $ROOT && \"\$(cat runtime/opencode-path)\""
+echo "=== INSTALLATION ATTEMPTS FINISHED: $REPORT ==="
+echo "OpenCode: $ROOT/bin/studio code"
+echo "OpenFlow: $ROOT/bin/studio flow"
+echo "Open Design: $ROOT/bin/studio design"
+echo "OpenHands: $ROOT/bin/studio canvas"
+echo "Review PASS/PARTIAL/BLOCKED in $REPORT"
