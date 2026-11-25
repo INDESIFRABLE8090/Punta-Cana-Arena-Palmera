@@ -2,10 +2,8 @@
 import Base from '@/layouts/Base.astro';
 import Hero from '@/components/Hero.astro';
 import Dive from '@/components/Dive.astro';
-import Marquee from '@/components/Marquee.astro';
 import Experiences from '@/components/Experiences.astro';
 import Transport from '@/components/Transport.astro';
-import Gallery from '@/components/Gallery.astro';
 import Planner from '@/components/Planner.astro';
 import Faq from '@/components/Faq.astro';
 import Quote from '@/components/Quote.astro';
@@ -52,12 +50,10 @@ const jsonLd = [
 
 <Base lang={lang} title={d.meta.homeTitle} description={d.meta.homeDescription} alternates={alternates} jsonLd={jsonLd} overlayHeader>
   <Hero lang={lang} />
+  <Dive lang={lang} />
   <Experiences lang={lang} />
   <Quote lang={lang} />
-  <Marquee lang={lang} />
-  <Dive lang={lang} />
   <Transport lang={lang} />
-  <Gallery lang={lang} />
   <Planner lang={lang} />
   <Faq lang={lang} />
 </Base>
