@@ -205,6 +205,47 @@ if command -v uv >/dev/null && space_ok; then
   else echo "BLOCKED Agent Canvas package"; fi
 else echo "BLOCKED Agent Canvas: uv or storage"; fi
 
+# Prepare an isolated client checkout using the user's existing GitHub authorization.
+# No push, no merge, no change to the original checkout.
+cat > "$ROOT/bin/prepare-client" <<'PREP'
+#!/usr/bin/env bash
+set -eu
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+PROJECT="$ROOT/project"
+if [ ! -e "$PROJECT" ]; then
+  command -v gh >/dev/null || { echo "BLOCKED: GitHub CLI not available"; exit 1; }
+  gh auth status --hostname github.com >/dev/null 2>&1 || { echo "BLOCKED: GitHub CLI needs existing authorized login"; exit 1; }
+  gh repo clone INDESIFRABLE8090/Punta-Cana-Arena-Palmera "$PROJECT" -- --single-branch --branch design/beyond-paradise-final-cut-20261124
+  git -C "$PROJECT" switch -c "creative/open-studio-$(date +%Y%m%d-%H%M%S)"
+elif [ ! -d "$PROJECT/.git" ]; then
+  echo "BLOCKED: existing project is not a git checkout"; exit 1
+fi
+cd "$PROJECT"
+if [ ! -f docs/FINAL-CUT-CREATIVE-DIRECTION.md ]; then
+  echo "BLOCKED: checkout lacks creative direction"; exit 1
+fi
+# Make the lab skills available to OpenCode and other agents in this checkout.
+for skill in "$ROOT/.agents/skills/"*; do
+  [ -f "$skill/SKILL.md" ] || continue
+  name="$(basename "$skill")"
+  mkdir -p .agents/skills
+  [ -e ".agents/skills/$name" ] || cp -R "$skill" ".agents/skills/$name"
+done
+# Use the config in this worktree only; preserve any existing configuration.
+if [ -f "$ROOT/opencode.json" ] && [ ! -e opencode.json ] && [ ! -e opencode.jsonc ]; then
+  cp "$ROOT/opencode.json" opencode.json
+fi
+# Keep machine-specific files out of git by default.
+for pattern in /opencode.json /.agents/skills/; do
+  grep -Fxq "$pattern" .git/info/exclude || printf '%s\n' "$pattern" >> .git/info/exclude
+done
+echo "CLIENT READY: $(pwd) | $(git branch --show-current) | $(git rev-parse HEAD)"
+PREP
+chmod 700 "$ROOT/bin/prepare-client"
+bash -n "$ROOT/bin/prepare-client" && echo "PASS client preparation syntax"
+# Existing projects and credentials are preserved. A failed checkout is recoverable.
+if space_ok; then timeout 240 "$ROOT/bin/prepare-client" || echo "BLOCKED client checkout; run prepare-client after restoring GitHub access"; fi
+
 # Project-scoped launchers. Do not launch all services in parallel.
 cat > "$ROOT/bin/studio" <<'LAUNCH'
 #!/usr/bin/env bash
@@ -215,12 +256,14 @@ export DISABLE_TELEMETRY=1 DO_NOT_TRACK=1
 case "${1:-help}" in
   code)
     OC="$(cat "$ROOT/runtime/opencode-path")"
-    cd "$ROOT"; shift
+    if [ -d "$ROOT/project/.git" ]; then cd "$ROOT/project"; else cd "$ROOT"; fi
+    shift
     exec "$OC" "$@"
     ;;
   flow)
     OC="$(cat "$ROOT/runtime/opencode-path")"
-    cd "$ROOT"; shift
+    if [ -d "$ROOT/project/.git" ]; then cd "$ROOT/project"; else cd "$ROOT"; fi
+    shift
     export HOME="$ROOT/flow-home" XDG_CONFIG_HOME="$ROOT/flow-home/.config" XDG_DATA_HOME="$ROOT/flow-home/.local/share" XDG_CACHE_HOME="$ROOT/flow-home/.cache"
     exec "$OC" "$@"
     ;;
@@ -240,12 +283,15 @@ case "${1:-help}" in
     shift
     exec bun "$ROOT/sources/cinematic-site/CinematicSite/Tools/NewSite.ts" "$@"
     ;;
+  prepare)
+    exec "$ROOT/bin/prepare-client"
+    ;;
   doctor)
     uname -m; df -h "$ROOT"
     for x in node npm bun uv ffmpeg; do command -v "$x" && "$x" --version 2>/dev/null | head -1 || true; done
     ls -lt "$ROOT"/install-report-*.txt
     ;;
-  *) printf '%s\n' "studio code | flow | design | design-stop | canvas | cinematic | doctor"
+  *) printf '%s\n' "studio code | flow | design | design-stop | canvas | cinematic | prepare | doctor"
     ;;
 esac
 LAUNCH
@@ -273,7 +319,10 @@ JARVIS Creative Studio
   ~/jarvis-creative-lab/bin/studio design-stop
   ~/jarvis-creative-lab/bin/studio canvas   # Agent Canvas; default localhost:8000
   ~/jarvis-creative-lab/bin/studio cinematic --help
+  ~/jarvis-creative-lab/bin/studio prepare  # retry private checkout if blocked
   ~/jarvis-creative-lab/bin/studio doctor
+The installer attempts to create a separate private client checkout in project/.
+If successful, code and flow open that checkout directly. Review local-only skills and configs before pushing.
 Choose a model explicitly marked free. OpenFlow isolation may require choosing
 a model again; existing credentials are not copied. Open Design may detect
 existing agents on PATH; select an authorized model. Do not enter paid API keys.
