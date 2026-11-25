@@ -31,7 +31,7 @@ const items = await Promise.all(
       <li class="scene" style={`--i:${i}`}>
         <div class="stage">
         <div class="frame">
-          <Picture src={it.src} alt={it.alt} formats={['avif', 'webp']} widths={[768, 1080, 1600, 2400]} sizes={i === 0 ? "(min-width: 64rem) 58vw, 92vw" : "(min-width: 64rem) 38vw, (min-width: 480px) 46vw, 92vw"} loading="lazy" decoding="async" quality={80} style={`object-position:${it.position}`} />
+          <Picture src={it.src} alt={it.alt} formats={['avif', 'webp']} widths={[768, 1080, 1600, 2400]} sizes={i === 0 ? "(min-width: 64rem) 58vw, 92vw" : "(min-width: 64rem) 38vw, (min-width: 361px) 46vw, 92vw"} loading="lazy" decoding="async" quality={80} style={`object-position:${it.position}`} />
         </div>
         <div class="cap shell">
           <p class="n">{String(i + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}</p>
@@ -69,7 +69,7 @@ const items = await Promise.all(
   .gallery { padding-bottom:clamp(4rem,9vw,8rem); overflow:clip; background:radial-gradient(ellipse at 70% 50%,#1d5251 0%,transparent 60%),#0d1a2b; }
   .scenes { display:grid; grid-template-columns:minmax(0,1fr); gap:clamp(.9rem,2vw,1.7rem); list-style:none; }
   .scene { position:relative; min-width:0; isolation:isolate; }
-  .stage { position:relative; display:flex; flex-direction:column; justify-content:flex-end; min-height:20rem; overflow:hidden; border-radius:clamp(1rem,2vw,2rem); padding:clamp(1rem,3vw,2rem); background:#142d37; box-shadow:0 28px 60px -38px #000; border:1px solid rgb(255 255 255 / .15); }
+  .stage { position:relative; isolation:isolate; display:flex; flex-direction:column; justify-content:flex-end; min-height:20rem; overflow:hidden; border-radius:clamp(1rem,2vw,2rem); padding:clamp(1rem,3vw,2rem); background:#142d37; box-shadow:0 28px 60px -38px #000; border:1px solid rgb(255 255 255 / .15); }
   .scene:first-child .stage { min-height:clamp(25rem,65vw,41rem); }
   .frame { position:absolute; inset:0; z-index:-2; overflow:hidden; }
   .stage::after { content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; background:linear-gradient(180deg,transparent 10%,rgb(6 16 27 / .24) 32%,rgb(6 16 27 / .92) 80%,#06101b); }
@@ -84,9 +84,13 @@ const items = await Promise.all(
   .zoom { min-height:44px; padding:0 1.1rem; border:1px solid #c8d4d6; border-radius:999px; background:#10242f; color:#fff3ea; font-weight:650; font-size:.86rem; cursor:zoom-in; }
   .zoom:hover { background:#fff3ea; color:#142d37; }
   .row small { font-size:.68rem; line-height:1.5; color:#e1e8e7; }
-  @media(min-width:480px) {
+  @media(min-width:361px) {
     .scenes { grid-template-columns:repeat(2,minmax(0,1fr)); }
     .scene:first-child { grid-column:1/-1; }
+    .scene:not(:first-child) .stage { padding:.9rem; }
+    .scene:not(:first-child) .t { font-size:clamp(1.5rem,4.5vw,4rem); }
+    .scene:not(:first-child) .zoom { padding:0 .65rem; font-size:.78rem; }
+    .scene:not(:first-child) .l { font-size:.95rem; }
   }
   @media(min-width:64rem) {
     .scenes { grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); grid-template-rows:repeat(2,minmax(17rem,auto)); }
