@@ -1,6 +1,9 @@
 ---
 /** Final Cut: responsive editorial grid. Preserve filter, itinerary, link and reveal contracts. */
-import { Picture } from 'astro:assets';
+import { Picture, getImage } from 'astro:assets';
+import Gallery from './Gallery.astro';
+import { creditFor } from '@/data/credits';
+import { legalUi } from '@/i18n/legal';
 import SplitHeading from './SplitHeading.astro';
 import AddButton from './AddButton.astro';
 import Icon from './Icon.astro';
@@ -14,6 +17,13 @@ const cats: Category[] = ['sea', 'adventure', 'nature', 'night'];
 const pad = (n: number) => String(n).padStart(2, '0');
 const soon = { es: 'Foto próximamente', en: 'Photo coming soon', pt: 'Foto em breve' }[lang];
 const illus = { es: 'Imagen ilustrativa', en: 'Illustrative image', pt: 'Imagem ilustrativa' }[lang];
+// One rendering of each licensed photo on the home page, with full size available on demand.
+const licensed = tours.filter((tour) => tour.image?.credit && ['commons-isla-catalina.jpg', 'commons-isla-saona.jpg', 'commons-mono-ardilla.jpg'].includes(tour.image.credit));
+const photos = new Map(await Promise.all(licensed.map(async (tour, index) => {
+  const image = tour.image!;
+  const full = await getImage({ src: image.src, width: Math.min(2400, image.src.width), format: 'webp', quality: 82 });
+  return [tour.slug, { index, full: full.src, alt: image.alt[lang], credit: creditFor(image.credit!) }] as const;
+})));
 const highlights = (i: number) => {
   const tour = tours[i]!;
   return (tour.options ? tour.options.map((o) => o.name[lang]) : tour.inclusions[lang].slice(1)).slice(0, 3);
@@ -31,10 +41,11 @@ const highlights = (i: number) => {
     </div>
   </div>
 
-  <div class="shell grid">
+  <div class="shell grid" id="galeria">
     <ol class="list" data-chapters>
-      {tours.map((tour, i) => (
-        <li class="row" data-category={tour.category} data-slug={tour.slug} style={`--accent:${tour.accent};--deep:${tour.deep}`}>
+      {tours.map((tour, i) => {
+        const photo = photos.get(tour.slug);
+        return (<li class="row" data-category={tour.category} data-slug={tour.slug} style={`--accent:${tour.accent};--deep:${tour.deep}`}>
           <a class="hit" href={tourPath(lang, tour.slug)} data-index-link>
             <span class="meta"><span class="num">{pad(i + 1)}</span><span class="cat">{d.categories[tour.category]}</span></span>
             <span class="name">{tour.name[lang]}</span>
@@ -46,17 +57,20 @@ const highlights = (i: number) => {
             ) : <span class="poster"><span class="pname">{tour.name[lang]}</span><span class="soon">{soon}</span></span>}
           </figure>
           {tour.image && !tour.image.credit && <p class="il-m">{illus}</p>}
+          {photo?.credit && <small class="credit">{legalUi[lang].photo}: {photo.credit.author} · {photo.credit.license}</small>}
           <p class="incl">{highlights(i).join(' · ')}</p>
           <div class="actions">
             <a class="view" href={tourPath(lang, tour.slug)}>{d.experiences.view}<Icon name="arrow" size={16} /></a>
             <AddButton lang={lang} slug={tour.slug} class="add" />
+            {photo && <button type="button" class="zoom" data-shot={photo.index} data-full={photo.full} data-alt={photo.alt} data-caption={`${tour.name[lang]} · ${legalUi[lang].photo}: ${photo.credit?.author} (${photo.credit?.license})`} aria-label={`${d.gallery.open}: ${tour.name[lang]}`}>{d.gallery.open}</button>}
           </div>
-        </li>
-      ))}
+        </li>);
+      })}
     </ol>
 
   </div>
   <p class="shell price-note">{d.experiences.priceNote}</p>
+  <Gallery lang={lang} />
 </section>
 
 <style>
@@ -96,6 +110,8 @@ const highlights = (i: number) => {
   .view{display:inline-flex;align-items:center;gap:.3rem;min-height:44px;font-weight:700;font-size:.8rem;color:#fff3ea;text-decoration:underline;text-underline-offset:.3em}
   .actions :global(.add){display:inline-flex;align-items:center;gap:.35rem;min-height:44px;padding:0 .65rem;border:1px solid #b0a1b0;border-radius:999px;background:#111929;color:#f6e9e2;font-weight:650;font-size:.75rem}
   .actions :global(.add[aria-pressed=true]){background:#f2a7bf;color:#2a1233;border-color:#f2a7bf}
+  .credit{font-size:.65rem;line-height:1.45;color:#e0d0d2}
+  .zoom{display:inline-flex;align-items:center;min-height:44px;padding:0 .65rem;border-radius:999px;border:1px solid #b0a1b0;background:#111929;color:#fff3ea;font-size:.76rem}
   .price-note{margin-top:2rem;font-size:.86rem;color:#e0d0d2}
   @media(min-width:361px){
     .list{grid-template-columns:repeat(2,minmax(0,1fr))}
