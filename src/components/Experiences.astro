@@ -48,7 +48,7 @@ const highlights = (i: number) => {
           </a>
           <figure class="shot" aria-hidden="true">
             {tour.image ? (
-              <Picture src={tour.image.src} alt="" formats={['avif', 'webp']} widths={[480, 768, 1080]} sizes="(min-width: 64rem) 1px, 92vw" loading="lazy" decoding="async" quality={72} style={`object-position:${tour.image.position ?? '50% 50%'}`} />
+              <Picture src={tour.image.src} alt="" formats={['avif', 'webp']} widths={[480, 768, 1080]} sizes="(min-width: 64rem) 64vw, 92vw" loading="lazy" decoding="async" quality={72} style={`object-position:${tour.image.position ?? '50% 50%'}`} />
             ) : <span class="poster"><span class="pname">{tour.name[lang]}</span><span class="soon">{soon}</span></span>}
           </figure>
           {tour.image && !tour.image.credit && <p class="il-m">{illus}</p>}
@@ -146,4 +146,47 @@ const highlights = (i: number) => {
     .pv figcaption span { font-family: var(--font-body); font-size: 0.72rem; font-weight: 750; letter-spacing: 0.2em; }
     .pv figcaption .il { margin-left: 0.8rem; font-family: var(--font-body); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.85; }
   }
+
+/* Final Cut: an integrated spatial editorial grid, not an image list. */
+.experiences { background: radial-gradient(ellipse at 15% 12%,#42243e 0%,transparent 43%),radial-gradient(ellipse at 85% 70%,#123a43 0%,transparent 50%),#111929; }
+.grid { display:block; }
+.stage { display:none; }
+.list { list-style:none; margin:0; padding:0; border:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(.7rem,2vw,1.4rem); }
+.row { isolation:isolate; display:flex; flex-direction:column; justify-content:flex-end; align-items:stretch; min-width:0; min-height:18rem; border:1px solid rgb(255 255 255 / .16); padding:clamp(.85rem,2vw,1.7rem); gap:.5rem; border-radius:1.5rem; overflow:hidden; background:var(--deep); box-shadow:0 18px 48px -26px #000; }
+.row[hidden] {display:none}
+.row:is(:nth-child(1),:nth-child(4),:nth-child(8),:nth-child(11)) {grid-column:span 2; min-height:23rem}
+.row .shot {display:block;position:absolute; inset:0; margin:0; aspect-ratio:auto; border-radius:0; z-index:-2; background:var(--deep); }
+.row::after {content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgb(0 0 0 / .08) 0%,rgb(7 13 22 / .46) 37%,rgb(7 13 22 / .94) 78%,#070d16 100%);}
+.row .hit {display:grid;gap:.45rem; color:white; }
+.row .name {font-size:clamp(1.45rem,5.6vw,3.8rem); line-height:1.02; color:#fff3ea; transform:none; overflow-wrap:anywhere; }
+.row:is(:nth-child(1),:nth-child(4),:nth-child(8),:nth-child(11)) .name {font-size:clamp(2.45rem,8vw,5.2rem);}
+.row .tag {font-size:clamp(.85rem,2.9vw,1.2rem);color:#fff3ea;}
+.row .meta {font-size:.66rem;gap:.5rem;color:#fff3ea;letter-spacing:.1em;}
+.row .il-m {display:block;margin:0;color:#f1e5df;font-size:.58rem;}
+.row .incl {display:none}
+.row .actions {display:flex;flex-direction:row;align-items:center;gap:.25rem .6rem;opacity:1;transform:none; flex-wrap:wrap; }
+.row .view {font-size:.79rem;min-height:44px;}
+.row .actions :global(.add) {min-height:44px;padding:0 .65rem;font-size:.72rem;background:rgb(7 13 22 / .62);}
+.row .poster {padding:.8rem}
+.row .poster .pname {font-size:clamp(1.6rem,6vw,3rem);opacity:.35;}
+.row .poster .soon {align-self:start; margin-bottom:7rem}
+.row .shot :global(img) {scale:1.03;}
+@media(prefers-reduced-motion:no-preference) {
+ :global(.js) .row .shot,:global(.js) .row.is-in .shot {clip-path:none}
+ :global(.js) .row .shot :global(img) {scale:1.12;transition:scale 1s var(--ease)}
+ :global(.js) .row.is-in .shot :global(img) {scale:1.03}
+ .row:hover .shot :global(img),.row:focus-within .shot :global(img){scale:1.12}
+}
+@media(min-width:64rem){
+ .list {grid-template-columns:repeat(3,minmax(0,1fr))}
+ .row {min-height:25rem;}
+ .row:is(:nth-child(1),:nth-child(4),:nth-child(8),:nth-child(11)) {min-height:28rem}
+ .row .name {font-size:clamp(1.8rem,3vw,3.6rem)}
+ .row:is(:nth-child(1),:nth-child(4),:nth-child(8),:nth-child(11)) .name {font-size:clamp(2.8rem,5vw,5rem)}
+ .row .incl {display:block;color:#f6e9e2}
+ .row .actions :global(.add),.row .view {font-size:.86rem}
+ .row.is-active .name,.row:hover .name,.row:focus-within .name {transform:none}
+}
+@media(max-width:360px){.list{grid-template-columns:minmax(0,1fr)}.row:is(:nth-child(1),:nth-child(4),:nth-child(8),:nth-child(11)){grid-column:span 1}}
+
 </style>
