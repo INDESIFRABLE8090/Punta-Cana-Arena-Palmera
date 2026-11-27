@@ -148,6 +148,12 @@ async function browserChecks() {
     ]) {
       const { ctx, page, errors } = await open(opts, path);
       await page.waitForTimeout(1200);
+      if (await page.locator('[data-hero]').count()) {
+        await page.evaluate(() => document.fonts.ready);
+        const separation = await page.locator('[data-hero]').evaluate(hero =>
+          hero.querySelector('.lead').getBoundingClientRect().top - hero.querySelector('.sub').getBoundingClientRect().bottom);
+        check(`${name}: el subtítulo deja espacio al cotizador`, separation >= 8, `${separation.toFixed(1)} px`);
+      }
       // Recorre la página entera para disparar cargas diferidas (3D incluido).
       const height = await page.evaluate(() => document.documentElement.scrollHeight);
       for (let y = 0; y < height; y += 700) {
@@ -326,6 +332,26 @@ async function browserChecks() {
 
       const wa = await page.$$eval('[data-wa]', (els) => els.map((e) => e.href));
       check('todos los enlaces de WhatsApp usan el número oficial', wa.length >= 3 && wa.every((h) => h.startsWith(`https://wa.me/${WHATSAPP}?text=`)));
+      await ctx.close();
+    }
+
+    {
+      const { ctx, page } = await open(pixel, '/es/');
+      const ticket = page.locator('[data-ticket]');
+      const send = ticket.locator('[data-ticket-send]');
+      await ticket.locator('[name=date]').fill('2020-02-01');
+      await ticket.locator('[name=people]').fill('-2');
+      await send.click();
+      check('billete: fecha pasada e número de pasajeros inválido bloquean el enlace',
+        await ticket.evaluate(form => !form.checkValidity()) && !(await send.getAttribute('href')).includes('2020') &&
+        await page.evaluate(() => document.activeElement?.getAttribute('name') === 'date'));
+      await ticket.locator('[name=date]').fill('2099-08-14');
+      await ticket.locator('[name=people]').fill('3');
+      await ticket.locator('[name=from]').fill('PUJ');
+      await ticket.locator('[name=to]').fill('Bávaro');
+      const text = new URL(await send.getAttribute('href')).searchParams.get('text');
+      check('billete: la consulta válida contiene la ruta, fecha y pasajeros',
+        ['PUJ','Bávaro','2099-08-14','3'].every(value => text.includes(value)));
       await ctx.close();
     }
 
