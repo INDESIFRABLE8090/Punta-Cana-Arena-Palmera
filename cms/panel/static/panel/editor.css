@@ -1,0 +1,58 @@
+/* Colores y controles de la oficina editorial. El sitio público conserva su propia hoja. */
+:root {
+  --primary: #17645d;
+  --secondary: #124843;
+  --accent: #fff7df;
+  --header-bg: #103e3d;
+  --header-color: #e0f4ee;
+  --header-link-color: #fff;
+  --header-branding-color: #fff7df;
+  --breadcrumbs-bg: #205e59;
+  --breadcrumbs-fg: #e4f2ef;
+  --breadcrumbs-link-fg: #fff;
+  --button-bg: #14665b;
+  --button-hover-bg: #104e47;
+  --default-button-bg: #0e504a;
+  --default-button-hover-bg: #093e39;
+  --font-family-primary: 'Source Sans 3', system-ui, sans-serif;
+}
+html[data-theme="light"] {
+  --body-bg: #fcfbf8;
+  --body-fg: #213534;
+  --link-fg: #145e59;
+  --link-hover-color: #093d36;
+  --darkened-bg: #f3f5f0;
+  --selected-bg: #e2f0e9;
+  --selected-row: #ecf5ef;
+}
+#header { gap: 1rem; }
+#branding, #user-tools { line-height: 1.45; }
+#branding #site-name { font-family: Georgia, serif; font-size: 1.45rem; }
+#content h1 { font-weight: 580; letter-spacing: -.025em; }
+.module { border-radius: .45rem; }
+.module caption, .module > h2 { border-radius: .45rem .45rem 0 0; }
+.module caption, .module h2, .inline-group h2 { text-transform: none; letter-spacing: normal; }
+#content-main .module table th, #content-main .module table td { vertical-align: middle; }
+#content-main :is(input, select, textarea):not([type="checkbox"], [type="radio"], [type="hidden"]) {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+#content-main :is(input[type="text"], input[type="number"], input[type="url"], input[type="email"],
+  input[type="password"], select, textarea) { border-radius: .35rem; padding: .5rem .65rem; }
+#content-main textarea { min-height: 5.5rem; }
+.submit-row :is(input, a), .object-tools a, #content-main .button { border-radius: .35rem; }
+:focus-visible { outline: 3px solid #b37212; outline-offset: 2px; }
+.deliveries { max-width: 64rem; }
+.edition { padding: 1.1rem; border: 1px solid var(--border-color); border-radius: .5rem; margin-block: 1rem; }
+@media (max-width: 767px) {
+  #header { gap: .35rem; align-items: flex-start; }
+  #branding #site-name { font-size: 1.25rem; }
+  #content, #content-main, .form-row, .inline-group { min-width: 0; }
+  #content-main .form-row :is(input, select, textarea):not([type="checkbox"], [type="radio"], [type="hidden"]) {
+    font-size: 1rem;
+    min-height: 44px;
+  }
+  .submit-row :is(input, a), .deliveries :is(button, .button) { min-height: 44px; box-sizing: border-box; }
+  #content-main .results, #content-main .tabular { overflow-x: auto; }
+  .deliveries { overflow-wrap: anywhere; }
+}
