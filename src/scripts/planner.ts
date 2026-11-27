@@ -1,4 +1,4 @@
-import { clientData, s, tourName } from './client';
+import { clientData, s, tourName, todayISO } from './client';
 import { getItinerary, subscribe, move, toggleTour, toggleTransport, type Itinerary } from './itinerary';
 import { waLink } from './whatsapp';
 
@@ -6,11 +6,6 @@ const ICON = {
   up: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 14 6-6 6 6"/></svg>',
   down: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 10 6 6 6-6"/></svg>',
   close: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>',
-};
-
-const todayISO = () => {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
 
 /** Limpia texto libre: sin caracteres de control ni espacios repetidos, con tope de longitud. */

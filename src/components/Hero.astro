@@ -134,14 +134,27 @@ const [l1, l2] = [chars(q.lines[0]), chars(q.lines[1])];
 
   @media (min-width: 40rem) { .sound [data-sound-label] { display: inline; } }
 
+  /* El titular y la reserva comparten flujo para admitir teléfonos cortos y texto ampliado. */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    height: auto;
+    min-height: 100svh;
+    max-height: none;
+    padding: calc(var(--header-h) + 9svh) var(--gutter) calc(7.5rem + env(safe-area-inset-bottom));
+  }
+  .copy, .cta { position: relative; inset: auto; }
+  .cta { margin-top: auto; }
+
   /* ---------- Escritorio ---------- */
   @media (min-width: 64rem) {
     .poster, .film { object-position: 70% 50%; }
-    .copy { left: 7vw; right: auto; top: calc(var(--header-h) + 7svh); }
+    .hero { padding: calc(var(--header-h) + 7svh) 7vw 9rem; }
     h1 { font-size: min(13.5vw, 25svh); }
     .ln.it { padding-left: 1.05em; }
     .sub { margin-left: 2.6em; }
-    .cta { left: 7vw; right: auto; width: 30rem; bottom: calc(9rem); }
+    .cta { width: 30rem; }
     .cue { display: flex; }
     .ctrl { bottom: 9.4rem; right: 5vw; }
   }

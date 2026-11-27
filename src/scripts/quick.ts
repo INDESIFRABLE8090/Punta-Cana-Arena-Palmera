@@ -1,10 +1,6 @@
-import { clientData, s, tourName } from './client';
+import { clientData, s, tourName, todayISO } from './client';
 import { waLink } from './whatsapp';
 
-const today = () => {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-};
 const clean = (v: FormDataEntryValue | null, max: number) => String(v ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
 
 export function initQuick() {
@@ -13,7 +9,7 @@ export function initQuick() {
   const status = form.querySelector<HTMLElement>('[data-quick-status]')!;
   const note = status.textContent ?? '';
   const date = form.elements.namedItem('date') as HTMLInputElement;
-  date.min = today();
+  date.min = todayISO();
 
   const mode = () => (new FormData(form).get('mode') === 'transfer' ? 'transfer' : 'tour');
   const sync = () => {
@@ -40,7 +36,7 @@ export function initQuick() {
     if (m === 'tour' && !clientData().tours.some((x) => x.slug === v.tour)) bad.push('tour');
     if (m === 'transfer' && v.from.length < 2) bad.push('from');
     if (m === 'transfer' && v.to.length < 2) bad.push('to');
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(v.date) || v.date < today()) bad.push('date');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(v.date) || v.date < todayISO()) bad.push('date');
     if (!Number.isInteger(v.people) || v.people < 1 || v.people > 60) bad.push('people');
     form.querySelectorAll('.f').forEach((f) => f.classList.remove('is-invalid'));
     if (bad.length) {

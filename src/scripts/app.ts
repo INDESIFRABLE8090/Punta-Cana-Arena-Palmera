@@ -5,7 +5,7 @@ import { initPlanner } from './planner';
 import { initAudio } from './audio';
 import { initGallery } from './gallery';
 import { initQuick } from './quick';
-import { prefersReducedMotion } from './client';
+import { prefersReducedMotion, todayISO } from './client';
 
 /** Arranque: primero lo imprescindible para interactuar; el movimiento se carga en reposo. */
 function initMenu() {
@@ -128,15 +128,24 @@ function initTicket() {
   const send = form.querySelector<HTMLAnchorElement>('[data-ticket-send]')!;
   const code = (v: string) => (v.trim() ? v.trim().replace(/[^\p{L}\p{N} ]/gu, '').slice(0, 3).toUpperCase() : '—');
   const f = form.dataset;
+  const date = form.elements.namedItem('date') as HTMLInputElement;
   const update = () => {
     const v = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).value.trim();
     form.querySelector('[data-code="from"]')!.textContent = code(v('from'));
     form.querySelector('[data-code="to"]')!.textContent = code(v('to'));
     const lines = [f.msg!, v('from') && `${f.lFrom}: ${v('from')}`, v('to') && `${f.lTo}: ${v('to')}`, v('date') && `${f.lDate}: ${v('date')}`, v('people') && `${f.lPeople}: ${v('people')}`].filter(Boolean);
-    send.href = waLink(lines.join('\n'));
+    date.min = todayISO();
+    send.href = waLink(form.matches(':valid') ? lines.join('\n') : f.msg!);
   };
   form.addEventListener('input', update);
-  form.addEventListener('submit', (e) => e.preventDefault());
+  send.addEventListener('click', (event) => {
+    update();
+    if (!form.reportValidity()) event.preventDefault();
+  });
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    send.click();
+  });
   if (prefersReducedMotion()) form.querySelectorAll('animateMotion').forEach((a) => a.remove());
   update();
 }
