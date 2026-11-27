@@ -17,7 +17,7 @@ const target = homePath('es');
     <script is:inline define:vars={{ paths: Object.fromEntries(languages.map((l) => [l, homePath(l)])) }}>
       var pref = (navigator.languages || [navigator.language || 'es']).map(function (l) { return l.slice(0, 2).toLowerCase(); });
       var hit = pref.find(function (l) { return paths[l]; }) || 'es';
-      location.replace(paths[hit] + location.hash);
+      location.replace(paths[hit] + location.search + location.hash);
     </script>
     <noscript><meta http-equiv="refresh" content={`0; url=${target}`} /></noscript>
   </head>

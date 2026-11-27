@@ -1,3 +1,4 @@
+import { initLazyVideos } from './scene-video';
 import { waLink } from './whatsapp';
 import { initItinerary } from './itinerary';
 import { initPlanner } from './planner';
@@ -118,29 +119,6 @@ function initChrome() {
   };
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
-}
-
-/**
- * Vídeos de escena (Google Veo, ilustrativos): no se descarga nada con movimiento reducido o ahorro de datos;
- * se elige 720p o 1080p según la pantalla y solo se reproducen mientras están cerca de la vista.
- */
-function initLazyVideos() {
-  const videos = [...document.querySelectorAll<HTMLVideoElement>('[data-lazy-video]')];
-  const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-  if (!videos.length || prefersReducedMotion() || conn?.saveData) return;
-  const big = window.matchMedia('(min-width: 64rem)').matches;
-  const start = (v: HTMLVideoElement) => {
-    if (!v.src) {
-      // MP4/H.264 (decodificación por hardware en Android); WebM/VP9 solo si el navegador no reproduce MP4.
-      const mp4 = v.canPlayType('video/mp4; codecs="avc1.640028"') !== '';
-      v.src = mp4 ? ((big ? v.dataset.srcLg : v.dataset.srcSm) ?? '') : (v.dataset.srcSm ?? '').replace(/\.mp4$/, '.webm');
-      v.addEventListener('playing', () => v.classList.add('is-on'), { once: true });
-    }
-    v.play().catch(() => {});
-  };
-  if (!('IntersectionObserver' in window)) return videos.forEach(start);
-  const io = new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting ? start(e.target as HTMLVideoElement) : (e.target as HTMLVideoElement).pause())), { rootMargin: '40% 0px' });
-  videos.forEach((v) => io.observe(v));
 }
 
 /** Billete de transporte: rellena el billete en vivo y prepara el mensaje de WhatsApp con los datos. */

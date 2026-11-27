@@ -8,6 +8,7 @@
  * Playwright no es dependencia del proyecto: se usa el instalado globalmente
  * (npm i -g playwright && npx playwright install chromium).
  */
+import { preview } from 'astro';
 import { createRequire } from 'node:module';
 import { execSync } from 'node:child_process';
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
@@ -17,8 +18,6 @@ import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
 const BASE = process.env.BASE_PATH ?? '/Punta-Cana-Arena-Palmera';
-const PORT = 4399;
-const origin = `http://localhost:${PORT}`;
 const WHATSAPP = '18097798311';
 const LANGS = { es: 'excursiones', en: 'excursions', pt: 'excursoes' };
 const SLUGS = ['scuba-doo', 'isla-saona', 'isla-catalina', 'buggies-polaris-atv', 'scape-park', 'fun-park', 'dolphin-explorer', 'lancha-rapida', 'monkeyland', 'party-boat', 'coco-bongo'];
@@ -109,30 +108,16 @@ function loadPlaywright() {
     return createRequire(join(execSync('npm root -g').toString().trim(), 'x.js'))('playwright');
   }
 }
-async function waitForServer() {
-  for (let i = 0; i < 60; i++) {
-    try {
-      if ((await fetch(`${origin}${BASE}/es/`)).ok) return;
-    } catch {}
-    await new Promise((r) => setTimeout(r, 250));
-  }
-  throw new Error('El servidor de vista previa no arrancó');
-}
-
 async function browserChecks() {
   const { chromium, devices } = loadPlaywright();
-  // `astro preview` queda en segundo plano; se detiene al terminar.
-  const astro = (args) => {
-    try {
-      execSync(`npx astro preview ${args}`, { cwd: root, stdio: 'ignore' });
-    } catch {}
-  };
-  astro('stop');
-  astro(`--port ${PORT}`);
-  const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+  const server = await preview({ root, server: { host: '127.0.0.1', port: 0 } });
+  let browser;
   try {
-    await waitForServer();
-    const url = (p) => `${origin}${BASE}${p}`;
+    browser = await chromium.launch({
+      executablePath: process.env.CHROMIUM_EXECUTABLE_PATH,
+      args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
+    });
+    const url = (p) => `http://127.0.0.1:${server.port}${BASE}${p}`;
     const open = async (ctxOptions, path) => {
       const ctx = await browser.newContext(ctxOptions);
       await ctx.addInitScript(() => {
@@ -216,10 +201,37 @@ async function browserChecks() {
       await ctx.close();
     }
 
+    console.log('\nPelícula y enlaces compartidos');
+    {
+      const { ctx, page } = await open({ ...pixel, locale: 'en-US' }, '/?filtro=night#experiencias');
+      check('enlace compartido: conserva idioma, filtro y sección',
+        new URL(page.url()).pathname.endsWith('/en/') &&
+        new URL(page.url()).hash === '#experiencias' &&
+        await page.locator('[data-filter="night"]').getAttribute('aria-pressed') === 'true');
+      await ctx.close();
+    }
+    {
+      const { ctx, page } = await open(pixel, '/es/');
+      const hero = page.locator('[data-hero] video');
+      await page.waitForFunction(() => document.querySelector('[data-hero] video')?.currentTime > 0);
+      check('móvil: la portada reproduce la variante 720p', /-720\.(mp4|webm)$/.test(await hero.getAttribute('src')));
+      check('móvil: transporte no inicia su descarga fuera de pantalla', !(await page.locator('#transporte video').getAttribute('src')));
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.waitForFunction(() => [...document.querySelectorAll('video')].every(v => v.paused));
+      check('cambiar a movimiento reducido devuelve el póster', !(await hero.evaluate(v => v.classList.contains('is-on'))));
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      await page.locator('#transporte video').scrollIntoViewIfNeeded();
+      await page.waitForFunction(() => document.querySelector('#transporte video')?.currentTime > 0);
+      check('al llegar a transporte solo se reproduce esa escena',
+        await page.evaluate(() => [...document.querySelectorAll('video')].filter(v => !v.paused).length === 1) &&
+        await hero.evaluate(v => v.paused));
+      await ctx.close();
+    }
+
     console.log('\nInteracción en móvil (Pixel 7, español)');
     {
       const { ctx, page } = await open(pixel, '/es/');
-      check('la inmersión 3D se activa con WebGL', await page.locator('[data-dive].is-live').count() === 1);
+      check('la escena de bienvenida responde al desplazamiento', await page.locator('[data-dive].is-live').count() === 1);
 
       await page.click('[data-menu-toggle]');
       check('menú móvil: se abre', await page.locator('[data-menu]').isVisible());
@@ -460,8 +472,8 @@ async function browserChecks() {
       await ctx.close();
     }
   } finally {
-    await browser.close();
-    astro('stop');
+    await browser?.close();
+    await server.stop();
   }
 }
 
